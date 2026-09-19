@@ -17,7 +17,7 @@ const contactSettingsSchema = new Schema<ContactSettingsDoc>(
     email: { type: String, required: true, trim: true, lowercase: true },
     phone: { type: String, required: true, trim: true },
     whatsapp: { type: String, required: true, trim: true },
-    instagram: { type: String, default: "https://instagram.com", trim: true },
+    instagram: { type: String, default: "https://www.instagram.com/designdiaries_by_sagrika_?stkn=ZmkzMWY4MnNydnpu", trim: true },
     linkedin: { type: String, default: "https://linkedin.com", trim: true },
   },
   { timestamps: true },

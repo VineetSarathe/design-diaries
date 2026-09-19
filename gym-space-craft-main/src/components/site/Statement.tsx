@@ -4,21 +4,28 @@ import { cn } from "@/lib/utils";
 export function Statement({
   words,
   tone = "ink",
+  blend,
   className,
 }: {
   words: string[];
   tone?: "ink" | "cream";
+  blend?: "sand";
   className?: string;
 }) {
   const row = [...words, ...words];
+  const blendSand = blend === "sand";
   return (
     <section
       aria-hidden="true"
       className={cn(
-        "relative overflow-hidden border-y py-6 md:py-8",
-        tone === "ink"
-          ? "border-background/10 bg-foreground text-background"
-          : "border-border bg-secondary text-foreground",
+        "relative overflow-hidden",
+        blendSand ? "border-t border-background/10 bg-[var(--ink)] pt-6 pb-5 md:pt-8 md:pb-6 text-background" : "py-6 md:py-8",
+        !blendSand && tone === "ink"
+          ? "border-t border-b border-background/10 bg-foreground text-background"
+          : "",
+        !blendSand && tone === "cream"
+          ? "border-y border-border bg-secondary text-foreground"
+          : "",
         className,
       )}
     >

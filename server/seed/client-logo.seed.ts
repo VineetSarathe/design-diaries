@@ -5,16 +5,16 @@ import { getCloudinary, isCloudinaryConfigured } from "../config/cloudinary";
 import { deleteCloudinaryImage, uploadClientLogoFromPath } from "../utils/cloudinary-images";
 
 const ORIGINALS = [
-  { name: "Ironworks", file: "logo-ironworks.png", slug: "ironworks" },
-  { name: "Athlete Lab", file: "logo-athlete-lab.png", slug: "athlete-lab" },
-  { name: "Pulse House", file: "logo-pulse-house.png", slug: "pulse-house" },
-  { name: "Forge Club", file: "logo-forge-club.png", slug: "forge-club" },
-  { name: "Core Nine", file: "logo-core-nine.png", slug: "core-nine" },
-  { name: "Apex Fitness", file: "logo-apex-fitness.png", slug: "apex-fitness" },
+  { name: "Ironworks", slug: "ironworks" },
+  { name: "Athlete Lab", slug: "athlete-lab" },
+  { name: "Pulse House", slug: "pulse-house" },
+  { name: "Forge Club", slug: "forge-club" },
+  { name: "Core Nine", slug: "core-nine" },
+  { name: "Apex Fitness", slug: "apex-fitness" },
 ] as const;
 
-function assetsDir() {
-  return path.resolve(__dirname, "../../gym-space-craft-main/src/assets");
+function logosPublicDir() {
+  return path.resolve(__dirname, "../../gym-space-craft-main/public/client-logos");
 }
 
 export async function seedClientLogos(): Promise<void> {
@@ -111,8 +111,8 @@ async function resolveLogoSource(imageUrl: string, name: string) {
   }
   if (!original) return { filePath: "", slug: "" };
 
-  const assetPath = path.join(assetsDir(), original.file);
-  if (await fileExists(assetPath)) return { filePath: assetPath, slug: original.slug };
+  const publicLogo = path.join(logosPublicDir(), `${original.slug}.png`);
+  if (await fileExists(publicLogo)) return { filePath: publicLogo, slug: original.slug };
   return { filePath: "", slug: "" };
 }
 

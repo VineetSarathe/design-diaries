@@ -21,7 +21,7 @@ import { useRecognitions } from "@/hooks/use-recognitions";
 import { isExternalHref, pickBySlugs } from "@/lib/homepage";
 
 import heroImg from "@/assets/hero-gym.jpg";
-import heroVideo from "@/assets/hero-gym.mp4.asset.json";
+import heroVideo from "@/assets/hero-gym.mp4";
 import p1 from "@/assets/project-1.jpg";
 import p2 from "@/assets/project-2.jpg";
 import p3 from "@/assets/project-3.jpg";
@@ -189,7 +189,7 @@ function Home() {
           style={{ transform: `translateY(${Math.min(scrollY * 0.18, 160)}px)` }}
         >
           <video
-            src={heroVideo.url}
+            src={heroVideo}
             poster={heroImg}
             autoPlay
             muted
@@ -409,7 +409,7 @@ function Home() {
         summary="The room had to fit cardio, Zumba, dumbbells and strength training and still feel open and inviting."
         href="/work"
         images={[
-          { src: heroImg, alt: "Film of the finished gym floor in use", video: heroVideo.url },
+          { src: heroImg, alt: "Film of the finished gym floor in use" },
           { src: caseImg, alt: "Mezzanine cardio deck above the main strength floor" },
           { src: p1, alt: "Strength training zone with racks along the wall" },
           { src: gallery1, alt: "Functional training area with open floor space" },

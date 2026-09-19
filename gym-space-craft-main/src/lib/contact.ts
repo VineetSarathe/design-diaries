@@ -7,10 +7,10 @@ export type ContactSettings = {
 };
 
 export const DEFAULT_CONTACT: ContactSettings = {
-  email: "hello@designdiaries.in",
-  phone: "+91 00000 00000",
-  whatsapp: "+91 00000 00000",
-  instagram: "https://instagram.com",
+  email: "designdiariesbysagrika@gmail.com",
+  phone: "+91 96224 34242",
+  whatsapp: "+91 96224 34242",
+  instagram: "https://www.instagram.com/designdiaries_by_sagrika_?stkn=ZmkzMWY4MnNydnpu",
   linkedin: "https://linkedin.com",
 };
 

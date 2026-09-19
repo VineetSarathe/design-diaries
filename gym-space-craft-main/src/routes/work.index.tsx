@@ -127,6 +127,7 @@ function WorkListing() {
       )}
 
       <CtaBanner
+        compact
         label="Start a Project"
         title="Have a space in mind?"
         body="Tell us about your gym, fitness or wellness space, including the floor area, city and what you plan to build. We will help you explore the right design approach for your project."

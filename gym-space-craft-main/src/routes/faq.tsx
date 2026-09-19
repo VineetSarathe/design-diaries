@@ -1,7 +1,24 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Reveal } from "@/components/site/Reveal";
 import { CtaBanner } from "@/components/site/CtaBanner";
-import { generalFaqs } from "@/data/company";
+import { FaqSection } from "@/components/site/Sections";
+import { generalFaqs, startFaqs } from "@/data/company";
+import { projectFaqs } from "@/data/projects";
+import { resourceFaqs } from "@/data/resources";
+import { partnerFaqs, serviceFaqs } from "@/data/services";
+
+function allSiteFaqs() {
+  const seen = new Set<string>();
+  const items: { q: string; a: string }[] = [];
+  for (const item of [...serviceFaqs, ...projectFaqs, ...resourceFaqs, ...startFaqs, ...partnerFaqs, ...generalFaqs]) {
+    const key = item.q.replace(/^\d+\.\s*/, "").trim().toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    items.push({ q: item.q.replace(/^\d+\.\s*/, "").trim(), a: item.a });
+  }
+  return items;
+}
+
+const faqs = allSiteFaqs();
 
 export const Route = createFileRoute("/faq")({
   head: () => ({
@@ -26,7 +43,7 @@ export const Route = createFileRoute("/faq")({
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "FAQPage",
-          mainEntity: generalFaqs.map((f) => ({
+          mainEntity: faqs.map((f) => ({
             "@type": "Question",
             name: f.q,
             acceptedAnswer: { "@type": "Answer", text: f.a },
@@ -41,34 +58,9 @@ export const Route = createFileRoute("/faq")({
 function FaqPage() {
   return (
     <>
-      <section className="mx-auto max-w-[110rem] px-5 pt-28 pb-12 md:px-10 md:pt-36 md:pb-16">
-        <Reveal>
-          <p className="label-caps text-primary">FAQ</p>
-          <h1 className="display-lg mt-5 max-w-4xl">Questions worth asking</h1>
-          <p className="mt-8 max-w-2xl text-lg text-muted-foreground">
-            Scope timelines, remote projects and where design ends and execution begins — answered
-            the way we'd answer them on a call.
-          </p>
-        </Reveal>
-      </section>
-
-      <section className="mx-auto max-w-[110rem] px-5 pb-20 md:px-10 md:pb-28">
-        <div className="max-w-4xl">
-          {generalFaqs.map((f, i) => (
-            <Reveal key={f.q} delay={i * 60}>
-              <details className="group border-t border-border py-6">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-6 font-display text-xl uppercase transition-colors duration-300 hover:text-primary">
-                  {f.q}
-                  <span className="text-primary transition-transform duration-300 group-open:rotate-45">
-                    +
-                  </span>
-                </summary>
-                <p className="mt-4 max-w-2xl text-muted-foreground">{f.a}</p>
-              </details>
-            </Reveal>
-          ))}
-        </div>
-      </section>
+      <div className="pt-16 md:pt-20">
+        <FaqSection items={faqs} title="" />
+      </div>
 
       <CtaBanner
         title="Still deciding? Start with the call"

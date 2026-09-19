@@ -344,7 +344,7 @@ export function EditorialSpread({
 
   return (
     <section className="relative overflow-hidden bg-foreground text-background">
-      <div className="mx-auto max-w-[110rem] px-5 pt-28 pb-16 md:px-10 md:pt-36 md:pb-24">
+      <div className="mx-auto max-w-[110rem] px-5 pt-8 pb-16 md:px-10 md:pt-10 md:pb-24">
         <div
           className="flex items-center gap-4 border-b border-background/15 pb-5 transition-all duration-700 ease-out"
           style={{ opacity: stage >= 1 ? 1 : 0, transform: stage >= 1 ? "none" : "translateY(12px)" }}

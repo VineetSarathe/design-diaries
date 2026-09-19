@@ -46,7 +46,7 @@ function ContactPage() {
       <section className="border-t border-border">
         <div className="mx-auto grid max-w-[110rem] gap-px bg-border sm:grid-cols-2 lg:grid-cols-4">
           {details.map((d, i) => (
-            <Reveal key={d.label} delay={i * 80} className="bg-background p-8 md:p-10">
+            <Reveal key={d.label} delay={i * 80} className="min-w-0 overflow-hidden bg-background p-8 md:p-10">
               <d.icon className="h-5 w-5 text-primary" />
               <p className="label-caps mt-6 text-muted-foreground">{d.label}</p>
               {d.href ? (
@@ -54,12 +54,14 @@ function ContactPage() {
                   href={d.href}
                   target={d.href.startsWith("http") ? "_blank" : undefined}
                   rel="noreferrer noopener"
-                  className="mt-2 block font-display text-xl uppercase transition-colors duration-300 hover:text-primary"
+                  className={`mt-2 block font-display text-lg uppercase leading-snug transition-colors duration-300 hover:text-primary md:text-xl ${
+                    d.label === "Email" ? "break-all" : "break-words"
+                  }`}
                 >
                   {d.value}
                 </a>
               ) : (
-                <p className="mt-2 font-display text-xl uppercase">{d.value}</p>
+                <p className="mt-2 break-words font-display text-lg uppercase leading-snug md:text-xl">{d.value}</p>
               )}
             </Reveal>
           ))}
@@ -83,9 +85,6 @@ function ContactPage() {
               LET&apos;S TALK ABOUT YOUR PROJECT →
             </Link>
           </Reveal>
-          <p className="mt-10 text-xs text-muted-foreground">
-            Placeholder phone number and email — real studio contact details to be swapped in.
-          </p>
         </div>
       </section>
     </>
