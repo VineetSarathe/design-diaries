@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "npm run dev --prefix gym-space-craft-main",
-    "build": "npm run build --prefix gym-space-craft-main",
+    "build": "npm install --prefix gym-space-craft-main && npm run build --prefix gym-space-craft-main",
     "build:dev": "npm run build:dev --prefix gym-space-craft-main",
     "preview": "npm run preview --prefix gym-space-craft-main",
     "lint": "npm run lint --prefix gym-space-craft-main",

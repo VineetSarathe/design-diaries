@@ -1,0 +1,4 @@
+{
+  "installCommand": "npm install --prefix gym-space-craft-main",
+  "buildCommand": "npm run build --prefix gym-space-craft-main"
+}
