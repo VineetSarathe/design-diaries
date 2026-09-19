@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { Reveal } from "./Reveal";
 import { deliverables } from "@/data/services";
 import conceptImage from "@/assets/case-study.jpg";
@@ -12,7 +11,7 @@ import viewsImage from "@/assets/project-3.jpg";
 
 const images = [conceptImage, planningImage, lightingImage, drawingsImage, viewsImage];
 
-export function DeliverablesShowcase({ fadeFromInk = false }: { fadeFromInk?: boolean }) {
+export function DeliverablesShowcase() {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
 
@@ -32,15 +31,9 @@ export function DeliverablesShowcase({ fadeFromInk = false }: { fadeFromInk?: bo
   const SelectedIcon = selected.icon;
 
   return (
-    <section className={cn("bg-secondary", fadeFromInk && "-mt-px")}>
-      {fadeFromInk ? <div aria-hidden className="seam-ink-to-sand" /> : null}
-      <div
-        className={cn(
-          "mx-auto max-w-[110rem] px-5 md:px-10",
-          fadeFromInk ? "pt-10 pb-20 md:pt-14 md:pb-28" : "py-20 md:py-28",
-        )}
-      >
-        <Reveal className="grid gap-6 lg:grid-cols-[0.7fr_1fr] lg:items-end">
+    <section className="bg-secondary">
+      <div className="mx-auto max-w-[110rem] px-5 py-20 md:px-10 md:py-28">
+        <Reveal className="grid gap-6 border-t border-border pt-7 lg:grid-cols-[0.7fr_1fr] lg:items-end">
           <div>
             <p className="label-caps text-primary">Deliverables</p>
             <h2 className="display-lg mt-5">What you receive</h2>

@@ -427,7 +427,6 @@ export type Download = {
   summary: string;
   covers: string[];
   image: string;
-  file: string;
   body: string[];
 };
 
@@ -435,18 +434,17 @@ export const downloads: Download[] = [
   {
     slug: "first-time-gym-owners-planning-checklist",
     title: "A First-Time Gym Owner's Planning Checklist",
-    format: "PDF checklist · 6 sections",
-    useTime: "",
+    format: "PDF checklist · 12 pages",
+    useTime: "20 min to work through",
     summary:
-      "The key checks to work through before committing to a gym space, from the lease and building to circulation, services and the training programme.",
+      "The pre-lease and pre-fit-out checks we run on every new gym enquiry, in the order they should happen.",
     covers: [
-      "Before signing the lease",
-      "Check the building",
-      "Test the gym programme",
-      "Think about circulation",
+      "Shell survey items to record before signing a lease",
+      "Column grid and slab-height questions for the landlord",
+      "Zoning sequence: spine, strength, conditioning, front-of-house",
+      "Service and drainage checks that change the layout",
     ],
-    image: heroGym,
-    file: "/downloads/first-time-gym-owners-planning-checklist.pdf",
+    image: floorplan,
     body: [
       "Most first-time owners come to us after the lease is signed and the equipment is ordered. By then, two of the biggest layout decisions have already been made for them.",
       "This checklist is the version of that conversation you can run yourself. Work through it with the landlord's drawings in front of you and you will know whether the unit holds the gym you have in mind.",
@@ -455,21 +453,58 @@ export const downloads: Download[] = [
   {
     slug: "equipment-layout-and-circulation-guide",
     title: "Gym Equipment Layout & Circulation Guide",
-    format: "PDF guide · 7 sections",
-    useTime: "",
+    format: "PDF guide · 18 pages",
+    useTime: "30 min read",
     summary:
-      "A practical guide to equipment clearances, circulation and zoning before the workout floor is finalised.",
+      "Clearances, rack centres and circulation widths we work to, with the reasoning behind each number.",
     covers: [
-      "Start with the zones",
-      "Equipment clearances",
-      "Build a circulation spine",
-      "Place turf, sleds & functional zones",
+      "Rack, bench and machine clearances that survive peak hour",
+      "Circulation spine widths and where they must not cross",
+      "Placing turf lanes, sleds and functional zones",
+      "Sightlines for trainers and for unstaffed hours",
     ],
-    image: workHero,
-    file: "/downloads/equipment-layout-and-circulation-guide.pdf",
+    image: gallery1,
     body: [
       "Equipment spacing is where a floor is won or lost. Too tight and peak hour becomes a queue; too loose and you have paid rent on empty carpet.",
       "These are the working numbers we draw to, with the peak-hour logic that produced them.",
+    ],
+  },
+  {
+    slug: "budget-planning-worksheet-new-gym",
+    title: "Budget Planning Worksheet for a New Gym Space",
+    format: "Worksheet · editable PDF",
+    useTime: "45 min to complete",
+    summary:
+      "A line-by-line worksheet separating design, fit-out, equipment and contingency so nothing lands as a surprise mid-build.",
+    covers: [
+      "Design and drawings vs. contractor scope, split clearly",
+      "Fit-out line items owners routinely forget",
+      "Equipment phasing across year one and year two",
+      "Contingency ranges we see hold up in practice",
+    ],
+    image: p5,
+    body: [
+      "The most common budget failure is not overspending — it is discovering mid-build that a line item was never anyone's scope.",
+      "This worksheet forces that split early, including the line between our drawings and your contractor's work.",
+    ],
+  },
+  {
+    slug: "mistakes-to-avoid-designing-a-fitness-space",
+    title: "Mistakes to Avoid When Designing a Fitness Space",
+    format: "PDF guide · 10 pages",
+    useTime: "15 min read",
+    summary:
+      "The recurring errors we are asked to undo, each with the drawing-stage fix that would have prevented it.",
+    covers: [
+      "Layouts drawn around equipment instead of movement",
+      "Mirror and lighting clashes that create glare",
+      "Finishes specified without a maintenance cost",
+      "Front-of-house planned as a lobby, not a revenue zone",
+    ],
+    image: p6,
+    body: [
+      "Roughly a third of our work is correction: floors that were drawn once, opened, and did not hold up under real use.",
+      "Each mistake in this guide is paired with what it costs to fix later versus what it costs to avoid at drawing stage.",
     ],
   },
 ];

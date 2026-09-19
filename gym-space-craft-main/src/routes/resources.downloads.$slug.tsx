@@ -65,11 +65,9 @@ function DownloadDetail() {
               <span className="label-caps inline-flex items-center gap-1.5 bg-primary px-3 py-1.5 text-primary-foreground">
                 <FileDown className="h-3.5 w-3.5" /> {item.format}
               </span>
-              {item.useTime ? (
-                <span className="label-caps inline-flex items-center gap-1.5 text-background/70">
-                  <Clock className="h-3.5 w-3.5" /> {item.useTime}
-                </span>
-              ) : null}
+              <span className="label-caps inline-flex items-center gap-1.5 text-background/70">
+                <Clock className="h-3.5 w-3.5" /> {item.useTime}
+              </span>
             </div>
             <h1 className="display-lg mt-5 max-w-4xl">{item.title}</h1>
           </Reveal>
@@ -80,6 +78,11 @@ function DownloadDetail() {
       <section className="mx-auto grid max-w-[110rem] gap-14 px-5 py-20 md:px-10 md:py-28 lg:grid-cols-[1.1fr_0.9fr] lg:gap-24">
         <Reveal>
           <p className="font-display text-2xl leading-snug md:text-3xl">{item.summary}</p>
+          {item.body.map((para) => (
+            <p key={para} className="mt-6 text-lg leading-relaxed text-muted-foreground">
+              {para}
+            </p>
+          ))}
 
           <h2 className="mt-12 font-display text-2xl uppercase">What's inside</h2>
           <ul className="mt-6 space-y-4">
@@ -90,10 +93,13 @@ function DownloadDetail() {
               </li>
             ))}
           </ul>
+          <p className="mt-8 text-xs text-muted-foreground">
+            Placeholder resource — the real PDF replaces this file before launch.
+          </p>
         </Reveal>
 
         <Reveal delay={120} className="lg:sticky lg:top-28 lg:self-start">
-          <DownloadForm resource={item.title} file={item.file} />
+          <DownloadForm resource={item.title} />
         </Reveal>
       </section>
 

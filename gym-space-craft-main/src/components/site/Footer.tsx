@@ -77,9 +77,7 @@ export function Footer() {
             <span className="h-px flex-1 bg-background/20" />
           </div>
           <a
-            href={whatsappHref(contact.phone)}
-            target="_blank"
-            rel="noreferrer noopener"
+            href={whatsappHref(contact.whatsapp)}
             className="group mt-6 flex items-center gap-3 rounded-full border border-background/25 px-4 py-3 transition-colors duration-300 hover:border-primary"
           >
             <MessageCircle size={20} className="text-primary" />
@@ -123,7 +121,7 @@ export function Footer() {
 
         <Link
           to="/start-a-project"
-          className="group relative flex min-h-[18rem] items-start overflow-hidden px-6 py-14 md:px-10 md:py-16"
+          className="group relative flex min-h-[18rem] items-center overflow-hidden px-6 py-14 md:px-10 md:py-16"
         >
           <img
             src={ctaBg}
@@ -184,20 +182,14 @@ export function Footer() {
         </div>
       </div>
 
-      <div
-        id="site-footer-legal"
-        className="mx-auto flex max-w-[110rem] flex-col gap-3 border-t border-background/12 px-5 py-7 text-xs text-background/50 md:flex-row md:items-center md:justify-between md:px-10 md:pr-56"
-      >
+      <div className="mx-auto flex max-w-[110rem] flex-col gap-3 border-t border-background/12 px-5 py-7 text-xs text-background/50 md:flex-row md:items-center md:justify-between md:px-10">
         <p>© {new Date().getFullYear()} Design Diaries. All rights reserved.</p>
-        <div className="flex flex-wrap gap-6">
+        <div className="flex gap-6">
           <Link to="/privacy" className="transition-colors hover:text-primary">
             Privacy Policy
           </Link>
-          <Link to="/cookies" className="transition-colors hover:text-primary">
-            Cookie Policy
-          </Link>
           <Link to="/terms" className="transition-colors hover:text-primary">
-            Terms & Conditions
+            Terms of Use
           </Link>
           <Link to="/faq" className="transition-colors hover:text-primary">
             FAQ

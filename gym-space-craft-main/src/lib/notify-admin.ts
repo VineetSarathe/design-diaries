@@ -77,7 +77,7 @@ export async function notifyAdmin(options: {
       access_key: accessKey,
       subject: options.subject,
       from_name: "Design Diaries",
-      email: options.replyTo || settings.email || "designdiariesbysagrika@gmail.com",
+      email: options.replyTo || settings.email || "hello@designdiaries.in",
       message: buildMessage(options),
     });
     if (!data?.success) {

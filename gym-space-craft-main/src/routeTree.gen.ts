@@ -15,7 +15,6 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as BookACallRouteImport } from './routes/book-a-call'
 import { Route as CareersRouteImport } from './routes/careers'
 import { Route as ContactRouteImport } from './routes/contact'
-import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ResourcesRouteImport } from './routes/resources'
@@ -73,11 +72,6 @@ const CareersRoute = CareersRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CookiesRoute = CookiesRouteImport.update({
-  id: '/cookies',
-  path: '/cookies',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FaqRoute = FaqRouteImport.update({
@@ -228,7 +222,6 @@ export interface FileRoutesByFullPath {
   '/book-a-call': typeof BookACallRoute
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
-  '/cookies': typeof CookiesRoute
   '/faq': typeof FaqRoute
   '/privacy': typeof PrivacyRoute
   '/resources': typeof ResourcesRouteWithChildren
@@ -264,7 +257,6 @@ export interface FileRoutesByTo {
   '/book-a-call': typeof BookACallRoute
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
-  '/cookies': typeof CookiesRoute
   '/faq': typeof FaqRoute
   '/privacy': typeof PrivacyRoute
   '/services': typeof ServicesRoute
@@ -300,7 +292,6 @@ export interface FileRoutesById {
   '/book-a-call': typeof BookACallRoute
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
-  '/cookies': typeof CookiesRoute
   '/faq': typeof FaqRoute
   '/privacy': typeof PrivacyRoute
   '/resources': typeof ResourcesRouteWithChildren
@@ -339,7 +330,6 @@ export interface FileRouteTypes {
     | '/book-a-call'
     | '/careers'
     | '/contact'
-    | '/cookies'
     | '/faq'
     | '/privacy'
     | '/resources'
@@ -375,7 +365,6 @@ export interface FileRouteTypes {
     | '/book-a-call'
     | '/careers'
     | '/contact'
-    | '/cookies'
     | '/faq'
     | '/privacy'
     | '/services'
@@ -410,7 +399,6 @@ export interface FileRouteTypes {
     | '/book-a-call'
     | '/careers'
     | '/contact'
-    | '/cookies'
     | '/faq'
     | '/privacy'
     | '/resources'
@@ -448,7 +436,6 @@ export interface RootRouteChildren {
   BookACallRoute: typeof BookACallRoute
   CareersRoute: typeof CareersRoute
   ContactRoute: typeof ContactRoute
-  CookiesRoute: typeof CookiesRoute
   FaqRoute: typeof FaqRoute
   PrivacyRoute: typeof PrivacyRoute
   ResourcesRoute: typeof ResourcesRouteWithChildren
@@ -501,13 +488,6 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cookies': {
-      id: '/cookies'
-      path: '/cookies'
-      fullPath: '/cookies'
-      preLoaderRoute: typeof CookiesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/faq': {
@@ -782,7 +762,6 @@ const rootRouteChildren: RootRouteChildren = {
   BookACallRoute: BookACallRoute,
   CareersRoute: CareersRoute,
   ContactRoute: ContactRoute,
-  CookiesRoute: CookiesRoute,
   FaqRoute: FaqRoute,
   PrivacyRoute: PrivacyRoute,
   ResourcesRoute: ResourcesRouteWithChildren,

@@ -10,6 +10,7 @@ import {
   DarkBand,
   EditorialSpread,
   OffsetPanel,
+  Seam,
 } from "@/components/site/PageKit";
 import { method, problems, serviceFaqs } from "@/data/services";
 import { useProjects } from "@/hooks/use-projects";
@@ -136,9 +137,11 @@ function ServicesPage() {
         </div>
       </DarkBand>
 
-      <Statement words={["Function first", "Drawn to build", "Gym specialists"]} tone="ink" blend="sand" />
+      <Statement words={["Function first", "Drawn to build", "Gym specialists"]} tone="ink" />
 
-      <DeliverablesShowcase fadeFromInk />
+      <Seam to="cream" />
+
+      <DeliverablesShowcase />
 
       <ProjectsStrip label="Consultancy in practice" title="DESIGN THAT WORKS IN REAL SPACES" limit={3} />
 
@@ -155,7 +158,6 @@ function ServicesPage() {
       <TrustedBy compact />
 
       <CtaBanner
-        compact
         image={p5}
         imageAlt="Full-width view of a completed gym training floor"
       />

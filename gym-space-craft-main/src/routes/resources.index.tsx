@@ -136,7 +136,7 @@ function ResourcesListing() {
                     <div className="relative aspect-[16/9] overflow-hidden bg-muted">
                       <img
                         src={d.image}
-                        alt={d.title}
+                        alt={`Placeholder cover — ${d.title}`}
                         loading="lazy"
                         width={1400}
                         height={800}
@@ -148,11 +148,9 @@ function ResourcesListing() {
                         <span className="label-caps inline-flex items-center gap-1.5 text-primary">
                           <FileDown className="h-3.5 w-3.5" /> {d.format}
                         </span>
-                        {d.useTime ? (
-                          <span className="label-caps inline-flex items-center gap-1.5 text-muted-foreground">
-                            <Clock className="h-3.5 w-3.5" /> {d.useTime}
-                          </span>
-                        ) : null}
+                        <span className="label-caps inline-flex items-center gap-1.5 text-muted-foreground">
+                          <Clock className="h-3.5 w-3.5" /> {d.useTime}
+                        </span>
                       </div>
                       <h3 className="mt-4 font-display text-2xl uppercase leading-tight transition-colors duration-300 group-hover:text-primary">
                         {d.title}
@@ -168,7 +166,7 @@ function ResourcesListing() {
                         ))}
                       </ul>
                       <span className="label-caps link-underline mt-8 inline-block self-start text-foreground group-hover:text-primary">
-                        Get the resource →
+                        Get the resource
                       </span>
                     </div>
                   </Link>
@@ -183,7 +181,7 @@ function ResourcesListing() {
         </p>
       </section>
 
-      <CtaBanner compact />
+      <CtaBanner />
 
       <ReelsSection label="EXPLORE OUR INSTAGRAM" title="Shorter faster answers" placement="resources" />
 

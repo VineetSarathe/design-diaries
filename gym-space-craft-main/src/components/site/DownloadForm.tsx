@@ -1,26 +1,7 @@
 import { useState } from "react";
 import { submitDownloadLead } from "@/lib/enquiry.functions";
 
-function startDownload(file: string) {
-  const filename = file.split("/").pop() || "resource.pdf";
-  const a = document.createElement("a");
-  a.href = file;
-  a.download = filename;
-  a.rel = "noopener";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-}
-
-export function DownloadForm({
-  resource,
-  file,
-  className = "",
-}: {
-  resource: string;
-  file: string;
-  className?: string;
-}) {
+export function DownloadForm({ resource }: { resource: string }) {
   const [state, setState] = useState<"idle" | "sending" | "done" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
 
@@ -36,8 +17,8 @@ export function DownloadForm({
         phone: String(fd.get("phone") ?? ""),
         resource,
       });
-      startDownload(file);
       setState("done");
+      window.open("/placeholder-resource.txt", "_blank", "noopener");
     } catch (err) {
       setState("error");
       setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
@@ -46,25 +27,22 @@ export function DownloadForm({
 
   if (state === "done") {
     return (
-      <div className={`animate-in fade-in border border-primary/40 bg-card p-8 duration-500 ${className}`}>
+      <div className="animate-in fade-in border border-primary/40 bg-card p-8 duration-500">
         <p className="label-caps text-primary">Unlocked</p>
-        <p className="mt-4 font-display text-2xl">Your PDF is downloading.</p>
+        <p className="mt-4 font-display text-2xl">Your guide has opened in a new tab.</p>
         <p className="mt-3 text-sm text-muted-foreground">
-          If nothing started,{" "}
-          <button type="button" className="underline hover:text-primary" onClick={() => startDownload(file)}>
-            download it here
-          </button>
-          .
+          Placeholder file — the real PDF and the Google Sheets lead destination are wired up
+          separately. If the tab was blocked, allow pop-ups and submit again.
         </p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={onSubmit} className={`border border-border bg-card p-6 md:p-8 ${className}`}>
+    <form onSubmit={onSubmit} className="border border-border bg-card p-6 md:p-8">
       <p className="label-caps text-primary">Unlock this resource</p>
       <p className="mt-3 text-sm text-muted-foreground">
-        Three details. The PDF downloads as soon as you submit.
+        Three details. The guide opens in a new tab as soon as you submit.
       </p>
       <div className="mt-6 space-y-5">
         {[
@@ -92,6 +70,9 @@ export function DownloadForm({
       >
         {state === "sending" ? "Sending…" : "Get the resource"}
       </button>
+      <p className="mt-4 text-xs text-muted-foreground">
+        Mock lead handler — goes to the same destination as the main enquiry form.
+      </p>
     </form>
   );
 }
