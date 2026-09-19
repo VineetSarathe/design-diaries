@@ -1,0 +1,40 @@
+{
+  "name": "gym-space-craft",
+  "private": true,
+  "scripts": {
+    "dev": "npm run dev --prefix gym-space-craft-main",
+    "build": "npm run build --prefix gym-space-craft-main",
+    "build:dev": "npm run build:dev --prefix gym-space-craft-main",
+    "preview": "npm run preview --prefix gym-space-craft-main",
+    "lint": "npm run lint --prefix gym-space-craft-main",
+    "format": "npm run format --prefix gym-space-craft-main",
+    "server": "tsx watch server/index.ts",
+    "server:start": "tsx server/index.ts"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cloudinary": "^2.11.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "ffmpeg-static": "^5.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.10.1",
+    "multer": "^2.4.0",
+    "nodemailer": "^10.0.10",
+    "sharp": "^0.35.4"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/multer": "^2.2.0",
+    "@types/node": "^22.16.5",
+    "@types/nodemailer": "^8.0.2",
+    "tsx": "^4.20.5",
+    "typescript": "^5.8.3"
+  }
+}
