@@ -342,7 +342,22 @@
   );
 }
 
-/* Continuous sand → ink join. Lives inside the cream section so no hairline gap. */
+/* Ink fades to the same sand as the next section — no cream hairline. */
+@utility seam-ink-to-sand {
+  display: block;
+  height: clamp(4.5rem, 9vw, 6.5rem);
+  margin: 0;
+  border: 0;
+  background-color: var(--secondary);
+  background-image: linear-gradient(
+    in oklab to bottom,
+    var(--ink) 0%,
+    color-mix(in oklab, var(--ink) 78%, transparent) 28%,
+    color-mix(in oklab, var(--ink) 42%, transparent) 55%,
+    color-mix(in oklab, var(--ink) 14%, transparent) 80%,
+    transparent 100%
+  );
+}
 @utility seam-sand-to-ink {
   display: block;
   height: clamp(8.5rem, 18vw, 12rem);

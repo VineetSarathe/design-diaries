@@ -391,13 +391,6 @@ function BlogDetail() {
         </section>
       )}
 
-      <CtaBanner
-        label="Start a Project"
-        title="Apply this to your own floor"
-        body="Send the area, the city and what you plan to run in it. You'll get a considered reply, not a brochure."
-        image={caseImg}
-      />
-
       {/* Related articles */}
       <section className="mx-auto max-w-[110rem] px-5 py-20 md:px-10 md:py-28">
         <Reveal className="flex flex-wrap items-end justify-between gap-6">
@@ -446,6 +439,14 @@ function BlogDetail() {
           ))}
         </div>
       </section>
+
+      <CtaBanner
+        compact
+        label="Start a Project"
+        title="Apply this to your own floor"
+        body="Send the area, the city and what you plan to run in it. You'll get a considered reply, not a brochure."
+        image={caseImg}
+      />
 
       <ReelsSection placement="resources" />
     </>

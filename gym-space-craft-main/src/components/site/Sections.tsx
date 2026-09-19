@@ -157,21 +157,26 @@ export function FaqSection({
 }) {
   return (
     <section id={id} className="mx-auto max-w-[110rem] scroll-mt-24 px-5 py-20 md:px-10 md:py-28">
-      <Reveal>
-        <p className="label-caps text-primary">FAQ</p>
-        <h2 className="display-lg mt-5">{title}</h2>
+      <Reveal className="flex items-center gap-6">
+        <h2 className="display-lg shrink-0">FAQ</h2>
+        <span className="h-px flex-1 bg-border" />
       </Reveal>
-      <div className="mt-12 max-w-4xl">
+      {title ? (
+        <Reveal>
+          <p className="mt-5 max-w-2xl text-muted-foreground">{title}</p>
+        </Reveal>
+      ) : null}
+      <div className="mt-10 grid gap-4 md:grid-cols-2">
         {items.map((f, i) => (
-          <Reveal key={f.q} delay={i * 70}>
-            <details className="group border-t border-border py-6">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-6 font-display text-xl uppercase transition-colors duration-300 hover:text-primary">
-                {f.q}
-                <span className="text-primary transition-transform duration-300 group-open:rotate-45">
+          <Reveal key={f.q} delay={i * 50}>
+            <details className="group h-full border border-border">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-left text-[0.95rem] leading-snug [&::-webkit-details-marker]:hidden">
+                <span>{f.q}</span>
+                <span className="shrink-0 text-lg leading-none text-primary transition-transform duration-300 group-open:rotate-45">
                   +
                 </span>
               </summary>
-              <p className="mt-4 max-w-2xl text-muted-foreground">{f.a}</p>
+              <p className="border-t border-border px-5 py-4 text-sm text-muted-foreground">{f.a}</p>
             </details>
           </Reveal>
         ))}
