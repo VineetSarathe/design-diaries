@@ -1,0 +1,407 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Design Diaries — design system
+ * Warm cream base, terracotta accent, near-black ink.
+ * Display: Bodoni Moda (high-contrast serif). Body: Archivo (grotesk).
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 6px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ink: var(--ink);
+  --color-cream: var(--cream);
+  --color-sand: var(--sand);
+  --color-clay: var(--clay);
+  --color-stone: var(--stone);
+  --color-graphite: var(--graphite);
+  --font-display: "Archivo", "Hind", ui-sans-serif, sans-serif;
+  --font-condensed: "Archivo", "Hind", ui-sans-serif, sans-serif;
+  --font-sans: "Hind", "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Instrument Serif", "Times New Roman", ui-serif, serif;
+}
+
+:root {
+  --radius: 0.125rem;
+  --cream: oklch(0.958 0.008 88);
+  --sand: oklch(0.912 0.006 80);
+  --stone: oklch(0.845 0.005 75);
+  --graphite: oklch(0.28 0.004 60);
+  --ink: oklch(0.145 0.002 60);
+  --clay: #c65a3c;
+
+  --background: var(--cream);
+  --foreground: var(--ink);
+  --card: oklch(0.985 0.008 85);
+  --card-foreground: var(--ink);
+  --popover: oklch(0.985 0.008 85);
+  --popover-foreground: var(--ink);
+  --primary: var(--clay);
+  --primary-foreground: oklch(0.985 0.008 85);
+  --secondary: var(--sand);
+  --secondary-foreground: var(--ink);
+  --muted: var(--sand);
+  --muted-foreground: oklch(0.48 0.014 60);
+  --accent: var(--clay);
+  --accent-foreground: oklch(0.985 0.008 85);
+  --destructive: oklch(0.55 0.2 27);
+  --destructive-foreground: oklch(0.985 0.008 85);
+  --border: oklch(0.87 0.016 80);
+  --input: oklch(0.87 0.016 80);
+  --ring: var(--clay);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: -0.005em;
+  }
+
+  ::selection {
+    background: var(--clay);
+    color: var(--cream);
+  }
+}
+
+@utility label-caps {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+}
+
+@utility display-xl {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  font-size: clamp(1.6rem, 3.3vw, 2.85rem);
+}
+
+@utility display-lg {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.015em;
+  text-transform: uppercase;
+  font-size: clamp(1.25rem, 2.4vw, 1.9rem);
+}
+
+@utility display-md {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
+  font-size: clamp(0.9rem, 1.25vw, 1rem);
+}
+
+/* Oversized statement type for full-bleed statement bands — kept slightly
+   below the reference scale so it stays bold without dominating the page. */
+@utility display-statement {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  font-size: clamp(2rem, 5vw, 4.1rem);
+}
+
+
+/* Terracotta italic serif emphasis phrase inside headlines */
+@utility accent-italic {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: -0.01em;
+  font-size: 1.14em;
+  color: var(--primary);
+}
+
+/* Thin trailing rule that runs off the end of a headline phrase */
+@utility heading-rule {
+  display: inline-block;
+  vertical-align: middle;
+  height: 1px;
+  width: clamp(2.5rem, 12vw, 11rem);
+  margin-left: 0.9rem;
+  margin-bottom: 0.35em;
+  background: color-mix(in oklab, var(--primary) 45%, transparent);
+}
+
+/* Caps for structural/nav-like labels */
+@utility condensed-caps {
+  font-family: var(--font-condensed);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* Soft colour seam between a cream section and a dark one */
+@utility seam-to-dark {
+  background: linear-gradient(
+    to bottom,
+    var(--cream) 0%,
+    color-mix(in oklab, var(--cream) 88%, var(--sand)) 12%,
+    color-mix(in oklab, var(--cream) 64%, var(--stone)) 28%,
+    color-mix(in oklab, var(--stone) 72%, var(--graphite)) 46%,
+    color-mix(in oklab, var(--graphite) 78%, var(--ink)) 66%,
+    color-mix(in oklab, var(--ink) 92%, var(--graphite)) 84%,
+    var(--ink) 100%
+  );
+  height: clamp(8rem, 20vw, 18rem);
+}
+
+@utility seam-to-cream {
+  background: linear-gradient(
+    to bottom,
+    var(--ink) 0%,
+    color-mix(in oklab, var(--ink) 92%, var(--graphite)) 16%,
+    color-mix(in oklab, var(--graphite) 78%, var(--ink)) 34%,
+    color-mix(in oklab, var(--stone) 72%, var(--graphite)) 54%,
+    color-mix(in oklab, var(--cream) 64%, var(--stone)) 72%,
+    color-mix(in oklab, var(--cream) 88%, var(--sand)) 88%,
+    var(--cream) 100%
+  );
+  height: clamp(8rem, 20vw, 18rem);
+}
+
+@utility hover-lift {
+  transition:
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  &:hover {
+    transform: translateY(-6px);
+  }
+}
+
+@utility link-underline {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -0.25rem;
+    height: 1px;
+    width: 100%;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  &:hover::after,
+  &[data-active="true"]::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+
+@utility reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  &[data-visible="true"] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@utility marquee-track {
+  display: flex;
+  width: max-content;
+  animation: dd-marquee 38s linear infinite;
+}
+
+@keyframes dd-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes about-drift {
+  from {
+    transform: scale(1.05) translate3d(0, 0, 0);
+  }
+  to {
+    transform: scale(1.09) translate3d(-1.25%, 1%, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+  [class*="about-drift"] {
+    animation: none;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Cinematic clip reveal for imagery */
+@utility mask-reveal {
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+  &[data-visible="true"] {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* Soft gradient blends so neighbouring sections read as one surface */
+@utility blend-cream-top {
+  background-image: linear-gradient(
+    to bottom,
+    var(--sand) 0%,
+    color-mix(in oklab, var(--sand) 72%, var(--cream)) 12%,
+    color-mix(in oklab, var(--sand) 44%, var(--cream)) 26%,
+    color-mix(in oklab, var(--sand) 18%, var(--cream)) 42%,
+    var(--cream) 58%,
+    var(--cream) 100%
+  );
+}
+
+@utility blend-cream-bottom {
+  background-image: linear-gradient(
+    to bottom,
+    var(--cream) 0%,
+    var(--cream) 52%,
+    color-mix(in oklab, var(--cream) 82%, var(--sand)) 66%,
+    color-mix(in oklab, var(--cream) 56%, var(--sand)) 80%,
+    color-mix(in oklab, var(--cream) 28%, var(--sand)) 92%,
+    var(--sand) 100%
+  );
+}
+
+@utility blend-ink {
+  background-image: linear-gradient(
+    to bottom,
+    color-mix(in oklab, var(--ink) 76%, var(--graphite)) 0%,
+    color-mix(in oklab, var(--ink) 84%, var(--graphite)) 12%,
+    color-mix(in oklab, var(--ink) 92%, var(--graphite)) 28%,
+    color-mix(in oklab, var(--ink) 97%, var(--graphite)) 44%,
+    var(--ink) 60%,
+    var(--ink) 100%
+  );
+}
+
+/* Continuous sand → ink join. Lives inside the cream section so no hairline gap. */
+@utility seam-sand-to-ink {
+  display: block;
+  height: clamp(8.5rem, 18vw, 12rem);
+  margin: 0;
+  border: 0;
+  background: linear-gradient(
+    to bottom,
+    var(--secondary) 0%,
+    color-mix(in oklab, var(--secondary) 82%, var(--ink)) 22%,
+    color-mix(in oklab, var(--secondary) 52%, var(--ink)) 44%,
+    color-mix(in oklab, var(--secondary) 22%, var(--ink)) 68%,
+    var(--ink) 88%,
+    var(--ink) 100%
+  );
+}
+
+@utility glow-clay {
+  box-shadow: 0 40px 90px -60px color-mix(in oklab, var(--clay) 70%, transparent);
+}
+
+.admin-panel {
+  --border: oklch(0.48 0.02 60);
+  --input: oklch(0.36 0.018 60);
+  --muted-foreground: oklch(0.26 0.012 60);
+  color: var(--ink);
+}
+
+.admin-panel button:not(:disabled),
+.admin-panel a,
+.admin-panel label,
+.admin-panel summary,
+.admin-panel [role="button"],
+.admin-panel input[type="checkbox"],
+.admin-panel input[type="radio"],
+.admin-panel input[type="file"],
+.admin-panel input[type="date"],
+.admin-panel select {
+  cursor: pointer;
+}
+
+.admin-panel button:disabled,
+.admin-panel [aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+.admin-panel input,
+.admin-panel textarea,
+.admin-panel select {
+  color: var(--ink);
+}
+
+.admin-panel input::placeholder,
+.admin-panel textarea::placeholder {
+  color: color-mix(in oklab, var(--ink) 55%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mask-reveal {
+    clip-path: none;
+    transition: none;
+  }
+}
