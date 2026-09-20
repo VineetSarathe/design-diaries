@@ -15,6 +15,7 @@ import {
   MessageSquareQuote,
   PanelsTopLeft,
   Phone,
+  Search,
   Sparkles,
   Users,
   X,
@@ -38,6 +39,7 @@ const NAV = [
   { label: "Logos", to: "/admin/logos" as const, icon: PanelsTopLeft },
   { label: "About", to: "/admin/about" as const, icon: BookOpen },
   { label: "Contact", to: "/admin/contact" as const, icon: Mail },
+  { label: "SEO", to: "/admin/seo" as const, icon: Search },
 ];
 
 function isActive(pathname: string, to: string) {

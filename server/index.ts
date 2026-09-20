@@ -12,6 +12,7 @@ import { seedRecognitions, migrateRecognitionImagesToCloudinary, backfillRecogni
 import { seedBlogs, attachBlogPointImages, migrateBlogImagesToCloudinary } from "./seed/blog.seed";
 import { seedInstagramFeed, seedWorkInstagramFeed, seedAboutInstagramFeed, seedResourcesInstagramFeed, seedServicesInstagramFeed } from "./seed/instagram-feed.seed";
 import { seedCallSettings } from "./seed/call-settings.seed";
+import { seedPageSeo } from "./seed/page-seo.seed";
 import { app } from "./app";
 
 async function start() {
@@ -19,6 +20,11 @@ async function start() {
   await seedAdmin();
   await seedContactSettings();
   await seedCallSettings();
+  try {
+    await seedPageSeo();
+  } catch (err) {
+    console.error("Page SEO seed failed", err);
+  }
   await seedHomepageSettings();
   await seedTestimonials();
   await backfillTestimonialSortOrder();

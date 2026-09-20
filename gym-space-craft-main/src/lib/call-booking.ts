@@ -1,5 +1,6 @@
 import { apiRequest } from "@/lib/api";
 import { notifyAdmin } from "@/lib/notify-admin";
+import { trackEvent } from "@/lib/analytics";
 
 export type CallSlot = {
   id: string;
@@ -74,5 +75,6 @@ export async function createCallBooking(payload: {
       { label: "Message", value: payload.message },
     ],
   });
+  trackEvent("generate_lead", { lead_type: "call", date: payload.date, slot: payload.slot });
   return result;
 }

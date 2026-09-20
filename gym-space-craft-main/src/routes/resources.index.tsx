@@ -7,25 +7,11 @@ import { FaqSection, PageHero, ReelsSection } from "@/components/site/Sections";
 import { blogCategories, downloads, posts as fallbackPosts, resourceFaqs } from "@/data/resources";
 import { useBlogs } from "@/hooks/use-blogs";
 import resourcesHero from "@/assets/gallery-1.jpg";
+import { loadRouteSeo, routePageSeo } from "@/lib/page-seo";
 
 export const Route = createFileRoute("/resources/")({
-  head: () => ({
-    meta: [
-      { title: "Gym Design Journal & Free Downloads | Design Diaries" },
-      {
-        name: "description",
-        content:
-          "Articles on gym planning, equipment layout, materials and wellness trends — plus free planning checklists, layout guides and budget worksheets for new gym owners.",
-      },
-      { property: "og:title", content: "Resources | Design Diaries" },
-      {
-        property: "og:description",
-        content: "Articles and downloadable checklists on planning and equipping a gym floor.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  loader: () => loadRouteSeo("/resources"),
+  head: ({ loaderData }) => routePageSeo("/resources", undefined, loaderData),
   component: ResourcesListing,
 });
 

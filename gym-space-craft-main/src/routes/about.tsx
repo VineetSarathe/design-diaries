@@ -29,25 +29,11 @@ import p2 from "@/assets/project-2.jpg";
 import p3 from "@/assets/project-3.jpg";
 import p4 from "@/assets/project-4.jpg";
 import p6 from "@/assets/project-6.jpg";
+import { loadRouteSeo, routePageSeo } from "@/lib/page-seo";
 
 export const Route = createFileRoute("/about")({
-  head: () => ({
-    meta: [
-      { title: "About Sagrika & Design Diaries | Gym Interior Specialist" },
-      {
-        name: "description",
-        content:
-          "Meet Sagrika and discover the journey, philosophy and recognition behind Design Diaries, a specialist gym interior studio in Indore.",
-      },
-      { property: "og:title", content: "About Design Diaries" },
-      {
-        property: "og:description",
-        content: "FUNCTION FIRST. AESTHETICS WITH PURPOSE. — the studio and the founder behind it.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  loader: () => loadRouteSeo("/about"),
+  head: ({ loaderData }) => routePageSeo("/about", undefined, loaderData),
   component: AboutPage,
 });
 

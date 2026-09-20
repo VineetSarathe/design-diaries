@@ -21,25 +21,11 @@ import gymLayout from "@/assets/gym-layout.jpg";
 import floorplan from "@/assets/floorplan.jpg";
 import gallery1 from "@/assets/gallery-1.jpg";
 import caseImg from "@/assets/case-study.jpg";
+import { loadRouteSeo, routePageSeo } from "@/lib/page-seo";
 
 export const Route = createFileRoute("/start-a-project")({
-  head: () => ({
-    meta: [
-      { title: "Start a Gym Project | Design Diaries" },
-      {
-        name: "description",
-        content:
-          "Tell us about your gym or fitness studio — size, city, timeline — or book a 30-minute discovery call. Sagrika reviews every enquiry personally.",
-      },
-      { property: "og:title", content: "Let's Plan Your Gym | Design Diaries" },
-      {
-        property: "og:description",
-        content: "Send your space details or book a 30-minute discovery call.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  loader: () => loadRouteSeo("/start-a-project"),
+  head: ({ loaderData }) => routePageSeo("/start-a-project", undefined, loaderData),
   component: StartProject,
 });
 

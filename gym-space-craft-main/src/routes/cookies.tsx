@@ -2,27 +2,15 @@ import { createFileRoute } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { Reveal } from "@/components/site/Reveal";
 import { mailtoHref, whatsappHref } from "@/lib/contact";
+import { loadRouteSeo, routePageSeo } from "@/lib/page-seo";
 
 const EMAIL = "designdiariesbysagrika@gmail.com";
 const PHONE = "+91 96224 34242";
 const SITE = "https://www.designdiaries.co";
 
 export const Route = createFileRoute("/cookies")({
-  head: () => ({
-    meta: [
-      { title: "Cookie Policy | Design Diaries" },
-      {
-        name: "description",
-        content:
-          "How Design Diaries by Sagrika uses cookies and similar technologies on www.designdiaries.co, including Google Analytics 4 and Microsoft Clarity.",
-      },
-      { property: "og:title", content: "Cookie Policy | Design Diaries" },
-      {
-        property: "og:description",
-        content: "Cookies, analytics tools and the choices available to you.",
-      },
-    ],
-  }),
+  loader: () => loadRouteSeo("/cookies"),
+  head: ({ loaderData }) => routePageSeo("/cookies", undefined, loaderData),
   component: CookiePolicyPage,
 });
 

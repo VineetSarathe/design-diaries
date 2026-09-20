@@ -36,6 +36,7 @@ import { Route as AdminLogosRouteImport } from './routes/admin.logos'
 import { Route as AdminProjectsRouteImport } from './routes/admin.projects'
 import { Route as AdminRecognitionRouteImport } from './routes/admin.recognition'
 import { Route as AdminResourcesRouteImport } from './routes/admin.resources'
+import { Route as AdminSeoRouteImport } from './routes/admin.seo'
 import { Route as AdminServicesRouteImport } from './routes/admin.services'
 import { Route as AdminTestimonialsRouteImport } from './routes/admin.testimonials'
 import { Route as AdminWorkRouteImport } from './routes/admin.work'
@@ -180,6 +181,11 @@ const AdminResourcesRoute = AdminResourcesRouteImport.update({
   path: '/resources',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminSeoRoute = AdminSeoRouteImport.update({
+  id: '/seo',
+  path: '/seo',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminServicesRoute = AdminServicesRouteImport.update({
   id: '/services',
   path: '/services',
@@ -248,6 +254,7 @@ export interface FileRoutesByFullPath {
   '/admin/projects': typeof AdminProjectsRoute
   '/admin/recognition': typeof AdminRecognitionRoute
   '/admin/resources': typeof AdminResourcesRoute
+  '/admin/seo': typeof AdminSeoRoute
   '/admin/services': typeof AdminServicesRoute
   '/admin/testimonials': typeof AdminTestimonialsRoute
   '/admin/work': typeof AdminWorkRoute
@@ -282,6 +289,7 @@ export interface FileRoutesByTo {
   '/admin/projects': typeof AdminProjectsRoute
   '/admin/recognition': typeof AdminRecognitionRoute
   '/admin/resources': typeof AdminResourcesRoute
+  '/admin/seo': typeof AdminSeoRoute
   '/admin/services': typeof AdminServicesRoute
   '/admin/testimonials': typeof AdminTestimonialsRoute
   '/admin/work': typeof AdminWorkRoute
@@ -320,6 +328,7 @@ export interface FileRoutesById {
   '/admin/projects': typeof AdminProjectsRoute
   '/admin/recognition': typeof AdminRecognitionRoute
   '/admin/resources': typeof AdminResourcesRoute
+  '/admin/seo': typeof AdminSeoRoute
   '/admin/services': typeof AdminServicesRoute
   '/admin/testimonials': typeof AdminTestimonialsRoute
   '/admin/work': typeof AdminWorkRoute
@@ -359,6 +368,7 @@ export interface FileRouteTypes {
     | '/admin/projects'
     | '/admin/recognition'
     | '/admin/resources'
+    | '/admin/seo'
     | '/admin/services'
     | '/admin/testimonials'
     | '/admin/work'
@@ -393,6 +403,7 @@ export interface FileRouteTypes {
     | '/admin/projects'
     | '/admin/recognition'
     | '/admin/resources'
+    | '/admin/seo'
     | '/admin/services'
     | '/admin/testimonials'
     | '/admin/work'
@@ -430,6 +441,7 @@ export interface FileRouteTypes {
     | '/admin/projects'
     | '/admin/recognition'
     | '/admin/resources'
+    | '/admin/seo'
     | '/admin/services'
     | '/admin/testimonials'
     | '/admin/work'
@@ -650,6 +662,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminResourcesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/seo': {
+      id: '/admin/seo'
+      path: '/seo'
+      fullPath: '/admin/seo'
+      preLoaderRoute: typeof AdminSeoRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/services': {
       id: '/admin/services'
       path: '/services'
@@ -721,6 +740,7 @@ interface AdminRouteChildren {
   AdminProjectsRoute: typeof AdminProjectsRoute
   AdminRecognitionRoute: typeof AdminRecognitionRoute
   AdminResourcesRoute: typeof AdminResourcesRoute
+  AdminSeoRoute: typeof AdminSeoRoute
   AdminServicesRoute: typeof AdminServicesRoute
   AdminTestimonialsRoute: typeof AdminTestimonialsRoute
   AdminWorkRoute: typeof AdminWorkRoute
@@ -739,6 +759,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminProjectsRoute: AdminProjectsRoute,
   AdminRecognitionRoute: AdminRecognitionRoute,
   AdminResourcesRoute: AdminResourcesRoute,
+  AdminSeoRoute: AdminSeoRoute,
   AdminServicesRoute: AdminServicesRoute,
   AdminTestimonialsRoute: AdminTestimonialsRoute,
   AdminWorkRoute: AdminWorkRoute,

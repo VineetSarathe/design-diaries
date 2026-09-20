@@ -2,27 +2,15 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { Reveal } from "@/components/site/Reveal";
 import { mailtoHref, whatsappHref } from "@/lib/contact";
+import { loadRouteSeo, routePageSeo } from "@/lib/page-seo";
 
 const EMAIL = "designdiariesbysagrika@gmail.com";
 const PHONE = "+91 96224 34242";
 const SITE = "https://www.designdiaries.co";
 
 export const Route = createFileRoute("/privacy")({
-  head: () => ({
-    meta: [
-      { title: "Privacy Policy | Design Diaries" },
-      {
-        name: "description",
-        content:
-          "How Design Diaries by Sagrika collects, uses and protects personal information on www.designdiaries.co.",
-      },
-      { property: "og:title", content: "Privacy Policy | Design Diaries" },
-      {
-        property: "og:description",
-        content: "What we collect, how we use it, and how we protect it.",
-      },
-    ],
-  }),
+  loader: () => loadRouteSeo("/privacy"),
+  head: ({ loaderData }) => routePageSeo("/privacy", undefined, loaderData),
   component: PrivacyPage,
 });
 

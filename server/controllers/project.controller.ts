@@ -33,6 +33,10 @@ function toDto(doc: ProjectDoc & { _id: unknown }, admin = false) {
     reviewQuote: doc.reviewQuote || "",
     reviewAuthor: doc.reviewAuthor || "",
     reviewRole: doc.reviewRole || "",
+    seoTitle: doc.seoTitle || "",
+    seoDescription: doc.seoDescription || "",
+    seoKeywords: doc.seoKeywords || "",
+    seoCanonical: doc.seoCanonical || "",
     images: doc.images.map((image) => ({
       url: image.url,
       alt: image.alt,
@@ -100,6 +104,10 @@ function parseFields(source: object, required: boolean) {
   const reviewQuote = readField(source, "reviewQuote", 1200);
   const reviewAuthor = readField(source, "reviewAuthor", 80);
   const reviewRole = readField(source, "reviewRole", 160);
+  const seoTitle = readField(source, "seoTitle", 160);
+  const seoDescription = readField(source, "seoDescription", 320);
+  const seoKeywords = readField(source, "seoKeywords", 400);
+  const seoCanonical = readField(source, "seoCanonical", 300);
   const hideCardMeta = parseBool((source as { hideCardMeta?: unknown }).hideCardMeta, true);
   let slug = slugify(readField(source, "slug", 80) || name);
 
@@ -116,7 +124,25 @@ function parseFields(source: object, required: boolean) {
     throw new AppError(400, "Enter a category");
   }
 
-  return { name, location, category, area, year, clientType, cardLabel, insight, reviewQuote, reviewAuthor, reviewRole, hideCardMeta, slug };
+  return {
+    name,
+    location,
+    category,
+    area,
+    year,
+    clientType,
+    cardLabel,
+    insight,
+    reviewQuote,
+    reviewAuthor,
+    reviewRole,
+    seoTitle,
+    seoDescription,
+    seoKeywords,
+    seoCanonical,
+    hideCardMeta,
+    slug,
+  };
 }
 
 function getId(req: Request) {
@@ -223,6 +249,10 @@ export async function updateProject(req: Request, res: Response) {
     reviewQuote: fields.reviewQuote,
     reviewAuthor: fields.reviewAuthor,
     reviewRole: fields.reviewRole,
+    seoTitle: fields.seoTitle,
+    seoDescription: fields.seoDescription,
+    seoKeywords: fields.seoKeywords,
+    seoCanonical: fields.seoCanonical,
     hideCardMeta: fields.hideCardMeta,
   });
 
@@ -283,6 +313,10 @@ export async function updateProject(req: Request, res: Response) {
         reviewQuote: doc.reviewQuote,
         reviewAuthor: doc.reviewAuthor,
         reviewRole: doc.reviewRole,
+        seoTitle: doc.seoTitle,
+        seoDescription: doc.seoDescription,
+        seoKeywords: doc.seoKeywords,
+        seoCanonical: doc.seoCanonical,
         hideCardMeta: doc.hideCardMeta,
         cardUrl: doc.cardUrl,
         cardPublicId: doc.cardPublicId,

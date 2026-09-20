@@ -11,6 +11,7 @@ import { getProject, type Project } from "@/data/projects";
 import { API_BASE } from "@/lib/api";
 import { cmsToProject, type CmsProject } from "@/lib/cms-project";
 import { useProjects } from "@/hooks/use-projects";
+import { breadcrumbJsonLd, pageSeo, absoluteUrl, blogShareImage, withCmsSeo } from "@/lib/seo";
 
 async function loadProject(slug: string): Promise<Project> {
   const base = API_BASE;
@@ -36,28 +37,45 @@ export const Route = createFileRoute("/work/$slug")({
     const project = await loadProject(params.slug);
     return { project };
   },
-  head: ({ loaderData }) => {
+  head: ({ loaderData, params }) => {
     if (!loaderData) {
-      return {
-        meta: [
-          { title: "Project not found | Design Diaries" },
-          { name: "robots", content: "noindex" },
-        ],
-      };
+      return pageSeo({
+        title: "Project not found | Design Diaries",
+        description: "This gym project could not be found.",
+        path: `/work/${params.slug}`,
+        noindex: true,
+      });
     }
     const p = loaderData.project;
     const title = `${p.name}, ${p.location} — ${p.category} | Design Diaries`;
     const description = `${p.area} ${p.category.toLowerCase()} in ${p.location}, ${p.year}. ${p.insight}`;
-    return {
-      meta: [
-        { title },
-        { name: "description", content: description },
-        { property: "og:title", content: title },
-        { property: "og:description", content: description },
-        { property: "og:type", content: "article" },
-        { name: "twitter:card", content: "summary_large_image" },
-      ],
-    };
+    const image = p.hero || p.card;
+    const path = `/work/${p.slug}`;
+    return withCmsSeo(
+      {
+        title,
+        description,
+        path,
+        image,
+        type: "article",
+        jsonLd: [
+          breadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Work", path: "/work" },
+            { name: p.name, path },
+          ]),
+          {
+            "@context": "https://schema.org",
+            "@type": "CreativeWork",
+            name: p.name,
+            description,
+            image: blogShareImage(image),
+            url: absoluteUrl(path),
+          },
+        ],
+      },
+      p,
+    );
   },
   component: ProjectDetail,
 });

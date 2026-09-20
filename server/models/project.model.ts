@@ -25,6 +25,10 @@ export type ProjectDoc = {
   reviewQuote: string;
   reviewAuthor: string;
   reviewRole: string;
+  seoTitle: string;
+  seoDescription: string;
+  seoKeywords: string;
+  seoCanonical: string;
   sortOrder: number;
   createdAt: Date;
   updatedAt: Date;
@@ -59,6 +63,10 @@ const projectSchema = new Schema<ProjectDoc>(
     reviewQuote: { type: String, default: "", trim: true },
     reviewAuthor: { type: String, default: "", trim: true },
     reviewRole: { type: String, default: "", trim: true },
+    seoTitle: { type: String, default: "", trim: true },
+    seoDescription: { type: String, default: "", trim: true },
+    seoKeywords: { type: String, default: "", trim: true },
+    seoCanonical: { type: String, default: "", trim: true },
     sortOrder: { type: Number, required: true, default: 1 },
   },
   { timestamps: true },

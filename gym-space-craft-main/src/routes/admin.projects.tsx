@@ -7,6 +7,7 @@ import { adminApi, type AdminProject } from "@/lib/admin-api";
 import { PROJECT_CATEGORIES } from "@/lib/cms-project";
 import { compressImage } from "@/lib/compress-image";
 import { useProjects } from "@/hooks/use-projects";
+import { SeoFields } from "@/components/admin/SeoFields";
 
 export const Route = createFileRoute("/admin/projects")({
   head: () => ({
@@ -32,6 +33,10 @@ type FormState = {
   reviewQuote: string;
   reviewAuthor: string;
   reviewRole: string;
+  seoTitle: string;
+  seoDescription: string;
+  seoKeywords: string;
+  seoCanonical: string;
 };
 
 const EMPTY_FORM: FormState = {
@@ -48,6 +53,10 @@ const EMPTY_FORM: FormState = {
   reviewQuote: "",
   reviewAuthor: "",
   reviewRole: "",
+  seoTitle: "",
+  seoDescription: "",
+  seoKeywords: "",
+  seoCanonical: "",
 };
 
 type ExtraSlot = {
@@ -141,6 +150,10 @@ function AdminProjectsPage() {
       reviewQuote: item.reviewQuote || "",
       reviewAuthor: item.reviewAuthor || "",
       reviewRole: item.reviewRole || "",
+      seoTitle: item.seoTitle || "",
+      seoDescription: item.seoDescription || "",
+      seoKeywords: item.seoKeywords || "",
+      seoCanonical: item.seoCanonical || "",
     });
     setSlugTouched(true);
     setEditingId(item.id);
@@ -223,6 +236,10 @@ function AdminProjectsPage() {
       data.set("reviewQuote", form.reviewQuote);
       data.set("reviewAuthor", form.reviewAuthor);
       data.set("reviewRole", form.reviewRole);
+      data.set("seoTitle", form.seoTitle);
+      data.set("seoDescription", form.seoDescription);
+      data.set("seoKeywords", form.seoKeywords);
+      data.set("seoCanonical", form.seoCanonical);
       data.set("hideCardMeta", String(form.hideCardMeta));
       if (extraSlots.length) {
         const extraOrder: string[] = [];
@@ -265,6 +282,10 @@ function AdminProjectsPage() {
           reviewQuote: savedProject.reviewQuote || "",
           reviewAuthor: savedProject.reviewAuthor || "",
           reviewRole: savedProject.reviewRole || "",
+          seoTitle: savedProject.seoTitle || "",
+          seoDescription: savedProject.seoDescription || "",
+          seoKeywords: savedProject.seoKeywords || "",
+          seoCanonical: savedProject.seoCanonical || "",
         });
         setCardPreview(savedProject.cardUrl);
         setExtraSlots(
@@ -500,6 +521,13 @@ function AdminProjectsPage() {
               />
               <span className="text-sm">Hide area / year on the card</span>
             </label>
+            <SeoFields
+              title={form.seoTitle}
+              description={form.seoDescription}
+              keywords={form.seoKeywords}
+              canonical={form.seoCanonical}
+              onChange={(field, value) => setField(field, value)}
+            />
             <label className="block">
               <span className="label-caps text-muted-foreground">Main Photo</span>
               <input

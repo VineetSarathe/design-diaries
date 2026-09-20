@@ -2,27 +2,15 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { Reveal } from "@/components/site/Reveal";
 import { mailtoHref, whatsappHref } from "@/lib/contact";
+import { loadRouteSeo, routePageSeo } from "@/lib/page-seo";
 
 const EMAIL = "designdiariesbysagrika@gmail.com";
 const PHONE = "+91 96224 34242";
 const SITE = "https://www.designdiaries.co";
 
 export const Route = createFileRoute("/terms")({
-  head: () => ({
-    meta: [
-      { title: "Terms & Conditions | Design Diaries" },
-      {
-        name: "description",
-        content:
-          "Terms & Conditions for using the Design Diaries by Sagrika website, including content use, project enquiries and legal notices.",
-      },
-      { property: "og:title", content: "Terms & Conditions | Design Diaries" },
-      {
-        property: "og:description",
-        content: "The rules for using www.designdiaries.co.",
-      },
-    ],
-  }),
+  loader: () => loadRouteSeo("/terms"),
+  head: ({ loaderData }) => routePageSeo("/terms", undefined, loaderData),
   component: TermsPage,
 });
 

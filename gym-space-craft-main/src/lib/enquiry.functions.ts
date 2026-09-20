@@ -3,6 +3,7 @@ import { apiFormRequest, apiRequest } from "@/lib/api";
 import type { Lead, LeadSource } from "@/lib/admin-api";
 import { compressImage } from "@/lib/compress-image";
 import { notifyAdmin } from "@/lib/notify-admin";
+import { trackEvent } from "@/lib/analytics";
 
 export const planningOptions = ["New Gym", "Renovation", "Fitness Studio", "Other"] as const;
 
@@ -62,6 +63,7 @@ export async function submitEnquiry(data: unknown) {
       { label: "City", value: parsed.city },
     ],
   });
+  trackEvent("generate_lead", { lead_type: "enquiry", city: parsed.city });
 }
 
 const downloadLeadSchema = z.object({
@@ -95,6 +97,7 @@ export async function submitDownloadLead(data: unknown) {
       { label: "Resource", value: parsed.resource },
     ],
   });
+  trackEvent("generate_lead", { lead_type: "download", resource: parsed.resource });
 }
 
 const projectEnquirySchema = z.object({
@@ -154,4 +157,5 @@ export async function submitProjectEnquiry(data: {
       { label: "File", value: data.file?.name || "" },
     ],
   });
+  trackEvent("generate_lead", { lead_type: "project", city: parsed.city });
 }

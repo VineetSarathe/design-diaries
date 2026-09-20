@@ -22,25 +22,11 @@ import p1 from "@/assets/project-1.jpg";
 import p3 from "@/assets/project-3.jpg";
 import p5 from "@/assets/project-5.jpg";
 import p6 from "@/assets/project-6.jpg";
+import { loadRouteSeo, routePageSeo } from "@/lib/page-seo";
 
 export const Route = createFileRoute("/services")({
-  head: () => ({
-    meta: [
-      { title: "Design Consultancy for Gyms | Design Diaries" },
-      {
-        name: "description",
-        content:
-          "One offering, done properly: gym design consultancy covering concept, space planning, lighting, 3D views and 2D working drawings for your contractor to build from.",
-      },
-      { property: "og:title", content: "Design Consultancy for Gyms | Design Diaries" },
-      {
-        property: "og:description",
-        content: "Concept, space planning, lighting, 3D views and working drawings for gyms.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  loader: () => loadRouteSeo("/services"),
+  head: ({ loaderData }) => routePageSeo("/services", undefined, loaderData),
   component: ServicesPage,
 });
 

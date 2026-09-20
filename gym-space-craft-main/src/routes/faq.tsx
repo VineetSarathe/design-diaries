@@ -5,6 +5,8 @@ import { generalFaqs, startFaqs } from "@/data/company";
 import { projectFaqs } from "@/data/projects";
 import { resourceFaqs } from "@/data/resources";
 import { partnerFaqs, serviceFaqs } from "@/data/services";
+import { faqPageJsonLd } from "@/lib/seo";
+import { loadRouteSeo, routePageSeo } from "@/lib/page-seo";
 
 function allSiteFaqs() {
   const seen = new Set<string>();
@@ -21,37 +23,9 @@ function allSiteFaqs() {
 const faqs = allSiteFaqs();
 
 export const Route = createFileRoute("/faq")({
-  head: () => ({
-    meta: [
-      { title: "Gym Interior Design FAQ | Design Diaries" },
-      {
-        name: "description",
-        content:
-          "Remote clients, timelines, scope, process and what to prepare — the questions gym owners ask before starting an interior design project.",
-      },
-      { property: "og:title", content: "FAQ | Design Diaries" },
-      {
-        property: "og:description",
-        content: "Scope, drawings, timelines and process questions answered.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    scripts: [
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "FAQPage",
-          mainEntity: faqs.map((f) => ({
-            "@type": "Question",
-            name: f.q,
-            acceptedAnswer: { "@type": "Answer", text: f.a },
-          })),
-        }),
-      },
-    ],
-  }),
+  loader: () => loadRouteSeo("/faq"),
+  head: ({ loaderData }) =>
+    routePageSeo("/faq", { jsonLd: [faqPageJsonLd(faqs)] }, loaderData),
   component: FaqPage,
 });
 

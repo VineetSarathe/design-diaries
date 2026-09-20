@@ -19,6 +19,7 @@ import { CaseStudySpotlight } from "@/components/site/CaseStudySpotlight";
 import { useHomepageSettings } from "@/hooks/use-homepage-settings";
 import { useRecognitions } from "@/hooks/use-recognitions";
 import { isExternalHref, pickBySlugs } from "@/lib/homepage";
+import { loadRouteSeo, routePageSeo } from "@/lib/page-seo";
 
 import heroImg from "@/assets/hero-gym.jpg";
 import p1 from "@/assets/project-1.jpg";
@@ -31,22 +32,8 @@ import gallery1 from "@/assets/gallery-1.jpg";
 import materials from "@/assets/why-materials.jpg";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "Gym Interior Design Studio in Indore | Design Diaries" },
-      {
-        name: "description",
-        content:
-          "Design Diaries is a specialist gym and fitness interior design studio in Indore. 15+ gyms designed around equipment logic, circulation, durability and business impact.",
-      },
-      { property: "og:title", content: "Gyms, Designed to Perform | Design Diaries" },
-      {
-        property: "og:description",
-        content:
-          "We design high-performance gym and fitness spaces where function, aesthetics and brand identity work together",
-      },
-    ],
-  }),
+  loader: () => loadRouteSeo("/"),
+  head: ({ loaderData }) => routePageSeo("/", undefined, loaderData),
   component: Home,
 });
 

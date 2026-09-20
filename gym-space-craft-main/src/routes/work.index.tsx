@@ -13,23 +13,11 @@ import { categoriesFromProjects } from "@/lib/cms-project";
 import { isVideoSrc, mediaPlaybackUrl, mediaPreviewUrl } from "@/lib/media";
 import workHero from "@/assets/work-hero.jpg";
 import p5 from "@/assets/project-5.jpg";
+import { loadRouteSeo, routePageSeo } from "@/lib/page-seo";
 
 export const Route = createFileRoute("/work/")({
-  head: () => ({
-    meta: [
-      { title: "Gym & Fitness Studio Projects | Design Diaries" },
-      {
-        name: "description",
-        content:
-          "Gym & fitness interior design projects, designed around real use. Browse gym projects and fitness studios by Design Diaries, Indore.",
-      },
-      { property: "og:title", content: "Our Work | Design Diaries" },
-      {
-        property: "og:description",
-        content: "Gym & fitness interior design projects, designed around real use.",
-      },
-    ],
-  }),
+  loader: () => loadRouteSeo("/work"),
+  head: ({ loaderData }) => routePageSeo("/work", undefined, loaderData),
   component: WorkListing,
 });
 

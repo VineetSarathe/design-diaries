@@ -4,25 +4,11 @@ import { CtaBanner } from "@/components/site/CtaBanner";
 import { roles } from "@/data/company";
 import { useContactSettings } from "@/hooks/use-contact-settings";
 import { mailtoHref } from "@/lib/contact";
+import { loadRouteSeo, routePageSeo } from "@/lib/page-seo";
 
 export const Route = createFileRoute("/careers")({
-  head: () => ({
-    meta: [
-      { title: "Careers at Design Diaries | Gym Interior Design Studio" },
-      {
-        name: "description",
-        content:
-          "Work on fitness interiors where layout, circulation and durability matter as much as finish. Open roles and applications at Design Diaries, Indore.",
-      },
-      { property: "og:title", content: "Careers | Design Diaries" },
-      {
-        property: "og:description",
-        content: "Join a studio that specialises in gym and fitness interiors.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  loader: () => loadRouteSeo("/careers"),
+  head: ({ loaderData }) => routePageSeo("/careers", undefined, loaderData),
   component: CareersPage,
 });
 

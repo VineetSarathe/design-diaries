@@ -24,6 +24,10 @@ export type CmsProject = {
   reviewQuote?: string;
   reviewAuthor?: string;
   reviewRole?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  seoKeywords?: string;
+  seoCanonical?: string;
   sortOrder?: number;
 };
 
@@ -64,6 +68,10 @@ export function cmsToProject(cms: CmsProject, fallback?: Project): Project {
     cardLabel: cms.cardLabel || undefined,
     hideCardMeta: cms.hideCardMeta,
     insight: cms.insight,
+    seoTitle: cms.seoTitle || "",
+    seoDescription: cms.seoDescription || "",
+    seoKeywords: cms.seoKeywords || "",
+    seoCanonical: cms.seoCanonical || "",
     card,
     cardImages,
     hero: card || extras[0]?.src || fallback?.hero || "",

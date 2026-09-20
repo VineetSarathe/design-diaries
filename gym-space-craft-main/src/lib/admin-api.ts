@@ -3,6 +3,8 @@ import type { ContactSettings } from "@/lib/contact";
 import type { HomepageSettings } from "@/lib/homepage";
 import type { AboutSettings } from "@/lib/about";
 import type { CmsProject } from "@/lib/cms-project";
+import type { PageSeoRecord } from "@/lib/page-seo";
+import type { CmsSeoFields } from "@/lib/seo";
 
 export type AdminUser = {
   email: string;
@@ -126,6 +128,14 @@ export type AdminBlog = {
   }[];
   sortOrder: number;
   createdAt?: string;
+  updatedAt?: string;
+};
+
+export type AdminRedirect = {
+  id: string;
+  from: string;
+  to: string;
+  enabled: boolean;
   updatedAt?: string;
 };
 
@@ -346,5 +356,32 @@ export const adminApi = {
       method: "PUT",
       body: JSON.stringify({ items }),
     });
+  },
+  listPageSeo() {
+    return apiRequest<{ pages: PageSeoRecord[] }>("/page-seo");
+  },
+  updatePageSeo(key: string, fields: CmsSeoFields) {
+    return apiRequest<{ page: PageSeoRecord }>(`/page-seo/${encodeURIComponent(key)}`, {
+      method: "PUT",
+      body: JSON.stringify(fields),
+    });
+  },
+  listRedirects() {
+    return apiRequest<{ redirects: AdminRedirect[] }>("/redirects");
+  },
+  createRedirect(payload: { from: string; to: string; enabled?: boolean }) {
+    return apiRequest<{ redirect: AdminRedirect }>("/redirects", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+  updateRedirect(id: string, payload: Partial<{ from: string; to: string; enabled: boolean }>) {
+    return apiRequest<{ redirect: AdminRedirect }>(`/redirects/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    });
+  },
+  deleteRedirect(id: string) {
+    return apiRequest(`/redirects/${id}`, { method: "DELETE" });
   },
 };

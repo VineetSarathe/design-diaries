@@ -13,6 +13,8 @@ import { useProjects } from "@/hooks/use-projects";
 import {
   SITE_NAME,
   absoluteUrl,
+  breadcrumbJsonLd,
+  jsonLdScript,
   resolveBlogSeo,
 } from "@/lib/seo";
 import gallery1 from "@/assets/gallery-1.jpg";
@@ -109,6 +111,13 @@ export const Route = createFileRoute("/resources/blog/$slug")({
             url: seo.url,
           }),
         },
+        jsonLdScript(
+          breadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Resources", path: "/resources" },
+            { name: p.title, path: `/resources/blog/${p.slug}` },
+          ]),
+        ),
       ],
     };
   },

@@ -3,23 +3,17 @@ import { Instagram } from "lucide-react";
 import { Reveal } from "@/components/site/Reveal";
 import { CalendarEmbed } from "@/components/site/CalendarEmbed";
 import { useContactSettings } from "@/hooks/use-contact-settings";
+import { pageSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/thank-you")({
-  head: () => ({
-    meta: [
-      { title: "Enquiry Received | Design Diaries" },
-      {
-        name: "description",
-        content:
-          "Your gym project enquiry has reached the studio. Book your 30-minute discovery call while you wait for our reply.",
-      },
-      { property: "og:title", content: "Enquiry Received | Design Diaries" },
-      { property: "og:description", content: "We'll reply within 24 hours." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "robots", content: "noindex" },
-    ],
-  }),
+  head: () =>
+    pageSeo({
+      title: "Enquiry Received | Design Diaries",
+      description:
+        "Your gym project enquiry has reached the studio. Book your 30-minute discovery call while you wait for our reply.",
+      path: "/thank-you",
+      noindex: true,
+    }),
   component: ThankYou,
 });
 

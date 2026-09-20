@@ -12,6 +12,8 @@ import recognitionRoutes from "./recognition.routes";
 import blogRoutes from "./blog.routes";
 import instagramFeedRoutes from "./instagram-feed.routes";
 import callBookingRoutes from "./call-booking.routes";
+import pageSeoRoutes from "./page-seo.routes";
+import redirectRoutes from "./redirect.routes";
 
 const router = Router();
 
@@ -28,5 +30,7 @@ router.use(recognitionRoutes);
 router.use(blogRoutes);
 router.use(instagramFeedRoutes);
 router.use(callBookingRoutes);
+router.use(pageSeoRoutes);
+router.use(redirectRoutes);
 
 export default router;

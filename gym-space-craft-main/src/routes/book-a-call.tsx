@@ -7,6 +7,7 @@ import {
   isSlotTaken,
   type CallAvailability,
 } from "@/lib/call-booking";
+import { pageSeo } from "@/lib/seo";
 
 type BookSearch = {
   date: string;
@@ -18,16 +19,13 @@ export const Route = createFileRoute("/book-a-call")({
     date: typeof search.date === "string" ? search.date : "",
     slot: typeof search.slot === "string" ? search.slot : "",
   }),
-  head: () => ({
-    meta: [
-      { title: "Confirm your call | Design Diaries" },
-      {
-        name: "description",
-        content: "Confirm your 30-minute discovery call with Design Diaries.",
-      },
-      { name: "robots", content: "noindex" },
-    ],
-  }),
+  head: () =>
+    pageSeo({
+      title: "Confirm your call | Design Diaries",
+      description: "Confirm your 30-minute discovery call with Design Diaries.",
+      path: "/book-a-call",
+      noindex: true,
+    }),
   component: BookACall,
 });
 

@@ -27,6 +27,10 @@ export type Project = {
   cardLabel?: string;
   hideCardMeta?: boolean;
   insight: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  seoKeywords?: string;
+  seoCanonical?: string;
   card: string;
   cardImages?: string[];
   hero: string;

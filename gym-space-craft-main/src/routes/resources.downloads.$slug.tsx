@@ -5,6 +5,7 @@ import { CtaBanner } from "@/components/site/CtaBanner";
 import { ReelsSection } from "@/components/site/Sections";
 import { DownloadForm } from "@/components/site/DownloadForm";
 import { downloads, getDownload, type Download } from "@/data/resources";
+import { breadcrumbJsonLd, pageSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/resources/downloads/$slug")({
   loader: ({ params }) => {
@@ -12,27 +13,31 @@ export const Route = createFileRoute("/resources/downloads/$slug")({
     if (!item) throw notFound();
     return { item };
   },
-  head: ({ loaderData }) => {
+  head: ({ loaderData, params }) => {
     if (!loaderData) {
-      return {
-        meta: [
-          { title: "Resource not found | Design Diaries" },
-          { name: "robots", content: "noindex" },
-        ],
-      };
+      return pageSeo({
+        title: "Resource not found | Design Diaries",
+        description: "This download could not be found.",
+        path: `/resources/downloads/${params.slug}`,
+        noindex: true,
+      });
     }
     const d = loaderData.item;
-    const title = `${d.title} | Design Diaries`;
-    return {
-      meta: [
-        { title },
-        { name: "description", content: d.summary },
-        { property: "og:title", content: title },
-        { property: "og:description", content: d.summary },
-        { property: "og:type", content: "article" },
-        { name: "twitter:card", content: "summary_large_image" },
+    const path = `/resources/downloads/${d.slug}`;
+    return pageSeo({
+      title: `${d.title} | Design Diaries`,
+      description: d.summary,
+      path,
+      image: d.image,
+      type: "article",
+      jsonLd: [
+        breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "Resources", path: "/resources" },
+          { name: d.title, path },
+        ]),
       ],
-    };
+    });
   },
   component: DownloadDetail,
 });

@@ -7,12 +7,15 @@ import {
   useRouterState,
   HeadContent,
   Scripts,
+  redirect,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 import TagManager from "react-gtm-module";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { DEFAULT_OG_IMAGE, jsonLdScript, organizationJsonLd, websiteJsonLd } from "@/lib/seo";
+import { matchRedirect } from "@/lib/redirects";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { PromoBanner } from "@/components/site/PromoBanner";
@@ -87,11 +90,16 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  beforeLoad: async ({ location }) => {
+    const to = await matchRedirect(location.pathname);
+    if (!to) return;
+    throw redirect({ href: to, statusCode: 301 });
+  },
   head: () => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Design Diaries — Gym Interior Design Studio, Indore" },
+      { title: "Design Diaries — Gym Interior Design Studio, Delhi" },
       {
         name: "description",
         content:
@@ -99,8 +107,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { name: "author", content: "Design Diaries" },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: DEFAULT_OG_IMAGE },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: DEFAULT_OG_IMAGE },
     ],
+    scripts: [jsonLdScript(organizationJsonLd()), jsonLdScript(websiteJsonLd())],
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },

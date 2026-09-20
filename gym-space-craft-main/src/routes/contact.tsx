@@ -3,23 +3,12 @@ import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import { Reveal } from "@/components/site/Reveal";
 import { useContactSettings } from "@/hooks/use-contact-settings";
 import { mailtoHref, telHref, whatsappHref } from "@/lib/contact";
+import { loadRouteSeo, routePageSeo } from "@/lib/page-seo";
 import contactHero from "@/assets/hero-gym.jpg";
 
 export const Route = createFileRoute("/contact")({
-  head: () => ({
-    meta: [
-      { title: "Contact Design Diaries | Delhi, India" },
-      {
-        name: "description",
-        content:
-          "General enquiries for Design Diaries — email, phone, WhatsApp and studio location in Delhi. Project enquiries go through Start a Project.",
-      },
-      { property: "og:title", content: "Contact | Design Diaries" },
-      { property: "og:description", content: "Reach the studio in Delhi, India." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  loader: () => loadRouteSeo("/contact"),
+  head: ({ loaderData }) => routePageSeo("/contact", undefined, loaderData),
   component: ContactPage,
 });
 
