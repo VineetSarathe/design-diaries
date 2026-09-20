@@ -25,6 +25,7 @@ export type CallBooking = {
   slot: string;
   name: string;
   phone: string;
+  email: string;
   city: string;
   message: string;
   createdAt: string;
@@ -48,6 +49,7 @@ export async function createCallBooking(payload: {
   slot: string;
   name: string;
   phone: string;
+  email: string;
   city: string;
   message: string;
 }) {
@@ -61,10 +63,12 @@ export async function createCallBooking(payload: {
     heading: payload.name,
     intro: "A discovery call was booked from the website.",
     name: payload.name,
+    replyTo: payload.email,
     fields: [
       { label: "Date", value: payload.date },
       { label: "Time", value: payload.slot },
       { label: "Name", value: payload.name },
+      { label: "Email", value: payload.email },
       { label: "Mobile", value: payload.phone },
       { label: "City", value: payload.city },
       { label: "Message", value: payload.message },

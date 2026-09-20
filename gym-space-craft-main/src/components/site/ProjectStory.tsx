@@ -208,9 +208,9 @@ export function ProjectVisualStory({ project }: { project: Project }) {
                     <p className="label-caps text-primary">{chapter.label}</p>
                     <h3 className="mt-3 font-display text-xl uppercase leading-tight">{chapter.question}</h3>
                   </div>
-                  <div className="grid gap-5 sm:grid-cols-[9rem_minmax(0,1fr)] sm:items-start">
+                  <div className="grid gap-5 sm:grid-cols-[11rem_minmax(0,1fr)] sm:items-center">
                     {visual && (
-                      <div className="aspect-[4/3] w-full shrink-0 overflow-hidden border border-border">
+                      <div className="aspect-[4/3] w-full min-h-[7.5rem] shrink-0 overflow-hidden border border-border">
                         <img src={mediaPreviewUrl(visual.src, 360)} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
                       </div>
                     )}

@@ -14,16 +14,14 @@ const images = [conceptImage, planningImage, lightingImage, drawingsImage, views
 
 export function DeliverablesShowcase({ fadeFromInk = false }: { fadeFromInk?: boolean }) {
   const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
 
   useEffect(() => {
-    if (paused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const timer = window.setInterval(
       () => setActive((current) => (current + 1) % deliverables.length),
-      3600,
+      1000,
     );
     return () => window.clearInterval(timer);
-  }, [paused]);
+  }, []);
 
   const selected = deliverables[active] ?? deliverables[0];
   const selectedImage = images[active] ?? images[0];
@@ -50,12 +48,8 @@ export function DeliverablesShowcase({ fadeFromInk = false }: { fadeFromInk?: bo
           </p>
         </Reveal>
 
-        <div
-          className="mt-12 grid overflow-hidden border border-border bg-background lg:grid-cols-[0.72fr_1.28fr]"
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
-        >
-          <div className="border-b border-border lg:border-r lg:border-b-0">
+        <div className="mt-12 grid overflow-hidden border border-border bg-background lg:grid-cols-[0.72fr_1.28fr] lg:items-stretch">
+          <div className="flex min-h-0 flex-col border-b border-border lg:h-full lg:border-r lg:border-b-0">
             {deliverables.map((item, index) => {
               const Icon = item.icon;
               const isActive = active === index;
@@ -65,10 +59,8 @@ export function DeliverablesShowcase({ fadeFromInk = false }: { fadeFromInk?: bo
                   type="button"
                   variant="ghost"
                   onClick={() => setActive(index)}
-                  onFocus={() => setPaused(true)}
-                  onBlur={() => setPaused(false)}
                   aria-pressed={isActive}
-                  className="group relative h-auto w-full min-w-0 justify-start whitespace-normal rounded-none border-b border-border px-5 py-5 text-left last:border-b-0 hover:bg-secondary md:px-7 md:py-6"
+                  className="group relative h-full min-h-[3.25rem] w-full min-w-0 flex-1 justify-start whitespace-normal rounded-none border-b border-border px-5 py-3 text-left last:border-b-0 hover:bg-secondary md:px-6 md:py-3.5"
                 >
                   <span
                     aria-hidden
@@ -78,7 +70,7 @@ export function DeliverablesShowcase({ fadeFromInk = false }: { fadeFromInk?: bo
                     {item.n}
                   </span>
                   <Icon className={`mr-4 h-5 w-5 shrink-0 transition-all duration-500 ${isActive ? "scale-110 text-primary" : "text-muted-foreground"}`} />
-                  <span className={`min-w-0 font-display text-sm uppercase transition-colors md:text-base ${isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"}`}>
+                  <span className={`min-w-0 font-display text-sm uppercase leading-snug transition-colors md:text-base ${isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"}`}>
                     {item.title}
                   </span>
                 </Button>
@@ -86,7 +78,7 @@ export function DeliverablesShowcase({ fadeFromInk = false }: { fadeFromInk?: bo
             })}
           </div>
 
-          <div className="relative min-h-[34rem] overflow-hidden bg-foreground text-background md:min-h-[40rem]">
+          <div className="relative min-h-[20rem] overflow-hidden bg-foreground text-background sm:min-h-[22rem] lg:min-h-[26rem]">
             {images.map((image, index) => (
               <img
                 key={image}
@@ -100,24 +92,24 @@ export function DeliverablesShowcase({ fadeFromInk = false }: { fadeFromInk?: bo
             ))}
             <span aria-hidden className="absolute inset-0 bg-gradient-to-t from-foreground via-foreground/35 to-transparent" />
 
-            <div key={selected.title} className="animate-fade-in absolute inset-x-0 bottom-0 p-6 md:p-10">
+            <div key={selected.title} className="animate-fade-in absolute inset-x-0 bottom-0 p-5 md:p-7">
               <div className="flex items-center gap-3">
                 <SelectedIcon className="h-5 w-5 text-primary" />
                 <p className="label-caps text-primary">Included in your package</p>
               </div>
-              <h3 className="display-lg mt-4 max-w-2xl text-background">{selected.title}</h3>
-              <p className="mt-4 max-w-2xl text-background/75">{selected.text}</p>
-              <ul className="mt-7 grid gap-x-6 gap-y-3 sm:grid-cols-2">
+              <h3 className="display-md mt-3 max-w-2xl text-background">{selected.title}</h3>
+              <p className="mt-2.5 max-w-2xl text-sm leading-relaxed text-background/75 md:text-[0.9375rem]">{selected.text}</p>
+              <ul className="mt-4 grid gap-x-6 gap-y-2 sm:grid-cols-2">
                 {selected.includes.map((item) => (
                   <li key={item} className="flex items-center gap-3 text-sm text-background/82">
-                    <span className="flex h-6 w-6 shrink-0 items-center justify-center border border-primary/60">
-                      <Check className="h-3.5 w-3.5 text-primary" />
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center border border-primary/60">
+                      <Check className="h-3 w-3 text-primary" />
                     </span>
                     {item}
                   </li>
                 ))}
               </ul>
-              <div className="mt-8 flex gap-2" aria-hidden>
+              <div className="mt-5 flex gap-2" aria-hidden>
                 {deliverables.map((item, index) => (
                   <span key={item.n} className={`h-0.5 transition-all duration-500 ${active === index ? "w-12 bg-primary" : "w-5 bg-background/30"}`} />
                 ))}

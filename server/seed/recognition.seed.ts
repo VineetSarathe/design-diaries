@@ -66,13 +66,83 @@ export async function seedRecognitions(): Promise<void> {
   console.log("Recognition collection is empty — add items in Admin > Recognition");
 }
 
+export async function backfillRecognitionDescriptions(): Promise<void> {
+  const docs = await Recognition.find();
+  let updated = 0;
+  for (const doc of docs) {
+    if (doc.description?.trim()) continue;
+    const description = descriptionFor(doc.title, doc.year);
+    if (!description) continue;
+    await Recognition.updateOne({ _id: doc._id }, { $set: { description } });
+    updated += 1;
+  }
+  if (updated > 0) console.log(`Filled supporting copy on ${updated} recognition card(s)`);
+}
+
+function descriptionFor(title: string, year: string) {
+  const key = `${title} ${year}`.toLowerCase();
+  if (key.includes("milap")) return "Hosted MILAP Jammu 2023, connecting entrepreneurs.";
+  if (key.includes("rising") && year.includes("2024")) {
+    return "Recognised as a Rising Star 2024 for emerging as a promising voice in Interior design.";
+  }
+  if (key.includes("rising") && year.includes("2025")) {
+    return "Recognised as an LWL Rising Star 2025 for meaningful impact in design.";
+  }
+  if (key.includes("idac")) {
+    return "Featured at iDAC Expo Delhi 2025, showcasing our work among leading names in the design industry";
+  }
+  if (key.includes("iconic")) {
+    return "Awarded Iconic Architecture Award 2025 for Best in Restaurant Interior Design";
+  }
+  if (key.includes("wow")) {
+    return "Recognised with the Architect’s Wow Award 2024 at the Architecture Business Connect Summit, Delhi.";
+  }
+  return "";
+}
+
 const DRIVE_CARDS = [
-  { dir: "02-iconic-architecture-award-2025", title: "Iconic Architecture Award", category: "Award", year: "2025" },
-  { dir: "04-published-at-idac-expo-delhi-2025", title: "Published at IDAC Expo Delhi", category: "Publication", year: "2025" },
-  { dir: "06-rising-stars-awards-2025-by-lwl", title: "Rising Stars Awards by LWL", category: "Award", year: "2025" },
-  { dir: "01-architect-s-wow-award-2024", title: "Architect's Wow Award", category: "Award", year: "2024" },
-  { dir: "05-rising-stars-awards-2024-by-lwl", title: "Rising Stars Awards by LWL", category: "Award", year: "2024" },
-  { dir: "03-milap-jammu-event-hosting-2023", title: "Milap Jammu Event Hosting", category: "Event", year: "2023" },
+  {
+    dir: "02-iconic-architecture-award-2025",
+    title: "Iconic Architecture Award",
+    category: "Award",
+    year: "2025",
+    description: "Awarded Iconic Architecture Award 2025 for Best in Restaurant Interior Design",
+  },
+  {
+    dir: "04-published-at-idac-expo-delhi-2025",
+    title: "Published at IDAC Expo Delhi",
+    category: "Publication",
+    year: "2025",
+    description: "Featured at iDAC Expo Delhi 2025, showcasing our work among leading names in the design industry",
+  },
+  {
+    dir: "06-rising-stars-awards-2025-by-lwl",
+    title: "Rising Stars Awards by LWL",
+    category: "Award",
+    year: "2025",
+    description: "Recognised as an LWL Rising Star 2025 for meaningful impact in design.",
+  },
+  {
+    dir: "01-architect-s-wow-award-2024",
+    title: "Architect's Wow Award",
+    category: "Award",
+    year: "2024",
+    description: "Recognised with the Architect’s Wow Award 2024 at the Architecture Business Connect Summit, Delhi.",
+  },
+  {
+    dir: "05-rising-stars-awards-2024-by-lwl",
+    title: "Rising Stars Awards by LWL",
+    category: "Award",
+    year: "2024",
+    description: "Recognised as a Rising Star 2024 for emerging as a promising voice in Interior design.",
+  },
+  {
+    dir: "03-milap-jammu-event-hosting-2023",
+    title: "Milap Jammu Event Hosting",
+    category: "Event",
+    year: "2023",
+    description: "Hosted MILAP Jammu 2023, connecting entrepreneurs.",
+  },
 ] as const;
 
 export async function replaceRecognitionsWithDriveSet(sourceRoot?: string): Promise<number> {
@@ -108,6 +178,7 @@ export async function replaceRecognitionsWithDriveSet(sourceRoot?: string): Prom
       title: card.title,
       category: card.category,
       year: card.year,
+      description: card.description,
       link: "/about#recognition",
       imageUrl: main.imageUrl,
       imagePublicId: main.imagePublicId,

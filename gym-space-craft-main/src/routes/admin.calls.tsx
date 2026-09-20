@@ -152,7 +152,7 @@ function AdminCallsPage() {
           <input
             name="q"
             defaultValue={q}
-            placeholder="Search name, phone, city"
+            placeholder="Search name, phone, email, city"
             className="min-w-[16rem] flex-1 border-b border-input bg-transparent py-3 outline-none transition-colors focus:border-primary"
           />
           <label className="relative block min-w-[12rem]">
@@ -197,7 +197,7 @@ function AdminCallsPage() {
               <table className="w-full min-w-[56rem] text-left text-sm">
                 <thead className="border-b border-border bg-secondary/60">
                   <tr>
-                    {["Name", "Mobile", "City", "Date", "Time", "Message"].map((heading) => (
+                    {["Name", "Mobile", "Email", "City", "Date", "Time", "Message"].map((heading) => (
                       <th key={heading} className="label-caps px-4 py-3 font-medium text-muted-foreground">
                         {heading}
                       </th>
@@ -209,6 +209,7 @@ function AdminCallsPage() {
                     <tr key={booking.id} className="border-b border-border last:border-0">
                       <td className="px-4 py-4">{booking.name}</td>
                       <td className="px-4 py-4">{booking.phone}</td>
+                      <td className="px-4 py-4">{booking.email || "—"}</td>
                       <td className="px-4 py-4">{booking.city}</td>
                       <td className="px-4 py-4">{formatCallDate(booking.date)}</td>
                       <td className="px-4 py-4">{booking.slot}</td>

@@ -10,7 +10,7 @@ export type HomepageSettings = {
 export const DEFAULT_HOMEPAGE: HomepageSettings = {
   heroHeading: "Gyms designed to perform",
   heroDescription:
-    "We specialise in fitness and gym interior design, shaped around movement, performance and the people who use them.",
+    "We design high-performance gym and fitness spaces where function, aesthetics and brand identity work together",
   ctaText: "Start Your Gym Project",
   ctaLink: "/start-a-project",
   featuredProjectSlugs: ["iron-standard", "sanctum-wellness", "still-house-recovery"],

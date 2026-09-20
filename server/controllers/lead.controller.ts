@@ -3,8 +3,10 @@ import type { FilterQuery } from "mongoose";
 import { Lead, LEAD_SOURCES, type LeadDoc, type LeadSource } from "../models/lead.model";
 import { AppError } from "../utils/appError";
 import { storeFileBuffer } from "../utils/store-file";
-import { sendMail } from "../utils/mail";
+import { sendMail, thankYouEmailHtml } from "../utils/mail";
 import { getCallNotifyEmail } from "../seed/call-settings.seed";
+import { ContactSettings, CONTACT_SETTINGS_KEY } from "../models/contact-settings.model";
+import { DEFAULT_CONTACT_SETTINGS } from "../seed/contact-settings.seed";
 
 function readString(body: object, key: string, max: number): string {
   if (!(key in body) || typeof body[key as keyof typeof body] !== "string") return "";
@@ -96,6 +98,40 @@ function csvCell(value: unknown): string {
   return `"${String(value ?? "").replace(/"/g, '""')}"`;
 }
 
+async function sendLeadThankYou(lead: LeadDoc) {
+  if (lead.source !== "project" || !lead.email.includes("@")) return;
+
+  const contact = await ContactSettings.findOne({ key: CONTACT_SETTINGS_KEY });
+  const studioEmail = contact?.email || DEFAULT_CONTACT_SETTINGS.email;
+  const studioPhone = contact?.whatsapp || contact?.phone || DEFAULT_CONTACT_SETTINGS.whatsapp;
+  const firstName = lead.name.trim().split(/\s+/)[0] || lead.name;
+
+  const text = [
+    `Hi ${firstName},`,
+    "",
+    "Thank you for getting in touch with Design Diaries.",
+    "",
+    "We have received your project enquiry. Sagrika will reply within 24 hours on working days.",
+    "",
+    "If you would like to talk sooner, WhatsApp is the fastest route:",
+    studioPhone,
+    "",
+    "Design Diaries",
+    studioEmail,
+  ].join("\n");
+
+  const sent = await sendMail({
+    to: lead.email,
+    replyTo: studioEmail,
+    subject: "Thank you — we received your enquiry | Design Diaries",
+    text,
+    html: thankYouEmailHtml({ firstName, studioEmail, studioPhone }),
+  });
+  if (!sent) {
+    console.error(`Thank-you email was not sent to ${lead.email}: Gmail SMTP is not configured`);
+  }
+}
+
 function formatLeadDate(value: unknown): string {
   const date = value instanceof Date ? value : new Date(String(value ?? ""));
   if (Number.isNaN(date.getTime())) return "";
@@ -151,6 +187,11 @@ export async function createLead(req: Request, res: Response) {
     });
   } catch (err) {
     console.error("Lead notification email failed", err);
+  }
+  try {
+    await sendLeadThankYou(lead);
+  } catch (err) {
+    console.error("Lead thank-you email failed", err);
   }
   res.status(201).json({ ok: true, lead: toLeadDto(lead) });
 }

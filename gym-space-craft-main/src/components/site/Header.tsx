@@ -4,6 +4,7 @@ import { ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight, Menu, X } from "lu
 import { cn } from "@/lib/utils";
 import { useSecretClicks } from "@/hooks/use-secret-clicks";
 import { useProjects } from "@/hooks/use-projects";
+import { useStartProjectLink } from "@/hooks/use-start-project-link";
 import logoBlack from "@/assets/logo-black.png";
 import logoWhite from "@/assets/logo-white.png";
 import thumbGym from "@/assets/project-1.jpg";
@@ -200,6 +201,7 @@ function MegaMenu({ item, onNavigate }: { item: NavItem; onNavigate: () => void 
 
 export function Header({ overHero = false }: { overHero?: boolean }) {
   const navigate = useNavigate();
+  const startProject = useStartProjectLink();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState<string | null>(null);
   const [mobile, setMobile] = useState(false);
@@ -328,8 +330,15 @@ export function Header({ overHero = false }: { overHero?: boolean }) {
 
         <div className="flex items-center gap-3">
           <Link
-            to="/start-a-project"
-            className="label-caps group relative hidden overflow-hidden border border-primary bg-primary px-6 py-3 tracking-[0.2em] text-primary-foreground transition-all duration-300 active:scale-[0.97] sm:inline-flex sm:items-center sm:gap-2"
+            to={startProject.to}
+            hash={startProject.hash}
+            onClick={startProject.onClick}
+            className={cn(
+              "label-caps group relative hidden overflow-hidden border px-6 py-3 tracking-[0.2em] transition-all duration-300 active:scale-[0.97] sm:inline-flex sm:items-center sm:gap-2",
+              headerOnDark
+                ? "border-background/40 text-background hover:border-primary hover:text-primary"
+                : "border-primary bg-primary text-primary-foreground",
+            )}
           >
             <span className="relative">Start a Project</span>
             <ArrowRight size={14} className="relative transition-transform duration-300 group-hover:translate-x-1" />
@@ -428,8 +437,12 @@ export function Header({ overHero = false }: { overHero?: boolean }) {
             );
           })}
           <Link
-            to="/start-a-project"
-            onClick={() => setMobile(false)}
+            to={startProject.to}
+            hash={startProject.hash}
+            onClick={(event) => {
+              startProject.onClick?.(event);
+              setMobile(false);
+            }}
             className="label-caps mt-6 flex items-center justify-center gap-3 bg-primary px-5 py-4 text-center text-primary-foreground"
           >
             Start a Project

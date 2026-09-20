@@ -10,6 +10,7 @@ export type RecognitionDoc = {
   title: string;
   category: string;
   year: string;
+  description: string;
   link: string;
   imageUrl: string;
   imagePublicId: string;
@@ -33,6 +34,7 @@ const recognitionSchema = new Schema<RecognitionDoc>(
     title: { type: String, required: true, trim: true },
     category: { type: String, required: true, trim: true },
     year: { type: String, default: "", trim: true },
+    description: { type: String, default: "", trim: true },
     link: { type: String, default: "/about#recognition", trim: true },
     imageUrl: { type: String, required: true, trim: true },
     imagePublicId: { type: String, default: "", trim: true },

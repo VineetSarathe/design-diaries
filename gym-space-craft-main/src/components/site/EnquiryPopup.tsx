@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { X } from "lucide-react";
+import { useStartProjectLink } from "@/hooks/use-start-project-link";
 
 const KEY = "dd-enquiry-popup-shown";
 
 export function EnquiryPopup() {
   const [open, setOpen] = useState(false);
+  const startProject = useStartProjectLink();
 
   useEffect(() => {
     if (sessionStorage.getItem(KEY)) return;
@@ -24,8 +26,8 @@ export function EnquiryPopup() {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-end justify-center bg-foreground/40 p-4 backdrop-blur-sm md:items-center">
-      <div className="animate-in fade-in slide-in-from-bottom-4 relative w-full max-w-md border border-border bg-card p-8 duration-500">
+    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-foreground/40 p-4 backdrop-blur-sm">
+      <div className="animate-in fade-in zoom-in-95 relative w-full max-w-md border border-border bg-card p-8 duration-500">
         <button
           aria-label="Close"
           onClick={() => setOpen(false)}
@@ -38,13 +40,16 @@ export function EnquiryPopup() {
           Tell us about your space
         </h3>
         <p className="mt-3 text-sm text-muted-foreground">
-          Share the basics — size, city, timeline — and Sagrika will come back with an initial view
-          on layout and feasibility.
+          Share your floor area, city and what you plan to build. Sagrika will review it and get back with an initial view on your space layout.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Link
-            to="/start-a-project"
-            onClick={() => setOpen(false)}
+            to={startProject.to}
+            hash={startProject.hash}
+            onClick={(event) => {
+              startProject.onClick?.(event);
+              setOpen(false);
+            }}
             className="label-caps bg-primary px-6 py-3.5 text-primary-foreground transition-all duration-300 hover:bg-foreground active:scale-[0.97]"
           >
             Start a Project

@@ -51,7 +51,7 @@ export function AboutSagrika({
             <span className="h-px w-10 bg-primary" />
             <span className="label-caps text-background/75">About</span>
           </div>
-          <h2 id="about-sagrika-title" className="display-lg max-w-xs text-background">
+          <h2 id="about-sagrika-title" className="display-xl max-w-xs text-background text-[clamp(2.15rem,4.6vw,3.6rem)] leading-[0.92]">
             <span className="block text-primary">Sagrika</span>
             <span className="block">Saraf</span>
           </h2>

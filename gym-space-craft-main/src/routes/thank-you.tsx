@@ -28,15 +28,17 @@ function ThankYou() {
 
   return (
     <>
-      <section className="mx-auto max-w-[110rem] px-5 pt-28 pb-16 md:px-10 md:pt-36 md:pb-20">
-        <Reveal>
-          <p className="label-caps text-primary">Enquiry received</p>
-          <h1 className="display-lg mt-5 max-w-4xl">Your note is with Sagrika</h1>
-          <p className="mt-8 max-w-xl text-lg text-muted-foreground">
-            You'll hear back within 24 hours on working days, with an initial view on layout,
-            feasibility and timeline. If it's urgent, WhatsApp is the fastest route.
-          </p>
-        </Reveal>
+      <section className="bg-foreground text-background">
+        <div className="mx-auto max-w-[110rem] px-5 pt-28 pb-16 md:px-10 md:pt-36 md:pb-20">
+          <Reveal>
+            <p className="label-caps text-primary">Enquiry received</p>
+            <h1 className="display-lg mt-5 max-w-4xl">Your note is with Sagrika</h1>
+            <p className="mt-8 max-w-xl text-lg text-background/80">
+              You'll hear back within 24 hours on working days, with an initial view on layout,
+              feasibility and timeline. If it's urgent, WhatsApp is the fastest route.
+            </p>
+          </Reveal>
+        </div>
       </section>
 
       <section className="border-t border-border">

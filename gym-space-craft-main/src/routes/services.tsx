@@ -98,7 +98,7 @@ function ServicesPage() {
 
       {/* Method — offset sequence */}
       <DarkBand>
-        <Chapter n="02" label="The method" title={<>HOW SAGRIKA DESIGNS AROUND THEM</>} />
+        <Chapter n="02" label="The method" title={<>How Sagrika Designs Modern Gyms</>} />
         <div className="mt-12 space-y-16 md:space-y-24">
           {method.map((m, i) => (
             <Reveal
@@ -154,15 +154,19 @@ function ServicesPage() {
 
       <TrustedBy compact />
 
-      <CtaBanner
-        compact
-        image={p5}
-        imageAlt="Full-width view of a completed gym training floor"
-      />
-
       <ReelsSection placement="services" />
 
       <FaqSection items={serviceFaqs} title="Common questions" />
+
+      <CtaBanner
+        compact
+        label="Start a Project"
+        title="SEE THE SPACE BEFORE IT IS BUILT"
+        body="Thinking gym, fitness studio, or wellness project? Let’s talk about your space, your needs, and what you want to build."
+        cta="Start a Project"
+        image={p5}
+        imageAlt="Full-width view of a completed gym training floor"
+      />
     </>
   );
 }

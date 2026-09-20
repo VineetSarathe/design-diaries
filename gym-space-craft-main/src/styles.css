@@ -270,6 +270,20 @@
   }
 }
 
+@keyframes splash-rise {
+  from {
+    transform: translate3d(0, 110%, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.splash-word {
+  animation: splash-rise 0.85s ease-out both;
+  transform: translate3d(0, 110%, 0);
+}
+
 @keyframes about-drift {
   from {
     transform: scale(1.05) translate3d(0, 0, 0);
@@ -279,9 +293,19 @@
   }
 }
 
+.logo-rail {
+  display: flex;
+  width: max-content;
+  animation: dd-marquee 38s linear infinite;
+  animation-play-state: running;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .marquee-track {
     animation: none;
+  }
+  .logo-rail {
+    animation: dd-marquee 38s linear infinite;
   }
   [class*="about-drift"] {
     animation: none;

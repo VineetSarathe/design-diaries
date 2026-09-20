@@ -22,6 +22,7 @@ type FormState = {
   title: string;
   category: string;
   year: string;
+  description: string;
   link: string;
 };
 
@@ -29,6 +30,7 @@ const EMPTY_FORM: FormState = {
   title: "",
   category: "Award",
   year: "",
+  description: "",
   link: "/about#recognition",
 };
 
@@ -99,6 +101,7 @@ function AdminRecognitionPage() {
       title: item.title,
       category: item.category,
       year: item.year,
+      description: item.description || "",
       link: item.link || "/about#recognition",
     });
     setEditingId(item.id);
@@ -164,6 +167,7 @@ function AdminRecognitionPage() {
       data.set("title", form.title);
       data.set("category", form.category);
       data.set("year", form.year);
+      data.set("description", form.description);
       data.set("link", form.link || "/about#recognition");
       if (extraSlots.length) {
         const extraOrder: string[] = [];
@@ -195,6 +199,7 @@ function AdminRecognitionPage() {
           title: savedItem.title,
           category: savedItem.category,
           year: savedItem.year,
+          description: savedItem.description || "",
           link: savedItem.link || "/about#recognition",
         });
         setImagePreview(savedItem.imageUrl);
@@ -309,6 +314,16 @@ function AdminRecognitionPage() {
                 value={form.title}
                 onChange={(event) => setField("title", event.target.value)}
                 className="mt-2 w-full border-b border-input bg-transparent py-3 outline-none focus:border-primary"
+              />
+            </label>
+            <label className="block">
+              <span className="label-caps text-muted-foreground">Supporting copy</span>
+              <textarea
+                value={form.description}
+                onChange={(event) => setField("description", event.target.value)}
+                rows={3}
+                className="mt-2 w-full resize-y border-b border-input bg-transparent py-3 outline-none focus:border-primary"
+                placeholder="Shown under the title, above View recognition"
               />
             </label>
             <div className="grid gap-6 sm:grid-cols-2">
@@ -491,6 +506,9 @@ function AdminRecognitionPage() {
                     <span className="label-caps text-[0.65rem] text-muted-foreground">
                       {item.category} · {item.year}
                     </span>
+                    {item.description ? (
+                      <span className="mt-1 block truncate text-sm text-muted-foreground">{item.description}</span>
+                    ) : null}
                   </span>
                   <button
                     type="button"

@@ -37,18 +37,16 @@ export function CaseStudySpotlight({
   journeyBackground,
 }: Props) {
   const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
   const [stage, setStage] = useState(0);
   const total = images.length;
   const go = (dir: number) => setActive((i) => (i + dir + total) % total);
   const current = images[active] ?? images[0]!;
 
   useEffect(() => {
-    if (paused || total < 2) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const id = window.setInterval(() => setActive((i) => (i + 1) % total), 4200);
+    if (total < 2) return;
+    const id = window.setInterval(() => setActive((i) => (i + 1) % total), 500);
     return () => window.clearInterval(id);
-  }, [paused, total]);
+  }, [total]);
 
   useEffect(() => {
     if (!journey.length) return;
@@ -75,11 +73,7 @@ export function CaseStudySpotlight({
       </div>
 
       {/* hero */}
-      <div
-        className="relative bg-foreground"
-        onMouseEnter={() => setPaused(true)}
-        onMouseLeave={() => setPaused(false)}
-      >
+      <div className="relative bg-foreground">
         <div className="relative grid lg:grid-cols-[minmax(0,1fr)_9.5rem]">
           <div className="relative min-h-[24rem] overflow-hidden sm:min-h-[28rem] lg:min-h-[38rem]">
             <span
@@ -97,7 +91,7 @@ export function CaseStudySpotlight({
                 loop
                 playsInline
                 aria-label={current.alt}
-                className="absolute inset-0 h-full w-full animate-[fade-in_800ms_ease-out] object-cover"
+                className="absolute inset-0 h-full w-full animate-[fade-in_300ms_ease-out] object-cover"
               />
             ) : (
               <img
@@ -105,7 +99,7 @@ export function CaseStudySpotlight({
                 src={current.src}
                 alt={current.alt}
                 loading="lazy"
-                className="absolute inset-0 h-full w-full animate-[fade-in_800ms_ease-out] object-cover motion-safe:scale-105 motion-safe:transition-transform motion-safe:duration-[5000ms] motion-safe:ease-out"
+                className="absolute inset-0 h-full w-full animate-[fade-in_300ms_ease-out] object-cover"
               />
             )}
             <span className="pointer-events-none absolute inset-0 bg-gradient-to-r from-foreground via-foreground/70 to-foreground/10" />
@@ -203,20 +197,22 @@ export function CaseStudySpotlight({
 
       {/* metrics rail */}
       <div className="bg-secondary">
-        <div className="mx-auto grid max-w-[110rem] gap-x-6 gap-y-8 px-5 py-10 sm:grid-cols-2 md:px-10 lg:grid-cols-5">
+        <div className="mx-auto grid max-w-[110rem] grid-cols-4 gap-x-2 gap-y-8 px-5 py-10 sm:gap-x-4 md:px-10 lg:grid-cols-5 lg:gap-x-6">
           {metrics.map((m, i) => (
             <Reveal
               key={m.l}
               delay={i * 90}
-              className={`group px-0 lg:px-8 ${i === 0 ? "" : "lg:border-l lg:border-border"}`}
+              className={`group min-w-0 px-0 lg:px-8 ${i === 0 ? "" : "border-l border-border lg:border-border"}`}
             >
-              <p className="font-display text-4xl leading-none tracking-tight text-foreground transition-colors duration-500 group-hover:text-primary md:text-5xl">
+              <p className="font-display text-[1.35rem] leading-none tracking-tight text-foreground transition-colors duration-500 group-hover:text-primary sm:text-3xl md:text-5xl">
                 {m.v}
               </p>
-              <p className="label-caps mt-3 text-muted-foreground">{m.l}</p>
+              <p className="label-caps mt-2 whitespace-pre-line text-[0.52rem] leading-[1.35] tracking-[0.14em] text-muted-foreground sm:mt-3 sm:text-[0.6875rem] sm:tracking-[0.26em]">
+                {m.l}
+              </p>
             </Reveal>
           ))}
-          <Reveal delay={metrics.length * 90} className="lg:border-l lg:border-border lg:px-8">
+          <Reveal delay={metrics.length * 90} className="col-span-4 lg:col-span-1 lg:border-l lg:border-border lg:px-8">
             <p className="text-sm leading-relaxed text-muted-foreground">{note}</p>
             <span className="mt-4 block h-px w-12 bg-primary" />
           </Reveal>

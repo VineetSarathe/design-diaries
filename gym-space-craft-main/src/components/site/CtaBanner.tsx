@@ -110,7 +110,7 @@ export function Testimonial({
               “
             </span>
           </div>
-          <blockquote className="mt-8 mb-8 max-w-3xl font-display text-2xl leading-[1.08] uppercase md:mt-10 md:mb-8 md:text-4xl">
+          <blockquote className="mt-8 mb-8 w-full max-w-none font-display text-2xl leading-[1.08] uppercase md:mt-10 md:mb-8 md:text-4xl">
             {quote}
           </blockquote>
           <div className="flex flex-wrap items-end justify-between gap-6 border-t border-background/20 pt-5">

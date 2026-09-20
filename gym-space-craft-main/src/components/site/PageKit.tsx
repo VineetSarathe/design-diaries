@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Reveal, useInView } from "./Reveal";
 import { cn } from "@/lib/utils";
+import { isVideoSrc, mediaPlaybackUrl, mediaPreviewUrl } from "@/lib/media";
 
 /** Thin gradient seam so a cream section flows into a dark one (and back). */
 export function Seam({
@@ -74,6 +75,7 @@ export function CinematicHero({
   title,
   intro,
   image,
+  images,
   imageAlt,
   meta,
   children,
@@ -82,13 +84,31 @@ export function CinematicHero({
   title: ReactNode;
   intro?: string;
   image: string;
+  images?: string[];
   imageAlt: string;
   meta?: { k: string; v: string }[];
   children?: ReactNode;
 }) {
   const [stage, setStage] = useState(0);
   const [offset, setOffset] = useState(0);
+  const [active, setActive] = useState(0);
   const ref = useRef<HTMLElement | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const slides = (images?.length ? images : [image]).filter(Boolean);
+  const safeActive = slides.length ? Math.min(active, slides.length - 1) : 0;
+  const current = slides[safeActive] || image;
+  const currentIsVideo = Boolean(current && isVideoSrc(current));
+  const previewSrc = current ? mediaPreviewUrl(current, 1920) : image;
+  const playbackSrc = current && currentIsVideo ? mediaPlaybackUrl(current, 1600) : "";
+
+  const advance = () => {
+    if (slides.length < 2) return;
+    setActive((index) => (index + 1) % slides.length);
+  };
+
+  useEffect(() => {
+    setActive(0);
+  }, [image, images?.join("|")]);
 
   useEffect(() => {
     const a = setTimeout(() => setStage(1), 100);
@@ -98,6 +118,22 @@ export function CinematicHero({
       clearTimeout(b);
     };
   }, []);
+
+  useEffect(() => {
+    if (slides.length < 2 || currentIsVideo) return;
+    const timer = window.setTimeout(advance, 1000);
+    return () => window.clearTimeout(timer);
+  }, [safeActive, slides.length, currentIsVideo]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !currentIsVideo) return;
+    video.muted = true;
+    video.volume = 0;
+    void video.play().catch(() => {
+      if (slides.length > 1) window.setTimeout(advance, 1000);
+    });
+  }, [currentIsVideo, playbackSrc, slides.length]);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -120,22 +156,43 @@ export function CinematicHero({
     };
   }, []);
 
+  const mediaStyle = {
+    opacity: stage >= 2 ? 0.55 : 0,
+    transform: `translateY(${offset}px) scale(${stage >= 2 ? 1 : 1.08})`,
+  };
+
   return (
     <section
       ref={ref}
       className="relative flex min-h-[74svh] items-end overflow-hidden bg-foreground"
     >
       <img
-        src={image}
+        key={`still-${previewSrc}`}
+        src={previewSrc}
         alt={imageAlt}
         width={1920}
         height={1080}
         className="absolute inset-0 h-[118%] w-full object-cover transition-all duration-[1600ms] ease-out"
-        style={{
-          opacity: stage >= 2 ? 0.55 : 0,
-          transform: `translateY(${offset}px) scale(${stage >= 2 ? 1 : 1.08})`,
-        }}
+        style={mediaStyle}
       />
+      {currentIsVideo && playbackSrc ? (
+        <video
+          key={playbackSrc}
+          ref={videoRef}
+          src={playbackSrc}
+          poster={previewSrc}
+          muted
+          autoPlay
+          playsInline
+          preload="metadata"
+          onEnded={advance}
+          onError={() => {
+            if (slides.length > 1) window.setTimeout(advance, 1000);
+          }}
+          className="absolute inset-0 h-[118%] w-full object-cover transition-all duration-[1600ms] ease-out"
+          style={mediaStyle}
+        />
+      ) : null}
       <div
         aria-hidden
         className="absolute inset-0 bg-gradient-to-t from-foreground via-foreground/55 to-foreground/25"
@@ -501,7 +558,7 @@ export function OffsetPanel({
 }) {
   return (
     <Reveal delay={delay} className="group h-full">
-      <article className="relative flex h-full min-h-[20rem] flex-col overflow-hidden bg-foreground lg:min-h-[26rem]">
+      <article className="relative flex h-full min-h-[16rem] flex-col overflow-hidden bg-foreground lg:min-h-[20rem]">
         <img
           src={image}
           alt={imageAlt}
@@ -514,9 +571,9 @@ export function OffsetPanel({
           aria-hidden
           className="pointer-events-none absolute inset-0 bg-gradient-to-t from-foreground via-foreground/40 to-transparent"
         />
-        <div className="relative z-10 flex h-full min-h-[20rem] flex-1 flex-col p-4 lg:min-h-[26rem] lg:p-5">
-          <span className="font-display text-4xl leading-none text-primary lg:text-[2.75rem]">{n}</span>
-          <div className="mt-auto pt-8">
+        <div className="relative z-10 flex h-full min-h-[16rem] flex-1 flex-col p-4 lg:min-h-[20rem] lg:p-5">
+          <span className="font-display text-5xl leading-none text-primary lg:text-6xl">{n}</span>
+          <div className="mt-auto pt-5">
             <h3 className="font-display text-[0.95rem] uppercase leading-snug text-background lg:text-base">
               {title}
             </h3>

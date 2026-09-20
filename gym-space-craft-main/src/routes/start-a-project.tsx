@@ -14,6 +14,7 @@ import {
 import { startFaqs } from "@/data/company";
 import { useContactSettings } from "@/hooks/use-contact-settings";
 import { useProjects } from "@/hooks/use-projects";
+import { PROJECT_ENQUIRY_ID } from "@/hooks/use-start-project-link";
 import { whatsappHref } from "@/lib/contact";
 import heroImg from "@/assets/hero-gym.jpg";
 import gymLayout from "@/assets/gym-layout.jpg";
@@ -88,7 +89,7 @@ function StartProject() {
             </div>
           </Reveal>
 
-          <Reveal delay={120} className="bg-background p-5 text-foreground shadow-2xl md:p-8">
+          <Reveal delay={120} id={PROJECT_ENQUIRY_ID} className="scroll-mt-28 bg-background p-5 text-foreground shadow-2xl md:p-8">
             <ProjectEnquiryForm />
           </Reveal>
         </div>

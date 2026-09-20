@@ -8,7 +8,7 @@ import { attachOriginalTestimonialImages, migrateTestimonialImagesToCloudinary }
 import { seedClientLogos, migrateClientLogosToCloudinary } from "./seed/client-logo.seed";
 import { seedAboutSettings } from "./seed/about-settings.seed";
 import { seedProjects, migrateProjectImagesToCloudinary, backfillProjectReviews } from "./seed/project.seed";
-import { seedRecognitions, migrateRecognitionImagesToCloudinary } from "./seed/recognition.seed";
+import { seedRecognitions, migrateRecognitionImagesToCloudinary, backfillRecognitionDescriptions } from "./seed/recognition.seed";
 import { seedBlogs, attachBlogPointImages, migrateBlogImagesToCloudinary } from "./seed/blog.seed";
 import { seedInstagramFeed, seedWorkInstagramFeed, seedAboutInstagramFeed, seedResourcesInstagramFeed, seedServicesInstagramFeed } from "./seed/instagram-feed.seed";
 import { seedCallSettings } from "./seed/call-settings.seed";
@@ -29,6 +29,7 @@ async function start() {
   await backfillProjectReviews();
   try {
     await seedRecognitions();
+    await backfillRecognitionDescriptions();
   } catch (err) {
     console.error("Recognition seed failed", err);
   }

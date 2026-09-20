@@ -38,7 +38,8 @@ export function SagrikaMethod({
   label = "The",
   title = "Sagrika",
   titleAccent = "Method",
-  kicker = "From insight to impact",
+  kicker = "From concept to completion",
+  description = "Our gym interior design process brings together spatial planning, design development and brand thinking to create a space that works beautifully from day one.",
   className,
 }: {
   steps?: MethodStep[];
@@ -46,10 +47,12 @@ export function SagrikaMethod({
   title?: string;
   titleAccent?: string;
   kicker?: string;
+  description?: string;
   className?: string;
 }) {
   const { ref, visible } = useInView<HTMLDivElement>(0.2);
   const [hovered, setHovered] = useState<number | null>(null);
+  const [paused, setPaused] = useState(false);
   const [auto, setAuto] = useState(0);
   /* Position of the travelling "snake" head as a 0–1 fraction of the path. */
   const [progress, setProgress] = useState(0);
@@ -58,71 +61,26 @@ export function SagrikaMethod({
   const [pathLen, setPathLen] = useState(0);
 
   const frac = (i: number) => (i + 0.5) / steps.length;
+  const active = hovered ?? auto;
 
   useEffect(() => {
     if (pathRef.current) setPathLen(pathRef.current.getTotalLength());
   }, []);
 
-  /* One continuous journey: the head travels along the wave to a stage,
-     holds there while that stage (and its image) is highlighted, then moves
-     on to the next. Pauses on hover/focus and for reduced motion. */
   useEffect(() => {
-    if (!visible) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      progressRef.current = frac(auto);
-      setProgress(frac(auto));
-      return;
-    }
-    if (hovered !== null) {
-      progressRef.current = frac(hovered);
-      setProgress(frac(hovered));
-      return;
-    }
+    const i = hovered ?? auto;
+    progressRef.current = frac(i);
+    setProgress(frac(i));
+  }, [auto, hovered, steps.length]);
 
-    const TRAVEL = 900;
-    const HOLD = 2400;
-    let idx = auto;
-    let from = progressRef.current;
-    let to = frac(idx);
-    let phase: "travel" | "hold" = "travel";
-    let start = performance.now();
-    let raf = 0;
+  useEffect(() => {
+    if (paused) return;
+    const timer = window.setInterval(() => {
+      setAuto((current) => (current + 1) % steps.length);
+    }, 500);
+    return () => window.clearInterval(timer);
+  }, [paused, steps.length]);
 
-    const ease = (t: number) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
-
-    const tick = (now: number) => {
-      const elapsed = now - start;
-      if (phase === "travel") {
-        const t = Math.min(1, elapsed / TRAVEL);
-        const p = from + (to - from) * ease(t);
-        progressRef.current = p;
-        setProgress(p);
-        if (t >= 1) {
-          phase = "hold";
-          start = now;
-          setAuto(idx);
-        }
-      } else if (elapsed >= HOLD) {
-        idx = (idx + 1) % steps.length;
-        from = progressRef.current;
-        to = frac(idx);
-        if (idx === 0) {
-          // wrap back to the start of the path without a reverse crawl
-          from = 0;
-          progressRef.current = 0;
-          setProgress(0);
-        }
-        phase = "travel";
-        start = now;
-      }
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [visible, hovered, steps.length]);
-
-  const active = hovered ?? (visible ? auto : null);
   const setActive = (i: number | null) => {
     setHovered(i);
     if (i !== null) setAuto(i);
@@ -170,14 +128,21 @@ export function SagrikaMethod({
             <span className="h-px w-10 bg-primary" />
             <p className="label-caps text-background/45">{label}</p>
           </div>
-          <h2 className="display-statement mt-4 text-[clamp(2.6rem,6.4vw,5.2rem)]">
-            <span className="text-primary">{title}</span>{" "}
-            <span className="text-background">{titleAccent}</span>
-          </h2>
+          <div className="mt-4 grid items-center gap-8 lg:grid-cols-[minmax(0,max-content)_minmax(0,1fr)] lg:gap-12">
+            <h2 className="display-statement whitespace-nowrap text-[clamp(2.2rem,5.2vw,5.2rem)]">
+              <span className="text-primary">{title}</span>{" "}
+              <span className="text-background">{titleAccent}</span>
+            </h2>
+            <p className="max-w-xl text-sm leading-relaxed text-background/55 lg:justify-self-end lg:text-right">
+              {description}
+            </p>
+          </div>
           <div className="mt-6 flex flex-wrap items-center gap-5">
             <p className="label-caps text-background/40">{kicker}</p>
             <span className="h-px flex-1 bg-background/12" />
-            <p className="label-caps text-background/35">Six stages · One standard</p>
+            <p className="label-caps invisible select-none" aria-hidden="true">
+              Six stages · One standard
+            </p>
           </div>
         </div>
 
@@ -191,10 +156,6 @@ export function SagrikaMethod({
                 <button
                   type="button"
                   key={s.k}
-                  onMouseEnter={() => setActive(i)}
-                  onMouseLeave={() => setActive(null)}
-                  onFocus={() => setActive(i)}
-                  onBlur={() => setActive(null)}
                   className="group text-left"
                   style={{
                     opacity: visible ? 1 : 0,
@@ -303,10 +264,22 @@ export function SagrikaMethod({
                 <button
                   type="button"
                   key={s.k}
-                  onMouseEnter={() => setActive(i)}
-                  onMouseLeave={() => setActive(null)}
-                  onFocus={() => setActive(i)}
-                  onBlur={() => setActive(null)}
+                  onMouseEnter={() => {
+                    setPaused(true);
+                    setActive(i);
+                  }}
+                  onMouseLeave={() => {
+                    setPaused(false);
+                    setActive(null);
+                  }}
+                  onFocus={() => {
+                    setPaused(true);
+                    setActive(i);
+                  }}
+                  onBlur={() => {
+                    setPaused(false);
+                    setActive(null);
+                  }}
                   className={cn(
                     "group relative text-left transition-transform duration-700 ease-out",
                     on ? "z-10 lg:scale-[1.06]" : "lg:scale-100",

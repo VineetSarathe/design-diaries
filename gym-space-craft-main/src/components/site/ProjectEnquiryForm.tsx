@@ -24,7 +24,7 @@ export function ProjectEnquiryForm() {
         phone: String(fd.get("phone") ?? ""),
         email: String(fd.get("email") ?? ""),
         city: String(fd.get("city") ?? ""),
-        planning: String(fd.get("planning") ?? "New Gym") as (typeof planningOptions)[number],
+        planning: String(fd.get("planning") ?? ""),
         description: String(fd.get("description") ?? ""),
         file,
       });
@@ -58,7 +58,8 @@ export function ProjectEnquiryForm() {
 
       <label className="block">
         <span className="label-caps text-muted-foreground">What are you planning</span>
-        <select required name="planning" defaultValue="New Gym" className={inputClass}>
+        <select name="planning" defaultValue="" className={inputClass}>
+          <option value="">Select (optional)</option>
           {planningOptions.map((o) => (
             <option key={o} value={o}>
               {o}
@@ -70,11 +71,10 @@ export function ProjectEnquiryForm() {
       <label className="block">
         <span className="label-caps text-muted-foreground">Tell us about the space</span>
         <textarea
-          required
           name="description"
           rows={4}
           maxLength={1200}
-          placeholder="Floor area, what you plan to run in it, where you are in the process."
+          placeholder="Floor area, what you plan to run in it, where you are in the process. Optional."
           className={`${inputClass} resize-none`}
         />
       </label>

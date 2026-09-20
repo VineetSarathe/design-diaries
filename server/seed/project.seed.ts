@@ -130,21 +130,10 @@ const SEED = [
   },
 ] as const;
 
-const PLACEHOLDER_QUOTES = new Set([
-  "Sagrika asked about our class timings and trainer roster before she asked about colours. That is why the floor works at 7am.",
-  "We were told we would have to pick one format. We run both, at the same time.",
-  "Same shelf, same stock, different position. It sells now.",
-  "Nine more bikes per class changed the maths of the whole business.",
-  "The night shift is our busiest quiet hour. The floor holds up without anyone watching it.",
-  "Our cleaning routine went from an hour to twenty minutes.",
-  "The basement no longer feels like a basement.",
-  "The constraints became the plan.",
-]);
-
 const PROJECT_REVIEWS: Record<string, { quote: string; author: string; role: string }> = {
   "iron-standard": {
     quote:
-      "The Strength Culture is more than just a gym. We had a bucket of ideas and Sagrika helped us turn it into something much bigger than we ever thought possible. Her work was so much more than we expected and we are so thankful to Design Diaries by Sagrika.",
+      "We had a bucket of ideas and Sagrika helped us turn it into something much bigger than we ever thought possible.",
     author: "Arushi Kajaria",
     role: "The Strength Culture",
   },
@@ -153,35 +142,35 @@ const PROJECT_REVIEWS: Record<string, { quote: string; author: string; role: str
     author: "Aastik Khajuria",
     role: "A3 Gym",
   },
-  "north-block-strength": {
-    quote: "We wanted a bigger and better gym. Despite managing the project remotely, Sagrika made the process smooth and the final gym came out just as we wanted.",
-    author: "Owner",
-    role: "FIT FIRST GYM",
-  },
-  "rep-house-cycle": {
-    quote: "It was a bigger project for me and after talking to Sagrika, I decided to give it a try. It was more than we had thought. She was there to help with every detail from the beginning to the end and was always available when we needed her. She made sure we got the right things done the right way.",
-    author: "Owner",
-    role: "The Body Move Fitness",
-  },
-  "forge-24": {
-    quote: "We wanted a bigger gym but also wanted to reuse things from our previous space. Sagrika made it all work beautifully and turned the old garage-like space into a premium gym.",
-    author: "Owner",
-    role: "A3 FITNESS GYM 2",
-  },
-  "still-house-recovery": {
-    quote: "We wanted a gym with different training areas on different floors. Sagrika brought it all together and gave the entire gym a uniform look.",
-    author: "Owner",
-    role: "DAWN'S GYM",
-  },
   "fitness-manzil-gym": {
-    quote: "We wanted a premium gym to elevate our brand. Sagrika used the basement space to its full potential and created a gym that feels different and memorable.",
-    author: "Owner",
+    quote: "Sagrika used our basement space to its full potential and created a premium gym that feels memorable.",
+    author: "OWNER",
     role: "FITNESS MANZIL GYM",
   },
   "outwork-fitness-gym": {
-    quote: "I wanted to do something different from any other commercial gym, especially with natural light and a different look. I saw Sagrika's work on Instagram and knew she understood what I was looking for. I am really pleased with the outcome and very grateful to her for creating such a beautiful space.",
-    author: "Owner",
+    quote: "Sagrika understood the different look we wanted and created a space we are truly pleased with.",
+    author: "OWNER",
     role: "OUTWORK FITNESS GYM",
+  },
+  "forge-24": {
+    quote: "Sagrika made our existing elements work beautifully and transformed the old garage-like space into a premium gym.",
+    author: "OWNER",
+    role: "A3 FITNESS GYM 2",
+  },
+  "still-house-recovery": {
+    quote: "Sagrika brought different training areas across multiple floors together and gave the entire gym a uniform look.",
+    author: "OWNER",
+    role: "DAWN'S GYM",
+  },
+  "north-block-strength": {
+    quote: "Despite managing the project remotely, Sagrika made the process smooth and delivered the bigger gym we wanted.",
+    author: "OWNER",
+    role: "FIT FIRST GYM",
+  },
+  "rep-house-cycle": {
+    quote: "Sagrika was there for every detail from beginning to end and made sure everything was done right.",
+    author: "OWNER",
+    role: "The Body Move Fitness",
   },
 };
 
@@ -244,15 +233,9 @@ export async function backfillProjectReviews(): Promise<void> {
     docs.map((doc) => {
       const review = PROJECT_REVIEWS[doc.slug];
       if (!review) return Promise.resolve();
-      const isPlaceholder =
-        !doc.reviewQuote ||
-        PLACEHOLDER_QUOTES.has(doc.reviewQuote) ||
-        doc.reviewAuthor === "Placeholder Client" ||
-        (doc.slug === "iron-standard" && doc.reviewAuthor === "The Strength Culture");
-      if (!isPlaceholder && doc.reviewQuote === review.quote && doc.reviewAuthor === review.author) {
+      if (doc.reviewQuote === review.quote && doc.reviewAuthor === review.author && doc.reviewRole === review.role) {
         return Promise.resolve();
       }
-      if (!isPlaceholder && doc.reviewQuote !== review.quote) return Promise.resolve();
       return Project.updateOne(
         { _id: doc._id },
         {

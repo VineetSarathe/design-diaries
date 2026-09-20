@@ -29,6 +29,14 @@ function AdminContactPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  const [smtpUser, setSmtpUser] = useState("");
+  const [smtpPass, setSmtpPass] = useState("");
+  const [smtpConfigured, setSmtpConfigured] = useState(false);
+  const [savingMail, setSavingMail] = useState(false);
+  const [testingMail, setTestingMail] = useState(false);
+  const [mailError, setMailError] = useState<string | null>(null);
+  const [mailSaved, setMailSaved] = useState(false);
+  const [mailTest, setMailTest] = useState<string | null>(null);
 
   useEffect(() => {
     if (!admin) return;
@@ -36,6 +44,13 @@ function AdminContactPage() {
       .getContactSettings()
       .then((res) => setValues({ ...DEFAULT_CONTACT, ...res.settings }))
       .catch((err) => setError(err instanceof Error ? err.message : "Could not load settings"));
+    adminApi
+      .getMailSettings()
+      .then((res) => {
+        setSmtpUser(res.settings.smtpUser);
+        setSmtpConfigured(res.settings.configured);
+      })
+      .catch((err) => setMailError(err instanceof Error ? err.message : "Could not load mail settings"));
   }, [admin]);
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -51,6 +66,39 @@ function AdminContactPage() {
       setError(err instanceof Error ? err.message : "Could not save settings");
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function onSaveMail(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setSavingMail(true);
+    setMailError(null);
+    setMailSaved(false);
+    setMailTest(null);
+    try {
+      const res = await adminApi.updateMailSettings(smtpUser, smtpPass);
+      setSmtpUser(res.settings.smtpUser);
+      setSmtpConfigured(res.settings.configured);
+      setSmtpPass("");
+      setMailSaved(true);
+    } catch (err) {
+      setMailError(err instanceof Error ? err.message : "Could not save mail settings");
+    } finally {
+      setSavingMail(false);
+    }
+  }
+
+  async function onTestMail() {
+    setTestingMail(true);
+    setMailError(null);
+    setMailTest(null);
+    try {
+      const res = await adminApi.testMailSettings();
+      setMailTest(`Test email sent to ${res.to}`);
+    } catch (err) {
+      setMailError(err instanceof Error ? err.message : "Could not send test email");
+    } finally {
+      setTestingMail(false);
     }
   }
 
@@ -95,6 +143,64 @@ function AdminContactPage() {
           >
             {saving ? "Saving…" : "Save Changes"}
           </button>
+        </form>
+
+        <form onSubmit={(event) => void onSaveMail(event)} className="mt-16 space-y-6 border-t border-border pt-12">
+          <p className="label-caps text-primary">Thank-you email</p>
+          <h2 className="font-display text-2xl uppercase">Gmail SMTP</h2>
+          <p className="text-sm text-muted-foreground">
+            Web3Forms only notifies the studio. To send a thank-you to the person who submits Start a
+            Project, connect Gmail here. Turn on 2-Step Verification, then create an App Password at
+            myaccount.google.com/apppasswords and paste it below.
+          </p>
+          {smtpConfigured && (
+            <p className="text-sm text-muted-foreground">Gmail is connected. New project enquiries will receive a thank-you email.</p>
+          )}
+          <label className="block">
+            <span className="label-caps text-muted-foreground">Gmail address</span>
+            <input
+              required
+              type="email"
+              value={smtpUser}
+              onChange={(event) => setSmtpUser(event.target.value)}
+              placeholder="designdiariesbysagrika@gmail.com"
+              className="mt-2 w-full border-b border-input bg-transparent py-3 text-base outline-none transition-colors focus:border-primary"
+            />
+          </label>
+          <label className="block">
+            <span className="label-caps text-muted-foreground">
+              App password {smtpConfigured ? "(leave blank to keep the saved one)" : ""}
+            </span>
+            <input
+              required={!smtpConfigured}
+              type="password"
+              value={smtpPass}
+              onChange={(event) => setSmtpPass(event.target.value)}
+              autoComplete="new-password"
+              placeholder="xxxx xxxx xxxx xxxx"
+              className="mt-2 w-full border-b border-input bg-transparent py-3 text-base outline-none transition-colors focus:border-primary"
+            />
+          </label>
+          {mailError && <p className="text-sm text-destructive">{mailError}</p>}
+          {mailSaved && <p className="text-sm text-muted-foreground">Saved. Gmail can now send thank-you emails.</p>}
+          {mailTest && <p className="text-sm text-muted-foreground">{mailTest}</p>}
+          <div className="flex flex-wrap gap-3">
+            <button
+              type="submit"
+              disabled={savingMail}
+              className="label-caps bg-primary px-7 py-4 text-primary-foreground transition-colors hover:bg-foreground disabled:opacity-60"
+            >
+              {savingMail ? "Checking Gmail…" : "Save Gmail SMTP"}
+            </button>
+            <button
+              type="button"
+              disabled={!smtpConfigured || testingMail}
+              onClick={() => void onTestMail()}
+              className="label-caps border border-input px-7 py-4 transition-colors hover:border-primary hover:text-primary disabled:opacity-60"
+            >
+              {testingMail ? "Sending…" : "Send test email"}
+            </button>
+          </div>
         </form>
       </section>
     </AdminShell>

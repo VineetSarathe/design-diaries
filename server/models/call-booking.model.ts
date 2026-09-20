@@ -5,6 +5,7 @@ export type CallBookingDoc = {
   slot: string;
   name: string;
   phone: string;
+  email: string;
   city: string;
   message: string;
   createdAt: Date;
@@ -17,6 +18,7 @@ const callBookingSchema = new Schema<CallBookingDoc>(
     slot: { type: String, required: true, trim: true },
     name: { type: String, required: true, trim: true },
     phone: { type: String, required: true, trim: true },
+    email: { type: String, default: "", trim: true, lowercase: true },
     city: { type: String, required: true, trim: true },
     message: { type: String, default: "", trim: true },
   },

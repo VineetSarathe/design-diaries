@@ -9,6 +9,8 @@ export type ContactSettingsDoc = {
   whatsapp: string;
   instagram: string;
   linkedin: string;
+  smtpUser: string;
+  smtpPass: string;
 };
 
 const contactSettingsSchema = new Schema<ContactSettingsDoc>(
@@ -19,6 +21,8 @@ const contactSettingsSchema = new Schema<ContactSettingsDoc>(
     whatsapp: { type: String, required: true, trim: true },
     instagram: { type: String, default: "https://www.instagram.com/designdiaries_by_sagrika_?stkn=ZmkzMWY4MnNydnpu", trim: true },
     linkedin: { type: String, default: "https://www.linkedin.com/in/designdiariesbysagrika", trim: true },
+    smtpUser: { type: String, default: "", trim: true, lowercase: true },
+    smtpPass: { type: String, default: "", trim: true, select: false },
   },
   { timestamps: true },
 );

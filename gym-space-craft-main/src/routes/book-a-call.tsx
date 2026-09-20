@@ -76,6 +76,7 @@ function BookACall() {
         name: String(fd.get("name") ?? ""),
         phone: String(fd.get("phone") ?? ""),
         city: String(fd.get("city") ?? ""),
+        email: String(fd.get("email") ?? ""),
         message: String(fd.get("message") ?? ""),
       });
       setState("done");
@@ -159,18 +160,23 @@ function BookACall() {
                     <input required name="phone" type="tel" placeholder="+91" className={inputClass} />
                   </label>
                 </div>
-                <label className="block">
-                  <span className="label-caps text-muted-foreground">City</span>
-                  <input required name="city" type="text" placeholder="Indore" className={inputClass} />
-                </label>
+                <div className="grid gap-6 sm:grid-cols-2">
+                  <label className="block">
+                    <span className="label-caps text-muted-foreground">City</span>
+                    <input required name="city" type="text" placeholder="Indore" className={inputClass} />
+                  </label>
+                  <label className="block">
+                    <span className="label-caps text-muted-foreground">Email</span>
+                    <input required name="email" type="email" placeholder="you@example.com" className={inputClass} />
+                  </label>
+                </div>
                 <label className="block">
                   <span className="label-caps text-muted-foreground">Short message</span>
                   <textarea
-                    required
                     name="message"
                     rows={4}
                     maxLength={400}
-                    placeholder="A line about the space or what you want to discuss."
+                    placeholder="A line about the space or what you want to discuss. Optional."
                     className={`${inputClass} resize-none`}
                   />
                 </label>

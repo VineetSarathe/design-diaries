@@ -1,12 +1,11 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { Reveal } from "@/components/site/Reveal";
-import { ProjectCard } from "@/components/site/ProjectCard";
+import { ProjectCard, toProjectCardData } from "@/components/site/ProjectCard";
 import { CtaBanner, Testimonial } from "@/components/site/CtaBanner";
 import { ProjectOutcomeRail, ProjectPlanFeature, ProjectVisualStory } from "@/components/site/ProjectStory";
 import {
   CinematicHero,
   DarkBand,
-  Seam,
 } from "@/components/site/PageKit";
 import { getProject, type Project } from "@/data/projects";
 import { API_BASE } from "@/lib/api";
@@ -81,6 +80,7 @@ function ProjectDetail() {
   const { projects, getProject } = useProjects();
   const project = getProject(loaded.slug) ?? loaded;
   const related = projects.filter((p) => p.slug !== project.slug).slice(0, 3);
+  const heroSlides = toProjectCardData(project).images;
 
   return (
     <>
@@ -88,7 +88,8 @@ function ProjectDetail() {
         label={project.cardLabel ?? project.category}
         title={project.detail?.title ?? `${project.name}${project.location ? ` · ${project.location}` : ""}`}
         intro={project.insight}
-        image={project.hero}
+        image={project.hero || heroSlides[0] || project.card}
+        images={heroSlides}
         imageAlt={`${project.name}${project.location ? `, ${project.location}` : ""} — main training floor`}
       >
         <div className="mt-8 flex flex-wrap items-center gap-6">
@@ -108,10 +109,8 @@ function ProjectDetail() {
 
       <Testimonial {...project.testimonial} />
 
-      <Seam to="dark" />
-
       {/* Related — dark */}
-      <DarkBand>
+      <DarkBand className="bg-foreground [background-image:none]">
         <Reveal className="flex flex-wrap items-end justify-between gap-6">
           <h2 className="display-lg">More projects</h2>
           <Link to="/work" className="label-caps link-underline hover:text-primary">

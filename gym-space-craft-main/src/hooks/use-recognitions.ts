@@ -18,6 +18,7 @@ function toItem(item: Recognition, index: number): RecognitionItem {
     image: item.imageUrl,
     images: media.map((entry) => entry.url),
     media,
+    description: item.description || "",
     link: item.link || "/about#recognition",
   };
 }

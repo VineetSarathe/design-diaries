@@ -38,6 +38,7 @@ export type CallBooking = {
   slot: string;
   name: string;
   phone: string;
+  email: string;
   city: string;
   message: string;
   createdAt: string;
@@ -92,6 +93,7 @@ export type Recognition = {
   title: string;
   category: string;
   year: string;
+  description?: string;
   link: string;
   imageUrl: string;
   imagePublicId?: string;
@@ -205,6 +207,18 @@ export const adminApi = {
       method: "PUT",
       body: JSON.stringify(settings),
     });
+  },
+  getMailSettings() {
+    return apiRequest<{ settings: { smtpUser: string; configured: boolean } }>("/settings/mail");
+  },
+  updateMailSettings(smtpUser: string, smtpPass: string) {
+    return apiRequest<{ settings: { smtpUser: string; configured: boolean } }>("/settings/mail", {
+      method: "PUT",
+      body: JSON.stringify({ smtpUser, smtpPass }),
+    });
+  },
+  testMailSettings() {
+    return apiRequest<{ to: string }>("/settings/mail/test", { method: "POST" });
   },
   getHomepageSettings() {
     return apiRequest<{ settings: HomepageSettings }>("/settings/homepage");

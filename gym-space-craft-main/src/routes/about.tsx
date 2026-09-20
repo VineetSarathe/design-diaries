@@ -4,13 +4,13 @@ import { ArrowRight, ArrowUpRight, Instagram, MoveDownRight } from "lucide-react
 import { Reveal } from "@/components/site/Reveal";
 import { AwardsMarquee } from "@/components/site/AwardsMarquee";
 import { AboutJourney } from "@/components/site/AboutJourney";
+import { RecognitionCards, type RecognitionItem } from "@/components/site/Recognition";
 import { useContactSettings } from "@/hooks/use-contact-settings";
 import { useAboutSettings } from "@/hooks/use-about-settings";
 import { useInstagramFeed } from "@/hooks/use-instagram-feed";
 import { useRecognitions } from "@/hooks/use-recognitions";
 import type { InstagramCard } from "@/lib/admin-api";
 import { mediaPreviewUrl } from "@/lib/media";
-import type { RecognitionItem } from "@/components/site/Recognition";
 import { storyArc } from "@/data/company";
 import founderImg from "@/assets/founder.webp";
 import journey01 from "@/assets/journey-01.webp";
@@ -86,7 +86,7 @@ function AboutPage() {
 
   return (
     <>
-      <section className="relative min-h-[82svh] overflow-hidden bg-foreground pt-24 text-background md:pt-28">
+      <section className="relative min-h-[82svh] overflow-hidden border-b border-background/15 bg-foreground pt-24 text-background md:pt-28">
         <img src={heroGym} alt="A completed Design Diaries gym interior" width={1800} height={1200} className="absolute inset-0 h-full w-full scale-105 object-cover opacity-45 motion-safe:animate-[about-drift_18s_ease-in-out_infinite_alternate]" />
         <span className="absolute inset-0 bg-gradient-to-r from-foreground via-foreground/70 to-foreground/25" />
         <span className="absolute inset-0 bg-gradient-to-t from-foreground via-transparent to-foreground/45" />
@@ -126,8 +126,6 @@ function AboutPage() {
         </div>
       </section>
 
-      <AboutJourney items={journey} />
-
       <section className="overflow-hidden bg-foreground text-background">
         <div className="mx-auto max-w-[110rem] px-5 py-18 md:px-10 md:py-28">
           <div className="grid gap-8 lg:grid-cols-[0.82fr_1.18fr] lg:items-center">
@@ -156,6 +154,8 @@ function AboutPage() {
           </div>
         </div>
       </section>
+
+      <AboutJourney items={journey} />
 
       <section className="overflow-hidden bg-foreground text-background">
         <div className="mx-auto max-w-[110rem] px-5 py-18 md:px-10 md:py-28">
@@ -202,14 +202,12 @@ function AboutPage() {
           <Reveal className="grid gap-8 border-t border-background/15 py-10 lg:grid-cols-[0.8fr_1.2fr]">
             <div>
               <p className="label-caps text-primary">Awards and recognition</p>
-              <h2 className="display-lg mt-5">Recognition that follows <span className="accent-italic">the work</span></h2>
-            </div>
-            <div className="grid gap-px bg-background/15 sm:grid-cols-2">
-              {recognitions.map((item, index) => (
-                <div key={`${item.number}-${item.title}`} className="group relative overflow-hidden bg-foreground p-5 transition-colors hover:bg-background/[0.06]"><span className="absolute inset-y-0 left-0 w-0.5 origin-bottom scale-y-0 bg-primary transition-transform duration-500 group-hover:scale-y-100" /><span className="font-display text-xs text-primary">{item.number || String(index + 1).padStart(2, "0")}</span><h3 className="mt-4 text-sm">{item.title}</h3><p className="mt-2 text-sm text-background/50">{item.category} {item.year}</p></div>
-              ))}
+              <h2 className="display-lg mt-5">
+                Recognition that follows <span className="accent-italic">the work</span>
+              </h2>
             </div>
           </Reveal>
+          <RecognitionCards items={recognitions} />
           <AwardsMarquee />
         </div>
       </section>

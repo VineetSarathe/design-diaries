@@ -111,7 +111,7 @@ export const projects: Project[] = [
     },
     testimonial: {
       quote:
-        "The Strength Culture is more than just a gym. We had a bucket of ideas and Sagrika helped us turn it into something much bigger than we ever thought possible. Her work was so much more than we expected and we are so thankful to Design Diaries by Sagrika.",
+        "We had a bucket of ideas and Sagrika helped us turn it into something much bigger than we ever thought possible.",
       author: "Arushi Kajaria",
       role: "The Strength Culture",
     },
@@ -222,8 +222,8 @@ export const projects: Project[] = [
       ],
     },
     testimonial: {
-      quote: "We wanted a bigger and better gym. Despite managing the project remotely, Sagrika made the process smooth and the final gym came out just as we wanted.",
-      author: "Owner",
+      quote: "Despite managing the project remotely, Sagrika made the process smooth and delivered the bigger gym we wanted.",
+      author: "OWNER",
       role: "FIT FIRST GYM",
     },
   },
@@ -276,8 +276,8 @@ export const projects: Project[] = [
       outcomes: [{ k: "Project type", v: "CLUB-BASED FITNESS SPACE" }],
     },
     testimonial: {
-      quote: "It was a bigger project for me and after talking to Sagrika, I decided to give it a try. It was more than we had thought. She was there to help with every detail from the beginning to the end and was always available when we needed her. She made sure we got the right things done the right way.",
-      author: "Owner",
+      quote: "Sagrika was there for every detail from beginning to end and made sure everything was done right.",
+      author: "OWNER",
       role: "The Body Move Fitness",
     },
   },
@@ -329,8 +329,8 @@ export const projects: Project[] = [
       outcomes: [{ k: "Project type", v: "EXPANDED FITNESS GYM" }],
     },
     testimonial: {
-      quote: "We wanted a bigger gym but also wanted to reuse things from our previous space. Sagrika made it all work beautifully and turned the old garage-like space into a premium gym.",
-      author: "Owner",
+      quote: "Sagrika made our existing elements work beautifully and transformed the old garage-like space into a premium gym.",
+      author: "OWNER",
       role: "A3 FITNESS GYM 2",
     },
   },
@@ -383,8 +383,8 @@ export const projects: Project[] = [
       ],
     },
     testimonial: {
-      quote: "We wanted a gym with different training areas on different floors. Sagrika brought it all together and gave the entire gym a uniform look.",
-      author: "Owner",
+      quote: "Sagrika brought different training areas across multiple floors together and gave the entire gym a uniform look.",
+      author: "OWNER",
       role: "DAWN'S GYM",
     },
   },
@@ -436,8 +436,8 @@ export const projects: Project[] = [
       outcomes: [{ k: "Project type", v: "PREMIUM FITNESS GYM" }],
     },
     testimonial: {
-      quote: "We wanted a premium gym to elevate our brand. Sagrika used the basement space to its full potential and created a gym that feels different and memorable.",
-      author: "Owner",
+      quote: "Sagrika used our basement space to its full potential and created a premium gym that feels memorable.",
+      author: "OWNER",
       role: "FITNESS MANZIL GYM",
     },
   },
@@ -491,8 +491,8 @@ export const projects: Project[] = [
       outcomes: [{ k: "Project type", v: "TWO-FLOOR FITNESS GYM" }],
     },
     testimonial: {
-      quote: "I wanted to do something different from any other commercial gym, especially with natural light and a different look. I saw Sagrika's work on Instagram and knew she understood what I was looking for. I am really pleased with the outcome and very grateful to her for creating such a beautiful space.",
-      author: "Owner",
+      quote: "Sagrika understood the different look we wanted and created a space we are truly pleased with.",
+      author: "OWNER",
       role: "OUTWORK FITNESS GYM",
     },
   },

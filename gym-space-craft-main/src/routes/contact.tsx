@@ -3,6 +3,7 @@ import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import { Reveal } from "@/components/site/Reveal";
 import { useContactSettings } from "@/hooks/use-contact-settings";
 import { mailtoHref, telHref, whatsappHref } from "@/lib/contact";
+import contactHero from "@/assets/hero-gym.jpg";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -32,15 +33,25 @@ function ContactPage() {
   ];
   return (
     <>
-      <section className="mx-auto max-w-[110rem] px-5 pt-28 pb-16 md:px-10 md:pt-36 md:pb-20">
-        <Reveal>
-          <p className="label-caps text-primary">Contact Us</p>
-          <h1 className="display-lg mt-5 max-w-3xl">LET&apos;S START A CONVERSATION</h1>
-          <p className="mt-8 max-w-xl text-lg text-muted-foreground">
-            For general enquiries, collaborations, press or anything else you would like to discuss,
-            reach out to the studio.
-          </p>
-        </Reveal>
+      <section className="relative overflow-hidden bg-foreground">
+        <img
+          src={contactHero}
+          alt="Design Diaries gym interior — oak slat ceiling, terracotta floor and strength equipment"
+          width={1920}
+          height={1080}
+          className="absolute inset-0 h-full w-full object-cover opacity-50"
+        />
+        <span className="absolute inset-0 bg-foreground/50" />
+        <div className="relative mx-auto max-w-[110rem] px-5 pt-28 pb-12 text-background md:px-10 md:pt-32 md:pb-16">
+          <Reveal>
+            <p className="label-caps text-primary">Contact Us</p>
+            <h1 className="display-lg mt-5 max-w-3xl">LET&apos;S START A CONVERSATION</h1>
+            <p className="mt-6 max-w-xl text-background/80">
+              For general enquiries, collaborations, press or anything else you would like to discuss,
+              reach out to the studio.
+            </p>
+          </Reveal>
+        </div>
       </section>
 
       <section className="border-t border-border">

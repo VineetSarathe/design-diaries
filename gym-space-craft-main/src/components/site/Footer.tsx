@@ -12,6 +12,7 @@ import logoWhite from "@/assets/logo-white.png";
 import { useContactSettings } from "@/hooks/use-contact-settings";
 import { mailtoHref, whatsappHref } from "@/lib/contact";
 import { useInstagramFeed } from "@/hooks/use-instagram-feed";
+import { useStartProjectLink } from "@/hooks/use-start-project-link";
 import type { InstagramCard } from "@/lib/admin-api";
 
 const quick = [
@@ -33,6 +34,7 @@ const fallbackFeed: InstagramCard[] = [
 export function Footer() {
   const contact = useContactSettings();
   const { items: feed } = useInstagramFeed("home", fallbackFeed);
+  const startProject = useStartProjectLink();
 
   return (
     <footer className="bg-foreground text-background">
@@ -122,7 +124,9 @@ export function Footer() {
         </div>
 
         <Link
-          to="/start-a-project"
+          to={startProject.to}
+          hash={startProject.hash}
+          onClick={startProject.onClick}
           className="group relative flex min-h-[18rem] items-start overflow-hidden px-6 py-14 md:px-10 md:py-16"
         >
           <img

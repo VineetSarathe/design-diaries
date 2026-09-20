@@ -18,6 +18,7 @@ import { Footer } from "@/components/site/Footer";
 import { PromoBanner } from "@/components/site/PromoBanner";
 import { StickyCTA } from "@/components/site/StickyCTA";
 import { ScrollProgress } from "@/components/site/ScrollProgress";
+import { SplashScreen } from "@/components/site/SplashScreen";
 import { ContactSettingsProvider } from "@/hooks/use-contact-settings";
 import { HomepageSettingsProvider } from "@/hooks/use-homepage-settings";
 import { AboutSettingsProvider } from "@/hooks/use-about-settings";
@@ -147,6 +148,7 @@ function RootComponent() {
         <HomepageSettingsProvider>
         <AboutSettingsProvider>
         <ProjectsProvider>
+        {!isAdmin && <SplashScreen />}
         {!isAdmin && <ScrollProgress />}
         {!isAdmin && <PromoBanner />}
         {!isAdmin && <Header overHero={isHome} />}

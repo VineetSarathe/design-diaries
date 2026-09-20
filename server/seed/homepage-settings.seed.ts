@@ -7,7 +7,7 @@ export const DEFAULT_HOMEPAGE_SETTINGS = {
   key: HOMEPAGE_SETTINGS_KEY,
   heroHeading: "Gyms designed to perform",
   heroDescription:
-    "We specialise in fitness and gym interior design, shaped around movement, performance and the people who use them.",
+    "We design high-performance gym and fitness spaces where function, aesthetics and brand identity work together",
   ctaText: "Start Your Gym Project",
   ctaLink: "/start-a-project",
   featuredProjectSlugs: ["iron-standard", "sanctum-wellness", "still-house-recovery"],
@@ -23,8 +23,12 @@ export async function seedHomepageSettings(): Promise<void> {
   }
 
   const patch: Partial<typeof DEFAULT_HOMEPAGE_SETTINGS> = {};
+  const oldHeroDescription =
+    "We specialise in fitness and gym interior design, shaped around movement, performance and the people who use them.";
   if (!existing.heroHeading) patch.heroHeading = DEFAULT_HOMEPAGE_SETTINGS.heroHeading;
-  if (!existing.heroDescription) patch.heroDescription = DEFAULT_HOMEPAGE_SETTINGS.heroDescription;
+  if (!existing.heroDescription || existing.heroDescription === oldHeroDescription) {
+    patch.heroDescription = DEFAULT_HOMEPAGE_SETTINGS.heroDescription;
+  }
   if (!existing.ctaText) patch.ctaText = DEFAULT_HOMEPAGE_SETTINGS.ctaText;
   if (!existing.ctaLink) patch.ctaLink = DEFAULT_HOMEPAGE_SETTINGS.ctaLink;
   if (!Array.isArray(existing.featuredProjectSlugs)) {

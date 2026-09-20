@@ -16,6 +16,7 @@ export type ProjectCardData = {
   year: string;
   insight: string;
   images: string[];
+  captions?: string[];
   clientType?: string;
   cardLabel?: string;
   hideCardMeta?: boolean;
@@ -37,7 +38,15 @@ function imagesFromProject(project: Project) {
   );
 }
 
+function captionFor(project: Project, src: string) {
+  const fromGallery = project.gallery.find((image) => image.src === src)?.caption;
+  if (fromGallery) return fromGallery;
+  if (project.plan?.src === src) return project.plan.caption;
+  return project.insight;
+}
+
 export function toProjectCardData(project: Project): ProjectCardData {
+  const images = imagesFromProject(project);
   return {
     slug: project.slug,
     name: project.name,
@@ -46,7 +55,8 @@ export function toProjectCardData(project: Project): ProjectCardData {
     area: project.area,
     year: project.year,
     insight: project.insight,
-    images: imagesFromProject(project),
+    images,
+    captions: images.map((src) => captionFor(project, src)),
     clientType: project.clientType,
     cardLabel: project.cardLabel,
     hideCardMeta: project.hideCardMeta,
@@ -57,10 +67,12 @@ export function ProjectCard({
   project,
   number = 1,
   className,
+  onPreviewChange,
 }: {
   project: Project | ProjectCardData;
   number?: number;
   className?: string;
+  onPreviewChange?: (src: string | null) => void;
 }) {
   const card = useMemo(
     () => ("images" in project ? project : toProjectCardData(project)),
@@ -68,29 +80,100 @@ export function ProjectCard({
   );
   const images = card.images.length ? card.images : [];
   const [active, setActive] = useState(0);
+  const [hovered, setHovered] = useState(false);
+  const [isTouchUi, setIsTouchUi] = useState(false);
+  const [mobileInView, setMobileInView] = useState(false);
+  const cycling = isTouchUi ? mobileInView : hovered;
   const safeActive = images.length ? Math.min(active, images.length - 1) : 0;
   const swipeStart = useRef<number | null>(null);
   const didSwipe = useRef(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const cardRef = useRef<HTMLElement | null>(null);
   const [playing, setPlaying] = useState(false);
   const activeSrc = images[safeActive];
+  const activeCaption = card.captions?.[safeActive] || card.insight;
   const activeIsVideo = Boolean(activeSrc && isVideoSrc(activeSrc));
   const previewSrc = activeSrc ? mediaPreviewUrl(activeSrc, 900) : "";
   const playbackSrc = activeSrc && activeIsVideo ? mediaPlaybackUrl(activeSrc, 960) : "";
   const eager = number <= 3;
+  const showVideo = Boolean(activeIsVideo && (playing || cycling));
+
+  const advance = () => {
+    if (images.length < 2) return;
+    setActive((current) => (current + 1) % images.length);
+  };
 
   useEffect(() => {
-    setPlaying(false);
+    if (!cycling || images.length < 2 || activeIsVideo) return;
+    const timer = window.setTimeout(advance, 1000);
+    return () => window.clearTimeout(timer);
+  }, [cycling, images.length, safeActive, activeIsVideo]);
+
+  const previewCb = useRef(onPreviewChange);
+  previewCb.current = onPreviewChange;
+
+  useEffect(() => {
+    if (!cycling) {
+      previewCb.current?.(null);
+      return;
+    }
+    if (activeSrc) previewCb.current?.(activeSrc);
+  }, [cycling, activeSrc]);
+
+  useEffect(() => () => previewCb.current?.(null), []);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(hover: none)");
+    const sync = () => setIsTouchUi(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+
+  useEffect(() => {
+    const el = cardRef.current;
+    if (!el || !isTouchUi) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        const on = Boolean(entry?.isIntersecting && (entry.intersectionRatio ?? 0) >= 0.45);
+        setMobileInView(on);
+        if (!on) {
+          setActive(0);
+          setPlaying(false);
+        }
+      },
+      { threshold: [0.45, 0.65, 0.85] },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [isTouchUi]);
+
+  useEffect(() => {
     const video = videoRef.current;
-    if (video) {
+    if (!video || !activeIsVideo) {
+      setPlaying(false);
+      return;
+    }
+    video.muted = true;
+    video.volume = 0;
+    if (!cycling) {
       video.pause();
       try {
         video.currentTime = 0;
       } catch {
         /* ignore */
       }
+      setPlaying(false);
+      return;
     }
-  }, [safeActive]);
+    void video
+      .play()
+      .then(() => setPlaying(true))
+      .catch(() => {
+        setPlaying(false);
+        if (cycling) window.setTimeout(advance, 1000);
+      });
+  }, [cycling, safeActive, activeIsVideo, playbackSrc]);
 
   useEffect(() => {
     const next = images[(safeActive + 1) % Math.max(images.length, 1)];
@@ -102,13 +185,13 @@ export function ProjectCard({
   const togglePlay = () => {
     const video = videoRef.current;
     if (!activeIsVideo || !video) return;
+    video.muted = true;
+    video.volume = 0;
     if (!video.paused) {
       video.pause();
       setPlaying(false);
       return;
     }
-    video.muted = false;
-    video.volume = 1;
     void video
       .play()
       .then(() => setPlaying(true))
@@ -144,10 +227,24 @@ export function ProjectCard({
 
   return (
     <article
+      ref={cardRef}
       className={cn(
         "group relative z-0 flex h-full w-full min-w-0 cursor-pointer flex-col border border-border bg-card transition-[transform,border-color,box-shadow,background-color] duration-500 ease-out hover:z-20 hover:-translate-y-2 hover:scale-[1.03] hover:border-foreground hover:bg-foreground hover:shadow-[0_40px_80px_-40px_rgba(0,0,0,0.65)] focus-within:z-20 focus-within:-translate-y-2 focus-within:scale-[1.03] focus-within:border-foreground focus-within:bg-foreground motion-reduce:transform-none motion-reduce:transition-none",
+        isTouchUi &&
+          mobileInView &&
+          "z-20 border-foreground bg-foreground shadow-[0_40px_80px_-40px_rgba(0,0,0,0.65)]",
         className,
       )}
+      onMouseEnter={() => {
+        if (isTouchUi) return;
+        setHovered(true);
+      }}
+      onMouseLeave={() => {
+        if (isTouchUi) return;
+        setHovered(false);
+        setActive(0);
+        setPlaying(false);
+      }}
       onPointerDown={onPointerDown}
       onPointerUp={onPointerUp}
       onPointerCancel={() => {
@@ -166,7 +263,10 @@ export function ProjectCard({
             width={900}
             height={720}
             sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-            className="absolute inset-0 h-full w-full object-cover transition-[opacity,transform] duration-700 ease-out group-hover:scale-[1.12] motion-reduce:transition-none"
+            className={cn(
+              "absolute inset-0 h-full w-full object-cover transition-[opacity,transform] duration-700 ease-out group-hover:scale-[1.12] motion-reduce:transition-none",
+              isTouchUi && mobileInView && "scale-[1.12]",
+            )}
           />
         ) : null}
         {activeIsVideo && playbackSrc ? (
@@ -174,26 +274,49 @@ export function ProjectCard({
             ref={videoRef}
             src={playbackSrc}
             poster={previewSrc}
-            loop
+            muted
             playsInline
-            preload="none"
+            preload="metadata"
             onPlay={() => setPlaying(true)}
             onPause={() => setPlaying(false)}
+            onEnded={() => {
+              setPlaying(false);
+              if (cycling) advance();
+            }}
+            onError={() => {
+              setPlaying(false);
+              if (cycling) window.setTimeout(advance, 1000);
+            }}
             aria-label={`${card.name} in ${card.location}, video ${safeActive + 1}`}
             className={cn(
               "absolute inset-0 h-full w-full object-cover",
-              playing ? "opacity-100" : "opacity-0",
+              showVideo ? "opacity-100" : "opacity-0",
             )}
           />
         ) : null}
-        <div className="pointer-events-none absolute inset-0 bg-foreground/0 transition-colors duration-500 group-hover:bg-foreground/55 group-focus-within:bg-foreground/55 motion-reduce:transition-none" />
+        <div
+          className={cn(
+            "pointer-events-none absolute inset-0 bg-foreground/0 transition-colors duration-500 group-hover:bg-foreground/55 group-focus-within:bg-foreground/55 motion-reduce:transition-none",
+            isTouchUi && mobileInView && "bg-foreground/55",
+          )}
+        />
 
         <span className="label-caps absolute top-3 left-3 z-20 bg-foreground px-2.5 py-1.5 text-background">
           {String(number).padStart(2, "0")}
         </span>
 
-        <span className="absolute top-3 right-3 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-background/65 bg-foreground/15 text-background backdrop-blur-sm transition-[background-color,border-color] duration-300 group-hover:border-primary group-hover:bg-primary group-hover:text-primary-foreground group-focus-within:border-primary group-focus-within:bg-primary group-focus-within:text-primary-foreground">
-          <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-focus-within:translate-x-0.5 group-focus-within:-translate-y-0.5 motion-reduce:transform-none" />
+        <span
+          className={cn(
+            "absolute top-3 right-3 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-background/65 bg-foreground/15 text-background backdrop-blur-sm transition-[background-color,border-color,color] duration-300 group-hover:border-primary group-hover:bg-primary group-hover:text-primary-foreground group-focus-within:border-primary group-focus-within:bg-primary group-focus-within:text-primary-foreground",
+            isTouchUi && mobileInView && "border-primary bg-primary text-primary-foreground",
+          )}
+        >
+          <ArrowUpRight
+            className={cn(
+              "h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-focus-within:translate-x-0.5 group-focus-within:-translate-y-0.5 motion-reduce:transform-none",
+              isTouchUi && mobileInView && "translate-x-0.5 -translate-y-0.5",
+            )}
+          />
         </span>
 
         {images.length > 1 && (
@@ -237,23 +360,43 @@ export function ProjectCard({
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start sm:gap-4">
           <div className="min-w-0">
             <p className="label-caps text-primary">{card.cardLabel ?? card.category}</p>
-            <h3 className="display-md mt-2 text-foreground transition-colors duration-500 group-hover:text-background group-focus-within:text-background">
+            <h3
+              className={cn(
+                "display-md mt-2 text-foreground transition-colors duration-500 group-hover:text-background group-focus-within:text-background",
+                isTouchUi && mobileInView && "text-background",
+              )}
+            >
               {card.name}
             </h3>
           </div>
           {card.clientType ? (
-            <p className="label-caps max-w-full leading-snug tracking-[0.12em] text-muted-foreground transition-colors duration-500 group-hover:text-background/60 group-focus-within:text-background/60 sm:max-w-[11rem] sm:text-right sm:tracking-[0.2em] [word-break:break-word]">
+            <p
+              className={cn(
+                "label-caps max-w-full leading-snug tracking-[0.12em] text-muted-foreground transition-colors duration-500 group-hover:text-background/60 group-focus-within:text-background/60 sm:max-w-[11rem] sm:text-right sm:tracking-[0.2em] [word-break:break-word]",
+                isTouchUi && mobileInView && "text-background/60",
+              )}
+            >
               {card.clientType}
             </p>
           ) : null}
         </div>
 
-        <p className="mt-4 text-sm leading-relaxed text-muted-foreground transition-colors duration-500 group-hover:text-background/75 group-focus-within:text-background/75">
-          {card.insight}
+        <p
+          className={cn(
+            "mt-4 text-sm leading-relaxed text-muted-foreground transition-colors duration-500 group-hover:text-background/75 group-focus-within:text-background/75",
+            isTouchUi && mobileInView && "text-background/75",
+          )}
+        >
+          {activeCaption}
         </p>
 
         {(card.location || (!card.hideCardMeta && (card.area || card.year))) && (
-          <div className="label-caps mt-5 grid grid-cols-[minmax(0,1fr)_auto] gap-4 border-t border-border pt-4 text-muted-foreground transition-colors duration-500 group-hover:border-background/25 group-hover:text-background/70 group-focus-within:border-background/25 group-focus-within:text-background/70">
+          <div
+            className={cn(
+              "label-caps mt-5 grid grid-cols-[minmax(0,1fr)_auto] gap-4 border-t border-border pt-4 text-muted-foreground transition-colors duration-500 group-hover:border-background/25 group-hover:text-background/70 group-focus-within:border-background/25 group-focus-within:text-background/70",
+              isTouchUi && mobileInView && "border-background/25 text-background/70",
+            )}
+          >
             <span className="min-w-0">{card.location}</span>
             {!card.hideCardMeta && (card.area || card.year) && (
               <span className="shrink-0 text-right">
@@ -268,7 +411,7 @@ export function ProjectCard({
             className="relative z-20 mt-4 flex w-full min-w-0 gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             aria-label={`${card.name} image gallery`}
           >
-            {images.slice(0, 4).map((src, index) => (
+            {images.slice(0, 3).map((src, index) => (
               <Button
                 key={`${src}-thumbnail-${index}`}
                 type="button"
@@ -302,26 +445,6 @@ export function ProjectCard({
                 {safeActive === index && <span className="absolute inset-x-0 bottom-0 h-0.5 bg-primary" />}
               </Button>
             ))}
-            {images.length > 4 && (
-              <Button
-                type="button"
-                variant="ghost"
-                aria-label={`Show image 5 of ${card.name}; ${images.length - 4} more images available`}
-                onClick={(event) => {
-                  event.preventDefault();
-                  event.stopPropagation();
-                  setActive(4);
-                }}
-                className={cn(
-                  "h-12 w-12 min-w-12 shrink-0 rounded-none border p-0 text-xs shadow-none sm:h-14",
-                  safeActive >= 4
-                    ? "border-primary bg-foreground text-background"
-                    : "border-border bg-muted text-foreground hover:bg-foreground hover:text-background",
-                )}
-              >
-                +{images.length - 4}
-              </Button>
-            )}
           </div>
         )}
       </div>
@@ -338,7 +461,7 @@ export function ProjectCard({
         className="absolute inset-0 z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
       />
 
-      {activeIsVideo && (
+      {activeIsVideo && !cycling && (
         <div className="pointer-events-none absolute inset-x-0 top-0 z-50 aspect-[5/4]">
           <VideoPlayButton
             playing={playing}

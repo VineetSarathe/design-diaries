@@ -1,10 +1,12 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { useStartProjectLink } from "@/hooks/use-start-project-link";
 
 export function StickyCTA() {
   const [show, setShow] = useState(false);
   const [overFooter, setOverFooter] = useState(false);
+  const startProject = useStartProjectLink();
 
   useEffect(() => {
     const onScroll = () => setShow(window.scrollY > window.innerHeight * 0.9);
@@ -26,7 +28,9 @@ export function StickyCTA() {
 
   return (
     <Link
-      to="/start-a-project"
+      to={startProject.to}
+      hash={startProject.hash}
+      onClick={startProject.onClick}
       className={cn(
         "label-caps fixed right-8 z-40 hidden bg-primary px-6 py-4 text-primary-foreground shadow-lg transition-all duration-500 hover:bg-foreground active:scale-[0.97] md:block",
         overFooter ? "bottom-28" : "bottom-8",

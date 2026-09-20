@@ -22,6 +22,7 @@ function toDto(doc: RecognitionDoc & { _id: unknown }, admin = false) {
     title: doc.title,
     category: doc.category,
     year: doc.year,
+    description: doc.description || "",
     link: doc.link || DEFAULT_LINK,
     imageUrl: doc.imageUrl,
     images: doc.images.map((image) => ({
@@ -45,6 +46,7 @@ function parseFields(source: object, required: boolean) {
   const title = readField(source, "title", 160);
   const category = readField(source, "category", 80);
   const year = readField(source, "year", 20);
+  const description = readField(source, "description", 400);
   const link = readField(source, "link", 300) || DEFAULT_LINK;
 
   if (required || "title" in source) {
@@ -54,7 +56,7 @@ function parseFields(source: object, required: boolean) {
     if (category.length < 2) throw new AppError(400, "Enter the category");
   }
 
-  return { title, category, year, link };
+  return { title, category, year, description, link };
 }
 
 function parseExtraOrder(source: object): string[] | null {
@@ -188,6 +190,7 @@ export async function updateRecognition(req: Request, res: Response) {
         title: fields.title || doc.title,
         category: fields.category || doc.category,
         year: "year" in (req.body ?? {}) ? fields.year : doc.year,
+        description: "description" in (req.body ?? {}) ? fields.description : doc.description,
         link: "link" in (req.body ?? {}) ? fields.link : doc.link,
         imageUrl,
         imagePublicId,

@@ -102,8 +102,8 @@ const projectEnquirySchema = z.object({
   phone: z.string().trim().min(7, "Please enter a valid phone number").max(20),
   email: z.string().trim().email("Please enter a valid email").max(160),
   city: z.string().trim().min(2, "Please enter your city").max(80),
-  planning: z.enum(planningOptions),
-  description: z.string().trim().min(10, "Tell us a little more").max(1200),
+  planning: z.union([z.enum(planningOptions), z.literal("")]),
+  description: z.string().trim().max(1200),
 });
 
 const MAX_LEAD_FILE_BYTES = 40 * 1024 * 1024;

@@ -2,8 +2,10 @@ import type { Request, Response } from "express";
 import { CallBooking, type CallBookingDoc } from "../models/call-booking.model";
 import { CallSettings, CALL_SETTINGS_KEY } from "../models/call-settings.model";
 import { AppError } from "../utils/appError";
-import { sendMail } from "../utils/mail";
+import { sendMail, thankYouEmailHtml } from "../utils/mail";
 import { getCallNotifyEmail, getCallNotifySettings } from "../seed/call-settings.seed";
+import { ContactSettings, CONTACT_SETTINGS_KEY } from "../models/contact-settings.model";
+import { DEFAULT_CONTACT_SETTINGS } from "../seed/contact-settings.seed";
 import {
   CALL_SLOTS,
   CALL_TIMEZONE,
@@ -31,6 +33,7 @@ function toDto(doc: CallBookingDoc & { _id: unknown }) {
     slot: doc.slot,
     name: doc.name,
     phone: doc.phone,
+    email: doc.email || "",
     city: doc.city,
     message: doc.message,
     createdAt: doc.createdAt.toISOString(),
@@ -65,6 +68,7 @@ export async function createCallBooking(req: Request, res: Response) {
   const slot = readString(req.body, "slot", 20);
   const name = readString(req.body, "name", 80);
   const phone = readString(req.body, "phone", 20);
+  const email = readString(req.body, "email", 160).toLowerCase();
   const city = readString(req.body, "city", 80);
   const message = readString(req.body, "message", 400);
 
@@ -73,15 +77,21 @@ export async function createCallBooking(req: Request, res: Response) {
   if (isSlotPast(date, slot)) throw new AppError(400, "This time has already passed");
   if (name.length < 2) throw new AppError(400, "Enter your full name");
   if (phone.length < 7) throw new AppError(400, "Enter a valid mobile number");
+  if (!email.includes("@")) throw new AppError(400, "Enter a valid email");
   if (city.length < 2) throw new AppError(400, "Enter your city");
-  if (message.length < 2) throw new AppError(400, "Enter a short message");
 
   try {
-    const doc = await CallBooking.create({ date, slot, name, phone, city, message });
+    const doc = await CallBooking.create({ date, slot, name, phone, email, city, message });
     const notifyEmail = await getCallNotifyEmail();
+    const contact = await ContactSettings.findOne({ key: CONTACT_SETTINGS_KEY });
+    const studioEmail = contact?.email || DEFAULT_CONTACT_SETTINGS.email;
+    const studioPhone = contact?.whatsapp || contact?.phone || DEFAULT_CONTACT_SETTINGS.whatsapp;
+    const firstName = name.trim().split(/\s+/)[0] || name;
+    const when = `${dateLabel(date)} · ${slot}`;
     try {
       await sendMail({
         to: notifyEmail,
+        replyTo: email,
         fromName: name,
         subject: `New discovery call · ${dateLabel(date)} · ${slot}`,
         text: [
@@ -90,6 +100,7 @@ export async function createCallBooking(req: Request, res: Response) {
           `Date: ${dateLabel(date)}`,
           `Time: ${slot}`,
           `Name: ${name}`,
+          `Email: ${email}`,
           `Mobile: ${phone}`,
           `City: ${city}`,
           `Message: ${message}`,
@@ -97,6 +108,27 @@ export async function createCallBooking(req: Request, res: Response) {
       });
     } catch (err) {
       console.error("Call booking email failed", err);
+    }
+    try {
+      const body = `Thank you for booking a discovery call with Design Diaries. Your call is confirmed for ${when}. Keep this time free — Sagrika will join you on the call.`;
+      const sent = await sendMail({
+        to: email,
+        replyTo: studioEmail,
+        subject: `Your call is booked · ${when} | Design Diaries`,
+        text: [`Hi ${firstName},`, "", body, "", "Design Diaries", studioEmail, studioPhone].join("\n"),
+        html: thankYouEmailHtml({
+          firstName,
+          studioEmail,
+          studioPhone,
+          title: "Call booked",
+          body,
+        }),
+      });
+      if (!sent) {
+        console.error(`Call thank-you email was not sent to ${email}: Gmail SMTP is not configured`);
+      }
+    } catch (err) {
+      console.error("Call thank-you email failed", err);
     }
     res.status(201).json({ ok: true, booking: toDto(doc) });
   } catch (err) {
@@ -137,7 +169,7 @@ export async function listCallBookings(req: Request, res: Response) {
   const filter: Record<string, unknown> = {};
   if (q) {
     const rx = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
-    filter.$or = [{ name: rx }, { phone: rx }, { city: rx }];
+    filter.$or = [{ name: rx }, { phone: rx }, { email: rx }, { city: rx }];
   }
   if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
     filter.date = date;

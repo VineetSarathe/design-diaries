@@ -42,18 +42,29 @@ type RecognitionCardProps = {
 };
 
 export function RecognitionCard({ item, active, onActivate, register }: RecognitionCardProps) {
-  const gallery: RecognitionMedia[] = item.media?.length
-    ? [{ url: item.image, kind: "image" }, ...item.media]
-    : Array.from(new Set([item.image, ...(item.images ?? [])])).map((url) => ({
-        url,
-        kind: isVideoSrc(url) ? "video" : "image",
-      }));
+  const gallery: RecognitionMedia[] = Array.from(
+    new Map(
+      (item.media?.length
+        ? [{ url: item.image, kind: "image" as const }, ...item.media]
+        : Array.from(new Set([item.image, ...(item.images ?? [])])).map((url) => ({
+            url,
+            kind: (isVideoSrc(url) ? "video" : "image") as const,
+          }))
+      ).map((entry) => [entry.url, entry]),
+    ).values(),
+  );
   const [imageIndex, setImageIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
+  const [hovered, setHovered] = useState(false);
   const swipeStart = useRef<number | null>(null);
   const videoRefs = useRef<Array<HTMLVideoElement | null>>([]);
   const current = gallery[imageIndex];
   const currentIsVideo = Boolean(current && isVideoSrc(current.url, current.kind));
+
+  const advance = () => {
+    if (gallery.length < 2) return;
+    setImageIndex((currentIndex) => (currentIndex + 1) % gallery.length);
+  };
 
   const changeImage = (direction: number) => {
     if (gallery.length < 2) return;
@@ -61,9 +72,17 @@ export function RecognitionCard({ item, active, onActivate, register }: Recognit
   };
 
   useEffect(() => {
+    if (!hovered || gallery.length < 2 || currentIsVideo) return;
+    const timer = window.setTimeout(advance, 1000);
+    return () => window.clearTimeout(timer);
+  }, [hovered, gallery.length, imageIndex, currentIsVideo]);
+
+  useEffect(() => {
     setPlaying(false);
     videoRefs.current.forEach((video, index) => {
       if (!video) return;
+      video.muted = true;
+      video.volume = 0;
       video.pause();
       if (index !== imageIndex) {
         try {
@@ -76,23 +95,45 @@ export function RecognitionCard({ item, active, onActivate, register }: Recognit
   }, [imageIndex]);
 
   useEffect(() => {
-    if (active) return;
+    const video = videoRefs.current[imageIndex];
+    if (!currentIsVideo || !video) {
+      if (!hovered) setPlaying(false);
+      return;
+    }
+    video.muted = true;
+    video.volume = 0;
+    video.loop = false;
+    if (!hovered) {
+      video.pause();
+      setPlaying(false);
+      return;
+    }
+    void video
+      .play()
+      .then(() => setPlaying(true))
+      .catch(() => {
+        setPlaying(false);
+        if (hovered) window.setTimeout(advance, 1000);
+      });
+  }, [hovered, imageIndex, currentIsVideo]);
+
+  useEffect(() => {
+    if (hovered || active) return;
     setPlaying(false);
     videoRefs.current.forEach((video) => video?.pause());
-  }, [active]);
+  }, [active, hovered]);
 
   const togglePlay = () => {
     const video = videoRefs.current[imageIndex];
     if (!video) return;
     onActivate();
+    video.muted = true;
+    video.volume = 0;
     if (!video.paused) {
       video.pause();
       setPlaying(false);
       return;
     }
-    video.muted = false;
-    video.defaultMuted = false;
-    video.volume = 1;
     void video
       .play()
       .then(() => setPlaying(true))
@@ -128,7 +169,7 @@ export function RecognitionCard({ item, active, onActivate, register }: Recognit
                 videoRefs.current[index] = node;
               }}
               src={entry.url}
-              loop
+              muted
               playsInline
               preload="metadata"
               onPlay={() => {
@@ -136,6 +177,9 @@ export function RecognitionCard({ item, active, onActivate, register }: Recognit
               }}
               onPause={() => {
                 if (index === imageIndex) setPlaying(false);
+              }}
+              onEnded={() => {
+                if (index === imageIndex && hovered) advance();
               }}
               aria-label={`${item.title}, ${item.category.toLowerCase()}, ${item.year}${index ? `, video ${index + 1}` : ""}`}
               className={cn(
@@ -175,7 +219,7 @@ export function RecognitionCard({ item, active, onActivate, register }: Recognit
         <span className="label-caps absolute top-3 left-3 z-20 bg-foreground px-2.5 py-1.5 text-background">
           {item.number}
         </span>
-        {currentIsVideo && (
+        {currentIsVideo && !hovered && (
           <VideoPlayButton
             playing={playing}
             label={playing ? `Pause video of ${item.title}` : `Play video of ${item.title}`}
@@ -222,8 +266,8 @@ export function RecognitionCard({ item, active, onActivate, register }: Recognit
         {item.description ? (
           <p
             className={cn(
-              "mt-3 line-clamp-2 min-h-10 text-sm leading-relaxed transition-[opacity,color,transform] duration-500 motion-reduce:transform-none",
-              active ? "translate-y-0 text-background/65 opacity-100" : "translate-y-1 text-muted-foreground opacity-70",
+              "mt-3 text-sm leading-relaxed transition-[opacity,color] duration-500",
+              active ? "text-background/65 opacity-100" : "text-muted-foreground opacity-80",
             )}
           >
             {item.description}
@@ -242,7 +286,15 @@ export function RecognitionCard({ item, active, onActivate, register }: Recognit
   return (
     <article
       ref={register}
-      onMouseEnter={onActivate}
+      onMouseEnter={() => {
+        onActivate();
+        setHovered(true);
+      }}
+      onMouseLeave={() => {
+        setHovered(false);
+        setImageIndex(0);
+        setPlaying(false);
+      }}
       onFocusCapture={onActivate}
       data-active={active}
       className={cn(
@@ -263,7 +315,7 @@ export function RecognitionCard({ item, active, onActivate, register }: Recognit
   );
 }
 
-export function RecognitionSection({ items }: { items: RecognitionItem[] }) {
+export function RecognitionCards({ items }: { items: RecognitionItem[] }) {
   const [active, setActive] = useState(0);
   const trackRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<Array<HTMLElement | null>>([]);
@@ -329,26 +381,7 @@ export function RecognitionSection({ items }: { items: RecognitionItem[] }) {
   if (!items.length) return null;
 
   return (
-    <section className="bg-secondary" aria-labelledby="recognition-heading" onKeyDown={handleKeys}>
-      <div className="mx-auto max-w-[110rem] px-5 pt-16 pb-0 md:px-10 md:pt-24">
-        <Reveal className="grid items-end gap-8 lg:grid-cols-[minmax(0,1fr)_22rem]">
-          <div>
-            <p className="label-caps flex items-center gap-4 text-primary">
-              Recognition
-              <span className="h-px w-16 bg-primary/40" />
-            </p>
-            <h2 id="recognition-heading" className="display-statement mt-4 lg:whitespace-nowrap">
-              Trusted Recognised
-              <br />
-              <span className="accent-italic">Making an impact</span>
-              <span className="heading-rule" aria-hidden="true" />
-            </h2>
-          </div>
-          <p className="max-w-xs text-sm leading-relaxed text-muted-foreground lg:justify-self-end">
-            Awards, press features and industry recognition that follow function-first work.
-          </p>
-        </Reveal>
-
+    <div onKeyDown={handleKeys}>
         <div
           ref={trackRef}
           onScroll={handleTrackScroll}
@@ -398,6 +431,35 @@ export function RecognitionSection({ items }: { items: RecognitionItem[] }) {
             </span>
           </div>
         </div>
+    </div>
+  );
+}
+
+export function RecognitionSection({ items }: { items: RecognitionItem[] }) {
+  if (!items.length) return null;
+
+  return (
+    <section className="bg-secondary" aria-labelledby="recognition-heading">
+      <div className="mx-auto max-w-[110rem] px-5 pt-16 pb-0 md:px-10 md:pt-24">
+        <Reveal className="grid items-end gap-8 lg:grid-cols-[minmax(0,1fr)_22rem]">
+          <div>
+            <p className="label-caps flex items-center gap-4 text-primary">
+              Recognition
+              <span className="h-px w-16 bg-primary/40" />
+            </p>
+            <h2 id="recognition-heading" className="display-statement mt-4 lg:whitespace-nowrap">
+              Trusted Recognised
+              <br />
+              <span className="accent-italic">Making an impact</span>
+              <span className="heading-rule" aria-hidden="true" />
+            </h2>
+          </div>
+          <p className="max-w-xs text-sm leading-relaxed text-muted-foreground lg:justify-self-end">
+            Awards, press features and industry recognition that follow function-first work.
+          </p>
+        </Reveal>
+
+        <RecognitionCards items={items} />
       </div>
       <div aria-hidden className="seam-sand-to-ink" />
     </section>

@@ -4,13 +4,13 @@ import { Clock } from "lucide-react";
 import { Reveal } from "@/components/site/Reveal";
 import { ProjectCard } from "@/components/site/ProjectCard";
 import { CtaBanner, Testimonial } from "@/components/site/CtaBanner";
-import { Seam } from "@/components/site/PageKit";
 import { FaqSection, ReelsSection } from "@/components/site/Sections";
 import { useProjects } from "@/hooks/use-projects";
 import { useBlogs } from "@/hooks/use-blogs";
 import { posts as fallbackPosts } from "@/data/resources";
 import { projectFaqs } from "@/data/projects";
 import { categoriesFromProjects } from "@/lib/cms-project";
+import { isVideoSrc, mediaPlaybackUrl, mediaPreviewUrl } from "@/lib/media";
 import workHero from "@/assets/work-hero.jpg";
 import p5 from "@/assets/project-5.jpg";
 
@@ -39,19 +39,34 @@ function WorkListing() {
   const featuredPosts = posts.slice(0, 3);
   const tabs = useMemo(() => ["All", ...categoriesFromProjects(projects)], [projects]);
   const [active, setActive] = useState("All");
+  const [heroSrc, setHeroSrc] = useState<string | null>(null);
   const shown = active === "All" ? projects : projects.filter((p) => p.category === active);
+  const heroIsVideo = Boolean(heroSrc && isVideoSrc(heroSrc));
+  const heroPreview = heroSrc ? mediaPreviewUrl(heroSrc, 1920) : workHero;
+  const heroPlayback = heroSrc && heroIsVideo ? mediaPlaybackUrl(heroSrc, 1280) : "";
 
   return (
     <>
       {/* Hero banner */}
       <section className="relative flex min-h-[62svh] items-end overflow-hidden bg-foreground">
         <img
-          src={workHero}
-          alt="Placeholder: warm-toned gym interior with oak slat ceiling and terracotta accent wall"
+          src={heroPreview}
+          alt="Gym interior project preview"
           width={1920}
           height={1080}
-          className="absolute inset-0 h-full w-full object-cover opacity-50"
+          className="absolute inset-0 h-full w-full object-cover opacity-50 transition-opacity duration-500"
         />
+        {heroIsVideo && heroPlayback ? (
+          <video
+            key={heroPlayback}
+            src={heroPlayback}
+            poster={heroPreview}
+            muted
+            autoPlay
+            playsInline
+            className="absolute inset-0 h-full w-full object-cover opacity-50"
+          />
+        ) : null}
         <span className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/35 to-foreground/20" />
         <div className="relative mx-auto w-full max-w-[110rem] px-5 pt-32 pb-14 text-background md:px-10 md:pb-20">
           <Reveal>
@@ -66,8 +81,6 @@ function WorkListing() {
           </Reveal>
         </div>
       </section>
-
-      <Seam to="cream" className="!h-[5.5rem] md:!h-36" />
 
       {/* Filters + grid */}
       <section className="mx-auto max-w-[110rem] px-5 py-16 md:px-10 md:py-20">
@@ -95,7 +108,7 @@ function WorkListing() {
         <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {shown.map((p, i) => (
             <Reveal key={p.slug} delay={i * 90}>
-              <ProjectCard project={p} number={i + 1} />
+              <ProjectCard project={p} number={i + 1} onPreviewChange={setHeroSrc} />
             </Reveal>
           ))}
         </div>

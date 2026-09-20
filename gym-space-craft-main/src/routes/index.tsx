@@ -21,7 +21,6 @@ import { useRecognitions } from "@/hooks/use-recognitions";
 import { isExternalHref, pickBySlugs } from "@/lib/homepage";
 
 import heroImg from "@/assets/hero-gym.jpg";
-import heroVideo from "@/assets/hero-gym.mp4";
 import p1 from "@/assets/project-1.jpg";
 import p2 from "@/assets/project-2.jpg";
 import p3 from "@/assets/project-3.jpg";
@@ -44,7 +43,7 @@ export const Route = createFileRoute("/")({
       {
         property: "og:description",
         content:
-          "We specialise in fitness and gym interior design, shaped around movement, performance and the people who use them.",
+          "We design high-performance gym and fitness spaces where function, aesthetics and brand identity work together",
       },
     ],
   }),
@@ -71,6 +70,16 @@ const recognitionFallback: Array<{
 }> = [];
 
 const testimonialFallbackImages = [p1, p3, p2, p4];
+const reviewOrder = [
+  "iron-standard",
+  "sanctum-wellness",
+  "fitness-manzil-gym",
+  "outwork-fitness-gym",
+  "forge-24",
+  "still-house-recovery",
+  "north-block-strength",
+  "rep-house-cycle",
+];
 
 function HomeCta({
   href,
@@ -116,13 +125,32 @@ function Home() {
           testimonial: project.testimonial.quote,
           rating: 5,
           imageUrl: project.card || project.hero || "",
-        })),
+        }))
+        .sort((a, b) => {
+          const ai = reviewOrder.indexOf(a.id);
+          const bi = reviewOrder.indexOf(b.id);
+          return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+        }),
     [workProjects],
   );
-  const featured = reviews[0];
-  const supporting = reviews.slice(1);
+  const [reviewIndex, setReviewIndex] = useState(0);
+  const rotatedReviews = useMemo(() => {
+    if (!reviews.length) return reviews;
+    const start = reviewIndex % reviews.length;
+    return [...reviews.slice(start), ...reviews.slice(0, start)];
+  }, [reviews, reviewIndex]);
+  const featured = rotatedReviews[0];
+  const supporting = rotatedReviews.slice(1);
   const supportingTrackRef = useRef<HTMLDivElement>(null);
   const [supportingMaxHeight, setSupportingMaxHeight] = useState<number>();
+
+  useEffect(() => {
+    if (reviews.length < 2) return;
+    const timer = window.setInterval(() => {
+      setReviewIndex((current) => (current + 1) % reviews.length);
+    }, 2000);
+    return () => window.clearInterval(timer);
+  }, [reviews.length]);
 
   useEffect(() => {
     const a = setTimeout(() => setStage(1), 120);
@@ -176,26 +204,21 @@ function Home() {
       observer.disconnect();
       track.removeEventListener("wheel", onWheel);
     };
-  }, [workProjects]);
+  }, [workProjects, supporting.length]);
 
   return (
     <>
       <EnquiryPopup />
 
-      {/* 01 — Performance-led hero with gym video */}
+      {/* 01 — Performance-led hero */}
       <section className="relative flex min-h-[80svh] items-center overflow-hidden bg-foreground pt-24">
         <div
           className="absolute inset-0"
           style={{ transform: `translateY(${Math.min(scrollY * 0.18, 160)}px)` }}
         >
-          <video
-            src={heroVideo}
-            poster={heroImg}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
+          <img
+            src={heroImg}
+            alt=""
             aria-hidden="true"
             className="h-full w-full scale-105 object-cover transition-[opacity,transform] duration-[1800ms] ease-out"
             style={{ opacity: stage >= 2 ? 0.72 : 0 }}
@@ -271,7 +294,9 @@ function Home() {
 
       {/* 02 — Trusted by */}
       <div className="seam-to-cream" />
-      <TrustedBy />
+      <div className="-mt-10 md:-mt-16">
+        <TrustedBy />
+      </div>
 
       {/* 03 — Selected Work */}
       <section className="blend-cream-bottom">
@@ -279,7 +304,7 @@ function Home() {
           <Reveal className="flex flex-col items-center text-center">
             <p className="label-caps flex items-center gap-4 text-muted-foreground">
               <span className="hidden h-px w-16 bg-border sm:block" />
-              Our gym projects
+              Gym interior design
               <span className="hidden h-px w-16 bg-border sm:block" />
             </p>
             <h2 className="display-statement mt-4">
@@ -398,7 +423,7 @@ function Home() {
         story="My first gym project changed the course of my work. With the increase in projects came the growth in my understanding of movement, equipment, user behavior and what makes a fitness space really work. I now apply that experience to every gym interior design project that I do."
       />
 
-      <div className="seam-to-cream" />
+      <div aria-hidden className="h-10 bg-background md:h-14" />
 
       {/* 07 — Case Study Spotlight */}
       <CaseStudySpotlight
@@ -416,10 +441,10 @@ function Home() {
           { src: materials, alt: "Material and finish detail from the fit-out" },
         ]}
         metrics={[
-          { v: "3,500", l: "Sq ft" },
-          { v: "4", l: "Training functions" },
-          { v: "1", l: "Cohesive flow" },
-          { v: "0", l: "Unnecessary partitions" },
+          { v: "-48%", l: "Peak hour\nequipment\nwait" },
+          { v: "4", l: "Distinct\ntraining\nfunctions" },
+          { v: "3,500", l: "Sq ft\nreplanned" },
+          { v: "100%", l: "Natural light\nin core\narea" },
         ]}
         note="Ceiling and flooring were used to define the training areas while keeping the space open and connected."
         journeyBackground={p3}
