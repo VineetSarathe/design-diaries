@@ -1,20 +1,20 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Instagram, Mail, MapPin, Phone } from "lucide-react";
+import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import { Reveal } from "@/components/site/Reveal";
 import { useContactSettings } from "@/hooks/use-contact-settings";
-import { mailtoHref, telHref } from "@/lib/contact";
+import { mailtoHref, telHref, whatsappHref } from "@/lib/contact";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact Design Diaries | Indore, India" },
+      { title: "Contact Design Diaries | Delhi, India" },
       {
         name: "description",
         content:
-          "General enquiries for Design Diaries — email, phone, WhatsApp and studio location in Indore. Project enquiries go through Start a Project.",
+          "General enquiries for Design Diaries — email, phone, WhatsApp and studio location in Delhi. Project enquiries go through Start a Project.",
       },
       { property: "og:title", content: "Contact | Design Diaries" },
-      { property: "og:description", content: "Reach the studio in Indore, India." },
+      { property: "og:description", content: "Reach the studio in Delhi, India." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -27,8 +27,8 @@ function ContactPage() {
   const details = [
     { icon: Mail, label: "Email", value: contact.email, href: mailtoHref(contact.email) },
     { icon: Phone, label: "Phone", value: contact.phone, href: telHref(contact.phone) },
-    { icon: Instagram, label: "Instagram", value: "Follow the studio", href: contact.instagram },
-    { icon: MapPin, label: "Studio", value: "Indore, Madhya Pradesh, India" },
+    { icon: MessageCircle, label: "WhatsApp", value: "Chat on WhatsApp", href: whatsappHref(contact.whatsapp) },
+    { icon: MapPin, label: "Studio", value: "Delhi, India" },
   ];
   return (
     <>
