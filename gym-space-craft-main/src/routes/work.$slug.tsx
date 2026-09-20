@@ -128,6 +128,7 @@ function ProjectDetail() {
       </DarkBand>
 
       <CtaBanner
+        compact
         label="Discuss a Similar Space"
         title={project.detail?.ctaTitle ?? "Your floor with this thinking applied"}
         body={
@@ -135,6 +136,8 @@ function ProjectDetail() {
           "Send the area, the city and what you plan to run in it. We'll tell you what the space can realistically hold."
         }
         cta={project.detail?.cta ?? "Discuss a Similar Space"}
+        image={project.hero || project.card}
+        imageAlt={`${project.name} training floor`}
       />
     </>
   );

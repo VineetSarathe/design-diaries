@@ -6,12 +6,17 @@ export type ContactSettings = {
   linkedin: string;
 };
 
+export const INSTAGRAM_PROFILE =
+  "https://www.instagram.com/designdiaries_by_sagrika_?stkn=ZmkzMWY4MnNydnpu";
+
+export const LINKEDIN_PROFILE = "https://www.linkedin.com/in/designdiariesbysagrika";
+
 export const DEFAULT_CONTACT: ContactSettings = {
   email: "designdiariesbysagrika@gmail.com",
   phone: "+91 96224 34242",
   whatsapp: "+91 96224 34242",
-  instagram: "https://www.instagram.com/designdiaries_by_sagrika_?stkn=ZmkzMWY4MnNydnpu",
-  linkedin: "https://linkedin.com",
+  instagram: INSTAGRAM_PROFILE,
+  linkedin: LINKEDIN_PROFILE,
 };
 
 export function telHref(phone: string) {

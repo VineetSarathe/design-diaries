@@ -100,7 +100,9 @@ export function AboutJourney({ items }: { items: JourneyItem[] }) {
                     onClick={() => setActive(index)}
                     className={cn(
                       "group h-full min-h-44 w-full items-start justify-start whitespace-normal rounded-none p-5 text-left transition-all duration-500 md:min-h-52 md:p-7",
-                      isActive ? "bg-foreground text-background" : "bg-background text-foreground hover:bg-secondary",
+                      isActive
+                        ? "bg-foreground text-background hover:bg-foreground"
+                        : "bg-background text-foreground hover:bg-secondary",
                     )}
                     aria-pressed={isActive}
                   >
@@ -111,15 +113,15 @@ export function AboutJourney({ items }: { items: JourneyItem[] }) {
                         </span>
                         <span
                           className={cn(
-                            "label-caps min-w-0 flex-1 leading-snug tracking-[0.12em] sm:tracking-[0.2em] [word-break:break-word]",
+                            "label-caps min-w-0 flex-1 leading-snug tracking-[0.12em] transition-colors duration-300 sm:tracking-[0.2em] [word-break:break-word] group-hover:text-primary",
                             isActive ? "text-background/50" : "text-muted-foreground",
                           )}
                         >
                           {item.year}
                         </span>
                       </div>
-                      <span className="mt-5 block text-sm font-semibold uppercase leading-tight">{item.title}</span>
-                      <span className={cn("mt-3 block text-sm font-normal leading-relaxed", isActive ? "text-background/65" : "text-muted-foreground")}>{item.text}</span>
+                      <span className="mt-5 block text-sm font-semibold uppercase leading-tight transition-colors duration-300 group-hover:text-primary">{item.title}</span>
+                      <span className={cn("mt-3 block text-sm font-normal leading-relaxed transition-colors duration-300 group-hover:text-primary/80", isActive ? "text-background/65" : "text-muted-foreground")}>{item.text}</span>
                       <span className="mt-auto block pt-5">
                         <span className={cn("block h-0.5 origin-left bg-primary transition-transform duration-[4200ms] ease-linear", isActive ? "scale-x-100" : "scale-x-0")} />
                       </span>

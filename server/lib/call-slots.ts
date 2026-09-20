@@ -1,5 +1,5 @@
 export const CALL_TIMEZONE = "Asia/Kolkata";
-export const CALL_DAYS = 8;
+export const CALL_DAYS = 60;
 
 export const CALL_SLOTS = [
   { id: "11:00-11:30", label: "11:00-11:30", startHour: 11, startMin: 0 },

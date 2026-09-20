@@ -6,7 +6,7 @@ import { CtaBanner } from "@/components/site/CtaBanner";
 import { ReelsSection } from "@/components/site/Sections";
 import { Statement } from "@/components/site/Statement";
 import { CinematicHero, DarkBand, Seam } from "@/components/site/PageKit";
-import { getPost, posts as fallbackPosts, type BlogPost } from "@/data/resources";
+import { getPost, posts as fallbackPosts, type BlogPost, BLOG_AUTHOR } from "@/data/resources";
 import { API_BASE } from "@/lib/api";
 import { cmsToPosts, type CmsBlog } from "@/lib/cms-blog";
 import { useProjects } from "@/hooks/use-projects";
@@ -349,6 +349,7 @@ function BlogDetail() {
                 </div>
               ) : null}
             </div>
+            <p className="label-caps mt-8 text-background/55">{BLOG_AUTHOR}</p>
           </article>
         </div>
       </DarkBand>

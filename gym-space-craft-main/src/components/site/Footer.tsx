@@ -156,10 +156,17 @@ export function Footer() {
       </Reveal>
 
       <div className="border-t border-background/12 py-8">
-        <div className="flex items-center gap-3 px-5 md:px-10">
+        <a
+          href={contact.instagram}
+          target="_blank"
+          rel="noreferrer noopener"
+          className="group flex items-center gap-3 px-5 md:px-10"
+        >
           <Instagram size={18} className="text-primary" />
-          <p className="label-caps text-[0.65rem] text-background/60">Follow on Instagram</p>
-        </div>
+          <p className="label-caps text-[0.65rem] text-background/60 transition-colors duration-300 group-hover:text-primary">
+            Follow on Instagram
+          </p>
+        </a>
         <div className="mt-5 flex gap-3 overflow-x-auto px-5 pb-2 md:px-10">
           {feed.map((f) => (
             <a

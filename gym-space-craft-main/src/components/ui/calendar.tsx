@@ -40,21 +40,21 @@ function Calendar({
         months: cn("relative flex flex-col gap-4 md:flex-row", defaultClassNames.months),
         month: cn("flex w-full flex-col gap-4", defaultClassNames.month),
         nav: cn(
-          "absolute inset-x-0 top-0 flex w-full items-center justify-between gap-1",
+          "absolute inset-x-0 top-0 z-10 flex w-full items-center justify-between gap-1 pointer-events-none",
           defaultClassNames.nav,
         ),
         button_previous: cn(
           buttonVariants({ variant: buttonVariant }),
-          "h-(--cell-size) w-(--cell-size) select-none p-0 aria-disabled:opacity-50",
+          "relative z-10 h-(--cell-size) w-(--cell-size) select-none p-0 pointer-events-auto aria-disabled:opacity-50",
           defaultClassNames.button_previous,
         ),
         button_next: cn(
           buttonVariants({ variant: buttonVariant }),
-          "h-(--cell-size) w-(--cell-size) select-none p-0 aria-disabled:opacity-50",
+          "relative z-10 h-(--cell-size) w-(--cell-size) select-none p-0 pointer-events-auto aria-disabled:opacity-50",
           defaultClassNames.button_next,
         ),
         month_caption: cn(
-          "flex h-(--cell-size) w-full items-center justify-center px-(--cell-size)",
+          "pointer-events-none flex h-(--cell-size) w-full items-center justify-center px-(--cell-size)",
           defaultClassNames.month_caption,
         ),
         dropdowns: cn(

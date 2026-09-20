@@ -66,10 +66,10 @@ function ServicesPage() {
         secondaryAlt="Dimensioned working drawing of a gym floor"
         caption="Concept to dimensioned drawings — the build stays with your contractor."
         meta={[
-          { k: "Scope", v: "Design + Drawings" },
-          { k: "Typical floor", v: "1,500–8,000 sq ft" },
-          { k: "Stages", v: "Six" },
-          { k: "Handover", v: "To your contractor" },
+          { k: "Scope", v: "Interior design + drawings" },
+          { k: "Typical project", v: "1,500–8,000 sq ft" },
+          { k: "Process", v: "Six stages" },
+          { k: "Handover", v: "Design to your contractor" },
         ]}
       />
 

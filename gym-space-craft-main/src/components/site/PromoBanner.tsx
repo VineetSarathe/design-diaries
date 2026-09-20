@@ -3,9 +3,21 @@ import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 
 const items = [
-  { text: "New project: The Strength Culture, Jammu", to: "/work" as const },
-  { text: "New guide: The Gym Layout Checklist — free download", to: "/resources" as const },
-  { text: "Journal: What equipment spacing really costs you", to: "/resources" as const },
+  {
+    text: "New project: The Strength Culture, Jammu",
+    to: "/work/$slug" as const,
+    params: { slug: "iron-standard" },
+  },
+  {
+    text: "New guide: The Gym Layout Checklist — free download",
+    to: "/resources/downloads/$slug" as const,
+    params: { slug: "first-time-gym-owners-planning-checklist" },
+  },
+  {
+    text: "Journal: What equipment spacing really costs you",
+    to: "/resources/blog/$slug" as const,
+    params: { slug: "from-equipment-to-experience-the-evolution-of-fitness-spaces-in-india" },
+  },
 ];
 
 export function PromoBanner() {
@@ -27,6 +39,7 @@ export function PromoBanner() {
         <Link
           key={i}
           to={item.to}
+          params={item.params}
           className="animate-in fade-in label-caps text-[0.625rem] duration-700 hover:text-primary"
         >
           {item.text} <span className="ml-2">→</span>

@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Instagram, Mail, MapPin, Phone } from "lucide-react";
 import { Reveal } from "@/components/site/Reveal";
 import { useContactSettings } from "@/hooks/use-contact-settings";
-import { mailtoHref, telHref, whatsappHref } from "@/lib/contact";
+import { mailtoHref, telHref } from "@/lib/contact";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -27,7 +27,7 @@ function ContactPage() {
   const details = [
     { icon: Mail, label: "Email", value: contact.email, href: mailtoHref(contact.email) },
     { icon: Phone, label: "Phone", value: contact.phone, href: telHref(contact.phone) },
-    { icon: Instagram, label: "WhatsApp", value: "Message the studio", href: whatsappHref(contact.whatsapp) },
+    { icon: Instagram, label: "Instagram", value: "Follow the studio", href: contact.instagram },
     { icon: MapPin, label: "Studio", value: "Indore, Madhya Pradesh, India" },
   ];
   return (

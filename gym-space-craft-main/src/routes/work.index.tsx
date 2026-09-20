@@ -1,17 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
+import { Clock } from "lucide-react";
 import { Reveal } from "@/components/site/Reveal";
 import { ProjectCard } from "@/components/site/ProjectCard";
 import { CtaBanner, Testimonial } from "@/components/site/CtaBanner";
 import { Seam } from "@/components/site/PageKit";
 import { FaqSection, ReelsSection } from "@/components/site/Sections";
 import { useProjects } from "@/hooks/use-projects";
+import { useBlogs } from "@/hooks/use-blogs";
+import { posts as fallbackPosts } from "@/data/resources";
 import { projectFaqs } from "@/data/projects";
 import { categoriesFromProjects } from "@/lib/cms-project";
 import workHero from "@/assets/work-hero.jpg";
-import gallery1 from "@/assets/gallery-1.jpg";
-import caseImg from "@/assets/case-study.jpg";
-import p6 from "@/assets/project-6.jpg";
+import p5 from "@/assets/project-5.jpg";
 
 export const Route = createFileRoute("/work/")({
   head: () => ({
@@ -32,29 +33,10 @@ export const Route = createFileRoute("/work/")({
   component: WorkListing,
 });
 
-const teasers = [
-  {
-    kind: "Blog",
-    title: "Rack spacing: the 2.4m rule and when to break it",
-    meta: "6 min read",
-    img: gallery1,
-  },
-  {
-    kind: "Download",
-    title: "Gym floor planning checklist — pre-lease edition",
-    meta: "PDF · 12 pages",
-    img: caseImg,
-  },
-  {
-    kind: "Blog",
-    title: "What a 7am rush tells you about your layout",
-    meta: "4 min read",
-    img: p6,
-  },
-];
-
 function WorkListing() {
   const { projects } = useProjects();
+  const { posts } = useBlogs(fallbackPosts);
+  const featuredPosts = posts.slice(0, 3);
   const tabs = useMemo(() => ["All", ...categoriesFromProjects(projects)], [projects]);
   const [active, setActive] = useState("All");
   const shown = active === "All" ? projects : projects.filter((p) => p.category === active);
@@ -68,8 +50,9 @@ function WorkListing() {
           alt="Placeholder: warm-toned gym interior with oak slat ceiling and terracotta accent wall"
           width={1920}
           height={1080}
-          className="absolute inset-0 h-full w-full object-cover opacity-60"
+          className="absolute inset-0 h-full w-full object-cover opacity-50"
         />
+        <span className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/35 to-foreground/20" />
         <div className="relative mx-auto w-full max-w-[110rem] px-5 pt-32 pb-14 text-background md:px-10 md:pb-20">
           <Reveal>
             <p className="label-caps text-primary">Our Work</p>
@@ -84,10 +67,10 @@ function WorkListing() {
         </div>
       </section>
 
-      <Seam to="cream" />
+      <Seam to="cream" className="!h-[5.5rem] md:!h-36" />
 
       {/* Filters + grid */}
-      <section className="mx-auto max-w-[110rem] px-5 py-20 md:px-10 md:py-28">
+      <section className="mx-auto max-w-[110rem] px-5 py-16 md:px-10 md:py-20">
         <Reveal className="flex flex-wrap items-center gap-3 border-b border-border pb-6">
           {tabs.map((t) => (
             <button
@@ -132,6 +115,8 @@ function WorkListing() {
         title="Have a space in mind?"
         body="Tell us about your gym, fitness or wellness space, including the floor area, city and what you plan to build. We will help you explore the right design approach for your project."
         cta="Start a Project →"
+        image={p5}
+        imageAlt="Full-width view of a completed gym training floor"
       />
 
       {/* Blogs / downloads teaser */}
@@ -146,25 +131,36 @@ function WorkListing() {
           </Link>
         </Reveal>
 
-        <div className="mt-14 grid gap-6 md:grid-cols-3">
-          {teasers.map((t, i) => (
-            <Reveal key={t.title} delay={i * 90}>
-              <Link to="/resources" className="group block">
+        <div className="mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+          {featuredPosts.map((p, i) => (
+            <Reveal key={p.slug} delay={i * 90}>
+              <Link
+                to="/resources/blog/$slug"
+                params={{ slug: p.slug }}
+                className="group block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
+              >
                 <div className="relative aspect-[16/10] overflow-hidden bg-muted">
                   <img
-                    src={t.img}
-                    alt={`Placeholder image — ${t.title}`}
+                    src={p.image}
+                    alt={p.imageAlt || `Cover image — ${p.title}`}
                     loading="lazy"
                     width={1400}
                     height={1000}
                     className="h-full w-full object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.06]"
                   />
                 </div>
-                <p className="label-caps mt-4 text-primary">{t.kind}</p>
-                <h3 className="mt-2 font-display text-2xl uppercase transition-colors duration-300 group-hover:text-primary">
-                  {t.title}
+                <div className="mt-4 flex items-center gap-3">
+                  <span className="label-caps bg-secondary px-3 py-1.5 text-primary">
+                    {p.category}
+                  </span>
+                  <span className="label-caps inline-flex items-center gap-1.5 text-muted-foreground">
+                    <Clock className="h-3.5 w-3.5" /> {p.readTime}
+                  </span>
+                </div>
+                <h3 className="mt-3 font-display text-2xl uppercase leading-tight transition-colors duration-300 group-hover:text-primary">
+                  {p.title}
                 </h3>
-                <p className="mt-1 text-sm text-muted-foreground">{t.meta}</p>
+                <p className="mt-3 text-sm text-muted-foreground">{p.excerpt}</p>
               </Link>
             </Reveal>
           ))}

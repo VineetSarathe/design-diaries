@@ -9,7 +9,16 @@ export function ContactSettingsProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     apiRequest<{ settings: ContactSettings }>("/settings/contact")
-      .then((res) => setSettings({ ...DEFAULT_CONTACT, ...res.settings }))
+      .then((res) => {
+        const merged = { ...DEFAULT_CONTACT, ...res.settings };
+        if (!merged.instagram?.includes("designdiaries_by_sagrika_")) {
+          merged.instagram = DEFAULT_CONTACT.instagram;
+        }
+        if (!merged.linkedin?.includes("designdiariesbysagrika")) {
+          merged.linkedin = DEFAULT_CONTACT.linkedin;
+        }
+        setSettings(merged);
+      })
       .catch(() => setSettings(DEFAULT_CONTACT));
   }, []);
 

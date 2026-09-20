@@ -505,7 +505,7 @@ function Home() {
                   >
                     &ldquo;
                   </span>
-                  <blockquote className="relative z-10 mt-10 max-w-[34ch] font-display text-[1.5rem] uppercase leading-[1.12] tracking-tight text-background md:text-[2rem]">
+                  <blockquote className="relative z-10 mt-10 max-w-[34ch] font-display text-[1.35rem] uppercase leading-[1.38] tracking-[-0.04em] text-background md:text-[1.75rem]">
                     {featured.testimonial}
                   </blockquote>
                   <figcaption className="relative z-10 mt-8 flex items-center justify-between gap-4 border-t border-background/20 pt-6">
@@ -580,7 +580,7 @@ function Home() {
                 delay={i * 140}
                 className="group flex flex-col items-center px-4 py-6 text-center transition-transform duration-500 hover:-translate-y-1 motion-reduce:transform-none"
               >
-                <p className="font-display text-4xl leading-none tracking-tight uppercase transition-all duration-500 group-hover:scale-105 group-hover:text-primary md:text-5xl motion-reduce:transform-none">
+                <p className="font-display text-3xl leading-none tracking-tight uppercase transition-all duration-500 group-hover:scale-105 group-hover:text-primary md:text-4xl motion-reduce:transform-none">
                   {s.display ?? <CountUp to={s.n ?? 0} suffix={s.s} />}
                 </p>
                 <span className="mt-4 block h-px w-8 bg-primary/0 transition-all duration-500 group-hover:w-16 group-hover:bg-primary" />

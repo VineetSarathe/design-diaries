@@ -120,18 +120,18 @@ function StartProject() {
         </div>
       </DarkBand>
 
-      <Seam to="cream" />
+      <Seam to="cream" className="!h-[5.5rem] md:!h-36" />
 
-      <section className="blend-cream-top">
-        <div className="mx-auto grid max-w-[110rem] gap-10 px-5 py-16 md:px-10 md:py-24 lg:grid-cols-[0.9fr_1.1fr]">
-          <Reveal>
+      <section>
+        <div className="mx-auto grid max-w-[110rem] gap-10 px-5 py-16 md:px-10 md:py-20 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+          <Reveal className="lg:pt-8">
             <p className="label-caps text-primary">Before you send</p>
             <h2 className="display-lg mt-4">A real reply from the designer</h2>
             <p className="mt-5 max-w-md text-muted-foreground">Sagrika reads every enquiry herself No sales team and no automated funnel</p>
           </Reveal>
           <Reveal delay={140} className="space-y-8">
             <div className="border border-border bg-card p-6 md:p-8">
-              <div className="mt-8 grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-3">
                 {proof.map((p) => (
                   <Link
                     key={p.slug}
@@ -201,7 +201,7 @@ function StartProject() {
         </div>
       </DarkBand>
 
-      <Seam to="cream" />
+      <Seam to="cream" className="!h-[5.5rem] md:!h-36" />
 
       <FaqSection items={startFaqs} title="Before you get in touch" />
     </>

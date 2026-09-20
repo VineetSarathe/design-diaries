@@ -148,12 +148,9 @@ function AboutPage() {
               <Reveal className="group relative mb-10 overflow-hidden">
                 <img src={founderPractice} alt="Sagrika working through a gym interior design" loading="lazy" width={1200} height={1800} className="aspect-[3/4] w-full object-cover object-[center_20%] opacity-70 transition-all duration-[1000ms] group-hover:scale-[1.04] group-hover:opacity-95" />
                 <span className="absolute inset-0 border border-background/20" />
-                <span className="label-caps absolute bottom-4 left-4 bg-foreground/80 px-3 py-2 text-background">Plan before palette</span>
               </Reveal>
               <Reveal delay={120} className="group relative overflow-hidden">
                 <img src={founderMeet} alt="Sagrika, founder of Design Diaries" loading="lazy" width={1216} height={1800} className="aspect-[4/5] w-full object-cover object-[center_20%] transition-transform duration-[1200ms] group-hover:scale-[1.04]" />
-                <span className="absolute inset-0 bg-gradient-to-t from-foreground/65 via-transparent to-transparent" />
-                <span className="label-caps absolute bottom-5 left-5 text-background">On site with the work</span>
               </Reveal>
             </div>
           </div>
@@ -249,7 +246,7 @@ function AboutPage() {
             </button>
           </div>
           <div className="mt-14 grid grid-cols-3 border-y border-background/15 py-8 text-center">
-            {[{ n: "15+", t: "Gym projects" }, { n: "8", t: "Cities" }, { n: "100%", t: "Design first" }].map((stat) => <Reveal key={stat.t}><p className="font-display text-2xl text-primary md:text-4xl">{stat.n}</p><p className="label-caps mt-2 text-background/45">{stat.t}</p></Reveal>)}
+            {[{ n: "15+", t: "Gym & fitness interior projects" }, { n: "Pan India", t: "Work" }, { n: "100%", t: "Function-first approach" }].map((stat) => <Reveal key={stat.t}><p className="font-display text-2xl text-primary md:text-4xl">{stat.n}</p><p className="label-caps mt-2 text-background/45">{stat.t}</p></Reveal>)}
           </div>
         </div>
       </section>

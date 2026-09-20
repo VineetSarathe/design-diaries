@@ -9,7 +9,7 @@ export const DEFAULT_CONTACT_SETTINGS = {
   phone: "+91 96224 34242",
   whatsapp: "+91 96224 34242",
   instagram: "https://www.instagram.com/designdiaries_by_sagrika_?stkn=ZmkzMWY4MnNydnpu",
-  linkedin: "https://linkedin.com",
+  linkedin: "https://www.linkedin.com/in/designdiariesbysagrika",
 };
 
 const OLD_PLACEHOLDERS = {
@@ -22,7 +22,12 @@ const OLD_PLACEHOLDERS = {
     "https://instagram.com/",
     "https://www.instagram.com",
     "https://www.instagram.com/",
+    "https://www.instagram.com/designdiaries_by_sagrika_",
+    "https://www.instagram.com/designdiaries_by_sagrika_/",
+    "https://instagram.com/designdiaries_by_sagrika_",
+    "https://instagram.com/designdiaries_by_sagrika_/",
   ]),
+  linkedin: new Set(["", "https://linkedin.com", "https://linkedin.com/", "https://www.linkedin.com", "https://www.linkedin.com/"]),
 };
 
 export async function seedContactSettings(): Promise<void> {
@@ -39,10 +44,18 @@ export async function seedContactSettings(): Promise<void> {
   if (OLD_PLACEHOLDERS.whatsapp.has(existing.whatsapp)) {
     patch.whatsapp = DEFAULT_CONTACT_SETTINGS.whatsapp;
   }
-  if (OLD_PLACEHOLDERS.instagram.has(existing.instagram)) {
+  if (
+    OLD_PLACEHOLDERS.instagram.has(existing.instagram) ||
+    existing.instagram !== DEFAULT_CONTACT_SETTINGS.instagram
+  ) {
     patch.instagram = DEFAULT_CONTACT_SETTINGS.instagram;
   }
-  if (!existing.linkedin) patch.linkedin = DEFAULT_CONTACT_SETTINGS.linkedin;
+  if (
+    OLD_PLACEHOLDERS.linkedin.has(existing.linkedin) ||
+    !existing.linkedin.includes("designdiariesbysagrika")
+  ) {
+    patch.linkedin = DEFAULT_CONTACT_SETTINGS.linkedin;
+  }
 
   if (Object.keys(patch).length > 0) {
     await ContactSettings.updateOne({ key: CONTACT_SETTINGS_KEY }, { $set: patch });

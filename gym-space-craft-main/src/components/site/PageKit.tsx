@@ -3,8 +3,19 @@ import { Reveal, useInView } from "./Reveal";
 import { cn } from "@/lib/utils";
 
 /** Thin gradient seam so a cream section flows into a dark one (and back). */
-export function Seam({ to = "dark" }: { to?: "dark" | "cream" }) {
-  return <div aria-hidden className={to === "dark" ? "seam-to-dark" : "seam-to-cream"} />;
+export function Seam({
+  to = "dark",
+  className,
+}: {
+  to?: "dark" | "cream";
+  className?: string;
+}) {
+  return (
+    <div
+      aria-hidden
+      className={cn(to === "dark" ? "seam-to-dark" : "seam-to-cream", className)}
+    />
+  );
 }
 
 /** Full-bleed dark band used to give every page the homepage's 60% dark rhythm. */

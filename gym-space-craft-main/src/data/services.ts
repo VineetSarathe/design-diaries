@@ -10,7 +10,7 @@ export const problems = [
     text: "A space might look right on paper and still fail as a gym. Testing the floor area early can reveal circulation, zoning, and equipment-planning problems before they become expensive changes.",
   },
   {
-    title: "A GENERALIST LEARNING ON YOUR BUDGET",
+    title: "LEARNING ON YOUR BUDGET",
     text: "Gym Interiors have their own functional requirements. Critical design choices can become costly lessons to the owner without experience in equipment layouts, training zones and user flow.",
   },
   {

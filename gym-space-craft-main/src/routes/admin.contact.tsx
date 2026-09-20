@@ -19,8 +19,8 @@ const fields = [
   { name: "email", label: "Email", type: "email", placeholder: "designdiariesbysagrika@gmail.com" },
   { name: "phone", label: "Phone", type: "tel", placeholder: "+91 96224 34242" },
   { name: "whatsapp", label: "WhatsApp", type: "tel", placeholder: "+91 96224 34242" },
-  { name: "instagram", label: "Instagram", type: "text", placeholder: "https://www.instagram.com/designdiaries_by_sagrika_" },
-  { name: "linkedin", label: "LinkedIn", type: "text", placeholder: "https://linkedin.com/company/studio" },
+  { name: "instagram", label: "Instagram", type: "text", placeholder: "https://www.instagram.com/designdiaries_by_sagrika_?stkn=ZmkzMWY4MnNydnpu" },
+  { name: "linkedin", label: "LinkedIn", type: "text", placeholder: "https://www.linkedin.com/in/designdiariesbysagrika" },
 ] as const;
 
 function AdminContactPage() {

@@ -63,6 +63,7 @@ function FaqPage() {
       </div>
 
       <CtaBanner
+        compact
         title="Still deciding? Start with the call"
         body="Thirty minutes on your space, your model and your peak hour — you'll leave with a clearer view either way."
         cta="Start a Project"

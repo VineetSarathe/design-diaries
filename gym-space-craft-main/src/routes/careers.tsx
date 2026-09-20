@@ -81,9 +81,6 @@ function CareersPage() {
             >
               {contact.email}
             </a>
-            <p className="mt-4 text-xs text-muted-foreground">
-              Placeholder address — the real studio inbox replaces this.
-            </p>
           </Reveal>
         </div>
       </section>

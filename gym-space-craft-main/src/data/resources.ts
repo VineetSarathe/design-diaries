@@ -20,6 +20,8 @@ export const blogCategories = [
 ] as const;
 export type BlogCategory = (typeof blogCategories)[number];
 
+export const BLOG_AUTHOR = "by sagrika saraf";
+
 export type BlogPost = {
   slug: string;
   title: string;

@@ -329,12 +329,7 @@ export function Header({ overHero = false }: { overHero?: boolean }) {
         <div className="flex items-center gap-3">
           <Link
             to="/start-a-project"
-            className={cn(
-              "label-caps group relative hidden overflow-hidden border px-6 py-3 tracking-[0.2em] transition-all duration-300 active:scale-[0.97] sm:inline-flex sm:items-center sm:gap-2",
-              headerOnDark
-                ? "border-background/40 text-background hover:border-primary hover:text-primary"
-                : "border-primary bg-primary text-primary-foreground",
-            )}
+            className="label-caps group relative hidden overflow-hidden border border-primary bg-primary px-6 py-3 tracking-[0.2em] text-primary-foreground transition-all duration-300 active:scale-[0.97] sm:inline-flex sm:items-center sm:gap-2"
           >
             <span className="relative">Start a Project</span>
             <ArrowRight size={14} className="relative transition-transform duration-300 group-hover:translate-x-1" />
