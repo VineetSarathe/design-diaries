@@ -94,10 +94,10 @@ function WorkListing() {
           </span>
         </Reveal>
 
-        <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-14 grid items-start gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {shown.map((p, i) => (
             <Reveal key={p.slug} delay={i * 90}>
-              <ProjectCard project={p} number={i + 1} onPreviewChange={setHeroSrc} />
+              <ProjectCard project={p} number={i + 1} onPreviewChange={setHeroSrc} uncropped />
             </Reveal>
           ))}
         </div>

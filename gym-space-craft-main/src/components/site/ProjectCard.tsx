@@ -68,11 +68,13 @@ export function ProjectCard({
   number = 1,
   className,
   onPreviewChange,
+  uncropped = false,
 }: {
   project: Project | ProjectCardData;
   number?: number;
   className?: string;
   onPreviewChange?: (src: string | null) => void;
+  uncropped?: boolean;
 }) {
   const card = useMemo(
     () => ("images" in project ? project : toProjectCardData(project)),
@@ -93,7 +95,7 @@ export function ProjectCard({
   const activeSrc = images[safeActive];
   const activeCaption = card.captions?.[safeActive] || card.insight;
   const activeIsVideo = Boolean(activeSrc && isVideoSrc(activeSrc));
-  const previewSrc = activeSrc ? mediaPreviewUrl(activeSrc, 800) : "";
+  const previewSrc = activeSrc ? mediaPreviewUrl(activeSrc, uncropped ? 1400 : 800) : "";
   const playbackSrc = activeSrc && activeIsVideo ? mediaPlaybackUrl(activeSrc, 720) : "";
   const eager = number <= 3;
   const showVideo = Boolean(activeIsVideo && (playing || cycling));
@@ -251,7 +253,12 @@ export function ProjectCard({
         swipeStart.current = null;
       }}
     >
-      <div className="relative aspect-[5/4] touch-pan-y overflow-hidden bg-foreground">
+      <div
+        className={cn(
+          "relative touch-pan-y overflow-hidden bg-foreground",
+          uncropped ? "min-h-[12rem]" : "aspect-[5/4]",
+        )}
+      >
         {previewSrc ? (
           <img
             key={previewSrc}
@@ -260,13 +267,18 @@ export function ProjectCard({
             loading={eager ? "eager" : "lazy"}
             fetchPriority={eager ? "high" : "low"}
             decoding="async"
-            width={800}
-            height={640}
+            width={uncropped ? 1400 : 800}
+            height={uncropped ? 1050 : 640}
             sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
             className={cn(
-              "absolute inset-0 h-full w-full object-cover transition-[opacity,transform] duration-500 ease-out motion-reduce:transition-none",
-              (cycling || (isTouchUi && mobileInView)) && "scale-[1.12]",
-              "group-hover:scale-[1.12]",
+              "transition-[opacity,transform] duration-500 ease-out motion-reduce:transition-none",
+              uncropped
+                ? "relative z-0 h-auto w-full object-contain object-center"
+                : cn(
+                    "absolute inset-0 h-full w-full object-cover",
+                    (cycling || (isTouchUi && mobileInView)) && "scale-[1.12]",
+                    "group-hover:scale-[1.12]",
+                  ),
             )}
           />
         ) : null}
@@ -290,7 +302,8 @@ export function ProjectCard({
             }}
             aria-label={`${card.name} in ${card.location}, video ${safeActive + 1}`}
             className={cn(
-              "absolute inset-0 h-full w-full object-cover",
+              "absolute inset-0 h-full w-full",
+              uncropped ? "object-contain" : "object-cover",
               showVideo ? "opacity-100" : "opacity-0",
             )}
           />
