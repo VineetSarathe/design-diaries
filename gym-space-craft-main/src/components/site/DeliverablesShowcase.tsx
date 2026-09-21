@@ -14,14 +14,16 @@ const images = [conceptImage, planningImage, lightingImage, drawingsImage, views
 
 export function DeliverablesShowcase({ fadeFromInk = false }: { fadeFromInk?: boolean }) {
   const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
 
   useEffect(() => {
+    if (paused) return;
     const timer = window.setInterval(
       () => setActive((current) => (current + 1) % deliverables.length),
-      1000,
+      1600,
     );
     return () => window.clearInterval(timer);
-  }, []);
+  }, [paused]);
 
   const selected = deliverables[active] ?? deliverables[0];
   const selectedImage = images[active] ?? images[0];
@@ -59,6 +61,11 @@ export function DeliverablesShowcase({ fadeFromInk = false }: { fadeFromInk?: bo
                   type="button"
                   variant="ghost"
                   onClick={() => setActive(index)}
+                  onMouseEnter={() => {
+                    setPaused(true);
+                    setActive(index);
+                  }}
+                  onMouseLeave={() => setPaused(false)}
                   aria-pressed={isActive}
                   className="group relative h-full min-h-[3.25rem] w-full min-w-0 flex-1 justify-start whitespace-normal rounded-none border-b border-border px-5 py-3 text-left last:border-b-0 hover:bg-secondary md:px-6 md:py-3.5"
                 >
@@ -78,7 +85,11 @@ export function DeliverablesShowcase({ fadeFromInk = false }: { fadeFromInk?: bo
             })}
           </div>
 
-          <div className="relative min-h-[20rem] overflow-hidden bg-foreground text-background sm:min-h-[22rem] lg:min-h-[26rem]">
+          <div
+            className="relative min-h-[20rem] overflow-hidden bg-foreground text-background sm:min-h-[22rem] lg:min-h-[26rem]"
+            onMouseEnter={() => setPaused(true)}
+            onMouseLeave={() => setPaused(false)}
+          >
             {images.map((image, index) => (
               <img
                 key={image}

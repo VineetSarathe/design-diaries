@@ -71,11 +71,24 @@ export function RecognitionCard({ item, active, onActivate, register }: Recognit
     setImageIndex((currentIndex) => (currentIndex + direction + gallery.length) % gallery.length);
   };
 
+  const canHover = () =>
+    typeof window !== "undefined" &&
+    window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+  const live = canHover() ? hovered : active;
+
   useEffect(() => {
-    if (!hovered || gallery.length < 2 || currentIsVideo) return;
+    if (gallery.length < 2 || currentIsVideo) return;
+    if (!live) return;
     const timer = window.setTimeout(advance, 1000);
     return () => window.clearTimeout(timer);
-  }, [hovered, gallery.length, imageIndex, currentIsVideo]);
+  }, [live, gallery.length, imageIndex, currentIsVideo]);
+
+  useEffect(() => {
+    if (active || canHover()) return;
+    setImageIndex(0);
+    setPlaying(false);
+  }, [active]);
 
   useEffect(() => {
     setPlaying(false);
@@ -97,13 +110,13 @@ export function RecognitionCard({ item, active, onActivate, register }: Recognit
   useEffect(() => {
     const video = videoRefs.current[imageIndex];
     if (!currentIsVideo || !video) {
-      if (!hovered) setPlaying(false);
+      if (!live) setPlaying(false);
       return;
     }
     video.muted = true;
     video.volume = 0;
     video.loop = false;
-    if (!hovered) {
+    if (!live) {
       video.pause();
       setPlaying(false);
       return;
@@ -113,9 +126,9 @@ export function RecognitionCard({ item, active, onActivate, register }: Recognit
       .then(() => setPlaying(true))
       .catch(() => {
         setPlaying(false);
-        if (hovered) window.setTimeout(advance, 1000);
+        if (live) window.setTimeout(advance, 1000);
       });
-  }, [hovered, imageIndex, currentIsVideo]);
+  }, [live, imageIndex, currentIsVideo]);
 
   useEffect(() => {
     if (hovered || active) return;
@@ -179,7 +192,7 @@ export function RecognitionCard({ item, active, onActivate, register }: Recognit
                 if (index === imageIndex) setPlaying(false);
               }}
               onEnded={() => {
-                if (index === imageIndex && hovered) advance();
+                if (index === imageIndex && live) advance();
               }}
               aria-label={`${item.title}, ${item.category.toLowerCase()}, ${item.year}${index ? `, video ${index + 1}` : ""}`}
               className={cn(
@@ -219,7 +232,7 @@ export function RecognitionCard({ item, active, onActivate, register }: Recognit
         <span className="label-caps absolute top-3 left-3 z-20 bg-foreground px-2.5 py-1.5 text-background">
           {item.number}
         </span>
-        {currentIsVideo && !hovered && (
+        {currentIsVideo && !live && (
           <VideoPlayButton
             playing={playing}
             label={playing ? `Pause video of ${item.title}` : `Play video of ${item.title}`}
@@ -240,12 +253,7 @@ export function RecognitionCard({ item, active, onActivate, register }: Recognit
             event.preventDefault();
             event.stopPropagation();
           }}
-          className={cn(
-            "pointer-events-auto absolute top-3 right-3 z-30 h-10 w-10 rounded-full border backdrop-blur-sm hover:border-primary hover:bg-primary hover:text-primary-foreground",
-            active
-              ? "border-primary bg-primary text-primary-foreground"
-              : "border-background/65 bg-foreground/15 text-background",
-          )}
+          className="pointer-events-auto absolute top-3 right-3 z-30 h-10 w-10 rounded-full border border-background/65 bg-transparent text-background hover:border-primary hover:bg-primary hover:text-primary-foreground"
         >
           <ArrowRight className="h-4 w-4" />
         </Button>
@@ -288,10 +296,11 @@ export function RecognitionCard({ item, active, onActivate, register }: Recognit
       ref={register}
       onMouseEnter={() => {
         onActivate();
-        setHovered(true);
+        if (canHover()) setHovered(true);
       }}
       onMouseLeave={() => {
         setHovered(false);
+        if (!canHover()) return;
         setImageIndex(0);
         setPlaying(false);
       }}

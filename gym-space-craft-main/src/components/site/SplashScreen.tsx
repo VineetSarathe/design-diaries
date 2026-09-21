@@ -25,15 +25,7 @@ export function SplashScreen() {
       )}
     >
       <div className="flex h-[1.35em] w-full items-center justify-center overflow-hidden text-4xl md:text-5xl">
-        <p
-          className="splash-word text-center font-medium uppercase"
-          style={{
-            fontFamily: "Arial, Helvetica, sans-serif",
-            color: "#c5c3a6",
-            letterSpacing: "0.28rem",
-            whiteSpace: "nowrap",
-          }}
-        >
+        <p className="splash-word text-center font-display font-bold uppercase text-white">
           DESIGNDIARIES
         </p>
       </div>

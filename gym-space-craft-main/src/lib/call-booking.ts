@@ -58,7 +58,7 @@ export async function createCallBooking(payload: {
     method: "POST",
     body: JSON.stringify(payload),
   });
-  await notifyAdmin({
+  void notifyAdmin({
     subject: `New discovery call · ${payload.date} · ${payload.slot}`,
     eyebrow: "Discovery call",
     heading: payload.name,

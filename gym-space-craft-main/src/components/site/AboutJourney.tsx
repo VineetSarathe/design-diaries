@@ -11,6 +11,22 @@ type JourneyItem = {
   image: string;
 };
 
+const JOURNEY_MS = 4000;
+
+function JourneyYear({ year, className }: { year: string; className?: string }) {
+  const match = year.match(/^(.*?)\s+to\s+(.*)$/i);
+  if (!match?.[1] || !match[2]) {
+    return <span className={className}>{year}</span>;
+  }
+  return (
+    <span className={className}>
+      {match[1]} to
+      <br />
+      {match[2]}
+    </span>
+  );
+}
+
 export function AboutJourney({ items }: { items: JourneyItem[] }) {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -20,7 +36,7 @@ export function AboutJourney({ items }: { items: JourneyItem[] }) {
     if (paused || items.length < 2) return;
     const timer = window.setInterval(() => {
       setActive((current) => (current + 1) % items.length);
-    }, 1000);
+    }, JOURNEY_MS);
     return () => window.clearInterval(timer);
   }, [items.length, paused]);
 
@@ -77,7 +93,7 @@ export function AboutJourney({ items }: { items: JourneyItem[] }) {
                 width={1200}
                 height={1500}
                 className={cn(
-                  "absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-300 ease-out",
+                  "absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-700 ease-out",
                   active === index ? "opacity-100" : "opacity-0",
                 )}
               />
@@ -87,7 +103,9 @@ export function AboutJourney({ items }: { items: JourneyItem[] }) {
               <div className="flex items-end justify-between gap-6">
                 <div>
                   <p className="label-caps text-primary">Chapter {String(active + 1).padStart(2, "0")}</p>
-                  <p className="mt-2 font-serif text-3xl leading-tight md:text-3xl">{selected.year}</p>
+                  <p className="display-lg mt-2 max-w-[14ch] text-background">
+                    <JourneyYear year={selected.year} />
+                  </p>
                 </div>
                 <div className="flex gap-2">
                   <Button
@@ -116,29 +134,33 @@ export function AboutJourney({ items }: { items: JourneyItem[] }) {
           </Reveal>
 
           <div className="lg:hidden" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
-            <ol className="grid grid-cols-5 gap-1 border-t border-border pt-5">
+            <ol className="grid grid-cols-5 gap-x-1 border-t border-border pt-5">
               {items.map((item, index) => {
                 const isActive = active === index;
                 return (
-                  <li key={`${item.year}-step`}>
+                  <li key={`${item.year}-step`} className="min-w-0">
                     <button
                       type="button"
                       onClick={() => setActive(index)}
-                      className="flex w-full flex-col items-center gap-2 text-center"
+                      className="flex w-full min-w-0 flex-col items-center gap-2 text-center"
                       aria-pressed={isActive}
                     >
-                      <span className={cn("font-display text-[0.65rem] tabular-nums", isActive ? "text-primary" : "text-muted-foreground")}>
+                      <span className={cn("font-display text-[0.7rem] font-semibold tabular-nums tracking-[0.16em]", isActive ? "text-primary" : "text-muted-foreground")}>
                         {String(index + 1).padStart(2, "0")}
                       </span>
                       <span
                         className={cn(
-                          "h-2 w-2 rounded-full border",
+                          "h-2 w-2 shrink-0 rounded-full border",
                           isActive ? "border-primary bg-primary" : "border-border bg-transparent",
                         )}
                       />
-                      <span className={cn("label-caps max-w-[4.6rem] text-center text-[0.58rem] leading-[1.2] tracking-[0.08em] [text-wrap:balance]", isActive ? "text-foreground" : "text-muted-foreground")}>
-                        {item.year}
-                      </span>
+                      <JourneyYear
+                        year={item.year}
+                        className={cn(
+                          "block w-full min-h-[2.4em] px-0.5 font-display text-[0.52rem] uppercase leading-[1.25] tracking-[0.06em]",
+                          isActive ? "text-foreground" : "text-muted-foreground",
+                        )}
+                      />
                     </button>
                   </li>
                 );
@@ -146,13 +168,10 @@ export function AboutJourney({ items }: { items: JourneyItem[] }) {
             </ol>
 
             <div className="mt-8 border-t border-border pt-5">
-              <div className="flex items-start justify-between gap-4">
-                <p className="label-caps text-primary">
-                  {String(active + 1).padStart(2, "0")}{" "}
-                  <span className="text-foreground">{selected.title}</span>
-                </p>
-                <p className="label-caps shrink-0 text-muted-foreground">Swipe →</p>
-              </div>
+              <p className="label-caps text-primary">
+                {String(active + 1).padStart(2, "0")}{" "}
+                <span className="font-display text-[0.8rem] tracking-[0.14em] text-foreground">{selected.title}</span>
+              </p>
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{selected.text}</p>
             </div>
           </div>
@@ -197,7 +216,7 @@ export function AboutJourney({ items }: { items: JourneyItem[] }) {
                       </div>
                       <span
                         className={cn(
-                          "mt-5 block text-sm font-semibold uppercase leading-tight transition-colors duration-300",
+                          "mt-5 block font-display text-[0.95rem] uppercase leading-tight tracking-wide transition-colors duration-300 md:text-base",
                           isActive ? "text-primary-foreground" : "text-foreground",
                         )}
                       >
@@ -214,9 +233,10 @@ export function AboutJourney({ items }: { items: JourneyItem[] }) {
                       <span className="mt-auto block pt-5">
                         <span
                           className={cn(
-                            "block h-0.5 origin-left transition-transform duration-1000 ease-linear",
+                            "block h-0.5 origin-left transition-transform ease-linear",
                             isActive ? "scale-x-100 bg-primary-foreground" : "scale-x-0 bg-primary",
                           )}
+                          style={{ transitionDuration: `${JOURNEY_MS}ms` }}
                         />
                       </span>
                     </span>

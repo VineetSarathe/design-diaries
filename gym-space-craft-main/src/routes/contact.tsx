@@ -54,11 +54,11 @@ function ContactPage() {
                   href={d.href}
                   target={d.href.startsWith("http") ? "_blank" : undefined}
                   rel="noreferrer noopener"
-                  className={`mt-2 block font-display text-lg uppercase leading-snug transition-colors duration-300 hover:text-primary md:text-xl ${
-                    d.label === "Email" ? "break-all" : "break-words"
+                  className={`mt-2 block font-display text-lg leading-snug transition-colors duration-300 hover:text-primary md:text-xl ${
+                    d.label === "Email" ? "break-all lowercase" : "break-words uppercase"
                   }`}
                 >
-                  {d.value}
+                  {d.label === "Email" ? d.value.toLowerCase() : d.value}
                 </a>
               ) : (
                 <p className="mt-2 break-words font-display text-lg uppercase leading-snug md:text-xl">{d.value}</p>

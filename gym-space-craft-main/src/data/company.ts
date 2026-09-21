@@ -32,12 +32,12 @@ export const storyArc = [
 ];
 
 export const methodSteps = [
-  { k: "Understand", d: "Know your people, goals and opportunities." },
-  { k: "Research", d: "Study the context, user behaviour and spatial possibilities." },
-  { k: "Plan", d: "Develop a clear spatial and functional strategy." },
-  { k: "Design", d: "Bring the vision to life with intentional aesthetic design." },
-  { k: "Build", d: "Oversee the design intent through execution and attention to detail." },
-  { k: "Learn", d: "Measure. Refine. Evolve. With every project." },
+  { k: "Understand", d: "Understand who you are designing for and what the space needs to achieve." },
+  { k: "Research", d: "Look closely at the site, people and practical details before making design decisions." },
+  { k: "Plan", d: "Plan the layout, equipment and movement around how the gym will actually work." },
+  { k: "Design", d: "Bring function, experience and aesthetics together to create a space people remember." },
+  { k: "Build", d: "Make the design work on site, with attention to every detail along the way." },
+  { k: "Learn", d: "Learn from every project and turn unexpected challenges into better solutions." },
 ];
 
 /** Empty this array and the Awards sub-section disappears — no padding. */

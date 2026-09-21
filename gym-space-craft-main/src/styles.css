@@ -300,12 +300,34 @@
   animation-play-state: running;
 }
 
+@keyframes testimonial-marquee-y {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
+}
+
+.testimonial-rail {
+  animation: testimonial-marquee-y 24s linear infinite;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .testimonial-rail:hover {
+    animation-play-state: paused;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .marquee-track {
     animation: none;
   }
   .logo-rail {
     animation: dd-marquee 38s linear infinite;
+  }
+  .testimonial-rail {
+    animation: none;
   }
   [class*="about-drift"] {
     animation: none;
@@ -425,6 +447,74 @@
 .admin-panel button:disabled,
 .admin-panel [aria-disabled="true"] {
   cursor: not-allowed;
+}
+
+/* Native Windows-style bar on mobile; desktop keeps the OS scrollbar. */
+.instagram-feed-scroll {
+  display: none;
+}
+
+@media (pointer: coarse) {
+  .instagram-feed-rail {
+    padding-bottom: 0;
+    scrollbar-width: none;
+  }
+
+  .instagram-feed-rail::-webkit-scrollbar {
+    display: none;
+    height: 0;
+  }
+
+  .instagram-feed-scroll {
+    display: flex;
+    height: 15px;
+    margin: 8px 20px 0;
+    background: #e6e6e6;
+  }
+
+  .instagram-feed-scroll-btn {
+    display: flex;
+    width: 15px;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    background: #3b3b3b;
+    padding: 0;
+  }
+
+  .instagram-feed-scroll-btn span {
+    width: 0;
+    height: 0;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    border-right: 5px solid #f3f3f3;
+  }
+
+  .instagram-feed-scroll-btn.next span {
+    border-right: 0;
+    border-left: 5px solid #f3f3f3;
+  }
+
+  .instagram-feed-scroll-track {
+    position: relative;
+    flex: 1;
+    background: #e6e6e6;
+  }
+
+  .instagram-feed-scroll-track span {
+    position: absolute;
+    top: 2px;
+    bottom: 2px;
+    border-radius: 8px;
+    background: #636363;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .instagram-feed-scroll {
+    display: none;
+  }
 }
 
 .admin-panel input,

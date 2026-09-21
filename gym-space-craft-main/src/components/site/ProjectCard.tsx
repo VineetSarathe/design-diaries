@@ -105,7 +105,7 @@ export function ProjectCard({
 
   useEffect(() => {
     if (!cycling || images.length < 2 || activeIsVideo) return;
-    const timer = window.setTimeout(advance, 1000);
+    const timer = window.setTimeout(advance, 1400);
     return () => window.clearTimeout(timer);
   }, [cycling, images.length, safeActive, activeIsVideo]);
 
@@ -251,24 +251,30 @@ export function ProjectCard({
         swipeStart.current = null;
       }}
     >
-      <div className="relative aspect-[5/4] touch-pan-y overflow-hidden bg-muted">
-        {previewSrc ? (
-          <img
-            key={previewSrc}
-            src={previewSrc}
-            alt={`${card.name} in ${card.location}, view ${safeActive + 1}`}
-            loading={eager ? "eager" : "lazy"}
-            fetchPriority={eager ? "high" : "low"}
-            decoding="async"
-            width={900}
-            height={720}
-            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-            className={cn(
-              "absolute inset-0 h-full w-full object-cover transition-[opacity,transform] duration-700 ease-out group-hover:scale-[1.12] motion-reduce:transition-none",
-              isTouchUi && mobileInView && "scale-[1.12]",
-            )}
-          />
-        ) : null}
+      <div className="relative aspect-[5/4] touch-pan-y overflow-hidden bg-foreground">
+        {images.map((src, index) => {
+          const url = mediaPreviewUrl(src, 900);
+          const on = index === safeActive;
+          return (
+            <img
+              key={`${url}-${index}`}
+              src={url}
+              alt={`${card.name} in ${card.location}, view ${index + 1}`}
+              loading={eager && index === 0 ? "eager" : "lazy"}
+              fetchPriority={eager && index === 0 ? "high" : "low"}
+              decoding="async"
+              width={900}
+              height={720}
+              sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+              className={cn(
+                "absolute inset-0 h-full w-full object-cover transition-[opacity,transform] duration-500 ease-out motion-reduce:transition-none",
+                on ? "opacity-100" : "opacity-0",
+                (cycling || (isTouchUi && mobileInView)) && "scale-[1.12]",
+                "group-hover:scale-[1.12]",
+              )}
+            />
+          );
+        })}
         {activeIsVideo && playbackSrc ? (
           <video
             ref={videoRef}

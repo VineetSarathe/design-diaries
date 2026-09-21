@@ -38,22 +38,35 @@ export function CaseStudySpotlight({
 }: Props) {
   const [active, setActive] = useState(0);
   const [stage, setStage] = useState(0);
+  const [journeyPaused, setJourneyPaused] = useState(false);
   const total = images.length;
   const go = (dir: number) => setActive((i) => (i + dir + total) % total);
   const current = images[active] ?? images[0]!;
 
+  const selectStage = (index: number) => {
+    setStage(index);
+    setJourneyPaused(true);
+  };
+
   useEffect(() => {
     if (total < 2) return;
-    const id = window.setInterval(() => setActive((i) => (i + 1) % total), 500);
+    const id = window.setInterval(() => setActive((i) => (i + 1) % total), 1500);
     return () => window.clearInterval(id);
   }, [total]);
 
   useEffect(() => {
-    if (!journey.length) return;
+    if (!journey.length || journeyPaused) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const id = window.setInterval(() => setStage((i) => (i + 1) % journey.length), 3200);
     return () => window.clearInterval(id);
-  }, [journey.length]);
+  }, [journey.length, journeyPaused]);
+
+  useEffect(() => {
+    if (!journeyPaused) return;
+    if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    const id = window.setTimeout(() => setJourneyPaused(false), 4000);
+    return () => window.clearTimeout(id);
+  }, [journeyPaused, stage]);
 
 
   return (
@@ -129,26 +142,25 @@ export function CaseStudySpotlight({
                   />
                 </Link>
               </Reveal>
-            </div>
 
-            {/* arrows */}
-            <div className="absolute right-5 bottom-5 flex gap-3 md:right-10 md:bottom-10">
-              <button
-                type="button"
-                onClick={() => go(-1)}
-                aria-label="Previous case study image"
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-background/50 text-background transition-colors duration-300 hover:border-primary hover:bg-primary hover:text-primary-foreground"
-              >
-                <ArrowLeft size={16} />
-              </button>
-              <button
-                type="button"
-                onClick={() => go(1)}
-                aria-label="Next case study image"
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-background/50 text-background transition-colors duration-300 hover:border-primary hover:bg-primary hover:text-primary-foreground"
-              >
-                <ArrowRight size={16} />
-              </button>
+              <div className="relative z-20 mt-5 flex flex-row flex-nowrap items-center gap-3 lg:absolute lg:right-10 lg:bottom-10 lg:mt-0">
+                <button
+                  type="button"
+                  onClick={() => go(-1)}
+                  aria-label="Previous case study image"
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-background/50 text-background transition-colors duration-300 hover:border-primary hover:bg-primary hover:text-primary-foreground"
+                >
+                  <ArrowLeft size={16} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => go(1)}
+                  aria-label="Next case study image"
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-background/50 text-background transition-colors duration-300 hover:border-primary hover:bg-primary hover:text-primary-foreground"
+                >
+                  <ArrowRight size={16} />
+                </button>
+              </div>
             </div>
           </div>
 
@@ -197,12 +209,12 @@ export function CaseStudySpotlight({
 
       {/* metrics rail */}
       <div className="bg-secondary">
-        <div className="mx-auto grid max-w-[110rem] grid-cols-4 gap-x-2 gap-y-8 px-5 py-10 sm:gap-x-4 md:px-10 lg:grid-cols-5 lg:gap-x-6">
+        <div className="mx-auto grid max-w-[110rem] grid-cols-4 gap-x-4 gap-y-8 px-5 py-10 md:px-10 lg:grid-cols-5 lg:gap-x-8">
           {metrics.map((m, i) => (
             <Reveal
               key={m.l}
               delay={i * 90}
-              className={`group min-w-0 px-0 lg:px-8 ${i === 0 ? "" : "border-l border-border lg:border-border"}`}
+              className="group min-w-0"
             >
               <p className="font-display text-[1.35rem] leading-none tracking-tight text-foreground transition-colors duration-500 group-hover:text-primary sm:text-3xl md:text-5xl">
                 {m.v}
@@ -212,7 +224,7 @@ export function CaseStudySpotlight({
               </p>
             </Reveal>
           ))}
-          <Reveal delay={metrics.length * 90} className="col-span-4 lg:col-span-1 lg:border-l lg:border-border lg:px-8">
+          <Reveal delay={metrics.length * 90} className="col-span-4 lg:col-span-1">
             <p className="text-sm leading-relaxed text-muted-foreground">{note}</p>
             <span className="mt-4 block h-px w-12 bg-primary" />
           </Reveal>
@@ -244,20 +256,30 @@ export function CaseStudySpotlight({
                 <Reveal
                   key={c.n}
                   delay={i * 100}
-                  className={`group relative cursor-default px-4 py-5 transition-all duration-500 sm:px-5 sm:py-6 lg:px-8 ${
+                  className={`group relative ${
                     i === 0 ? "" : "lg:border-l lg:border-background/20"
-                  } ${on ? "bg-background/6" : "bg-transparent"}`}
+                  }`}
                 >
-                  <span
-                    aria-hidden="true"
-                    className={`absolute top-0 left-0 h-[2px] bg-primary transition-all duration-700 ease-out ${
-                      on ? "w-full opacity-100" : "w-0 opacity-0"
+                  <button
+                    type="button"
+                    onClick={() => selectStage(i)}
+                    onMouseEnter={() => selectStage(i)}
+                    onMouseLeave={() => {
+                      if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+                        setJourneyPaused(false);
+                      }
+                    }}
+                    aria-pressed={on}
+                    className={`relative w-full cursor-pointer appearance-none border-0 px-4 py-5 text-center text-inherit transition-all duration-500 group-hover:translate-x-1 sm:px-5 sm:py-6 md:text-left lg:px-8 ${
+                      on ? "bg-background/6" : "bg-transparent"
                     }`}
-                  />
-                  <div
-                    onMouseEnter={() => setStage(i)}
-                    className="text-center transition-transform duration-500 group-hover:translate-x-1 md:text-left"
                   >
+                    <span
+                      aria-hidden="true"
+                      className={`absolute top-0 left-0 h-[2px] bg-primary transition-all duration-700 ease-out ${
+                        on ? "w-full opacity-100" : "w-0 opacity-0"
+                      }`}
+                    />
                     <span
                       className={`font-display text-4xl leading-none transition-colors duration-500 sm:text-5xl md:text-6xl ${
                         on ? "text-primary" : "text-background/35"
@@ -265,21 +287,21 @@ export function CaseStudySpotlight({
                     >
                       {c.n}
                     </span>
-                    <p
-                      className={`label-caps mt-6 transition-colors duration-500 ${
+                    <span
+                      className={`label-caps mt-6 block transition-colors duration-500 ${
                         on ? "text-primary" : "text-background"
                       }`}
                     >
                       {c.t}
-                    </p>
-                    <p
-                      className={`mx-auto mt-3 max-w-xs text-sm leading-relaxed transition-colors duration-500 md:mx-0 ${
+                    </span>
+                    <span
+                      className={`mx-auto mt-3 block max-w-xs text-sm leading-relaxed transition-colors duration-500 md:mx-0 ${
                         on ? "text-background/90" : "text-background/50"
                       }`}
                     >
                       {c.d}
-                    </p>
-                  </div>
+                    </span>
+                  </button>
                 </Reveal>
               );
             })}

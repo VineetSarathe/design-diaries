@@ -38,12 +38,12 @@ export const Route = createFileRoute("/")({
 });
 
 const steps = [
-  { k: "Understand", d: "Know your people, goals and opportunities." },
-  { k: "Research", d: "Study the context, user behaviour and spatial possibilities." },
-  { k: "Plan", d: "Develop a clear spatial and functional strategy." },
-  { k: "Design", d: "Bring the vision to life with intentional aesthetic design." },
-  { k: "Build", d: "Oversee the design intent through execution and attention to detail." },
-  { k: "Learn", d: "Measure. Refine. Evolve. With every project." },
+  { k: "Understand", d: "Understand who you are designing for and what the space needs to achieve." },
+  { k: "Research", d: "Look closely at the site, people and practical details before making design decisions." },
+  { k: "Plan", d: "Plan the layout, equipment and movement around how the gym will actually work." },
+  { k: "Design", d: "Bring function, experience and aesthetics together to create a space people remember." },
+  { k: "Build", d: "Make the design work on site, with attention to every detail along the way." },
+  { k: "Learn", d: "Learn from every project and turn unexpected challenges into better solutions." },
 ];
 
 const recognitionFallback: Array<{
@@ -58,9 +58,9 @@ const recognitionFallback: Array<{
 
 const testimonialFallbackImages = [p1, p3, p2, p4];
 const reviewOrder = [
+  "fitness-manzil-gym",
   "iron-standard",
   "sanctum-wellness",
-  "fitness-manzil-gym",
   "outwork-fitness-gym",
   "forge-24",
   "still-house-recovery",
@@ -120,24 +120,13 @@ function Home() {
         }),
     [workProjects],
   );
-  const [reviewIndex, setReviewIndex] = useState(0);
-  const rotatedReviews = useMemo(() => {
-    if (!reviews.length) return reviews;
-    const start = reviewIndex % reviews.length;
-    return [...reviews.slice(start), ...reviews.slice(0, start)];
-  }, [reviews, reviewIndex]);
-  const featured = rotatedReviews[0];
-  const supporting = rotatedReviews.slice(1);
+  const featured =
+    reviews.find((review) => review.id === "fitness-manzil-gym") ?? reviews[0];
+  const supporting = reviews.filter((review) => review.id !== featured?.id);
+  const supportingLoop = supporting.length ? [...supporting, ...supporting] : [];
+  const supportingViewportRef = useRef<HTMLDivElement>(null);
   const supportingTrackRef = useRef<HTMLDivElement>(null);
-  const [supportingMaxHeight, setSupportingMaxHeight] = useState<number>();
-
-  useEffect(() => {
-    if (reviews.length < 2) return;
-    const timer = window.setInterval(() => {
-      setReviewIndex((current) => (current + 1) % reviews.length);
-    }, 2000);
-    return () => window.clearInterval(timer);
-  }, [reviews.length]);
+  const supportingPausedRef = useRef(false);
 
   useEffect(() => {
     const a = setTimeout(() => setStage(1), 120);
@@ -157,41 +146,35 @@ function Home() {
   }, []);
 
   useEffect(() => {
-    const track = supportingTrackRef.current;
-    if (!track) return;
+    const viewport = supportingViewportRef.current;
+    const rail = supportingTrackRef.current;
+    if (!viewport || !rail || supporting.length < 1) return;
 
-    const update = () => {
-      const cards = Array.from(track.children) as HTMLElement[];
-      const visible = cards.slice(0, 3);
-      if (!visible.length) {
-        setSupportingMaxHeight(undefined);
-        return;
-      }
+    const cards = Array.from(rail.children) as HTMLElement[];
+    const count = window.matchMedia("(min-width: 1024px)").matches ? 3 : 2;
+    const visible = cards.slice(0, Math.min(count, supporting.length));
+    if (window.matchMedia("(min-width: 1024px)").matches) {
+      viewport.style.height = "";
+    } else if (visible.length) {
       const first = visible[0];
       const last = visible[visible.length - 1];
-      setSupportingMaxHeight(last.offsetTop + last.offsetHeight - first.offsetTop);
-    };
+      viewport.style.height = `${last.offsetTop + last.offsetHeight - first.offsetTop}px`;
+    }
 
-    update();
-    const observer = new ResizeObserver(update);
-    observer.observe(track);
-    Array.from(track.children).forEach((child) => observer.observe(child));
-
-    const onWheel = (event: WheelEvent) => {
-      const atTop = track.scrollTop <= 1;
-      const atBottom = track.scrollTop + track.clientHeight >= track.scrollHeight - 1;
-      if ((event.deltaY < 0 && atTop) || (event.deltaY > 0 && atBottom)) {
-        event.preventDefault();
-        window.scrollBy({ top: event.deltaY });
+    let offset = 0;
+    let frame = 0;
+    const tick = () => {
+      const distance = rail.scrollHeight / 2;
+      if (!supportingPausedRef.current && distance > 8) {
+        offset += 0.45;
+        if (offset >= distance) offset = 0;
+        rail.style.transform = `translate3d(0, ${-offset}px, 0)`;
       }
+      frame = window.requestAnimationFrame(tick);
     };
-    track.addEventListener("wheel", onWheel, { passive: false });
-
-    return () => {
-      observer.disconnect();
-      track.removeEventListener("wheel", onWheel);
-    };
-  }, [workProjects, supporting.length]);
+    frame = window.requestAnimationFrame(tick);
+    return () => window.cancelAnimationFrame(frame);
+  }, [supporting.length, supportingLoop.length]);
 
   return (
     <>
@@ -291,7 +274,7 @@ function Home() {
           <Reveal className="flex flex-col items-center text-center">
             <p className="label-caps flex items-center gap-4 text-muted-foreground">
               <span className="hidden h-px w-16 bg-border sm:block" />
-              Gym interior design
+              Gym Interiors
               <span className="hidden h-px w-16 bg-border sm:block" />
             </p>
             <h2 className="display-statement mt-4">
@@ -492,7 +475,7 @@ function Home() {
           </Reveal>
 
           {featured && (
-          <div className={`mt-12 grid gap-px bg-background/12 ${supporting.length ? "lg:grid-cols-[1.15fr_1fr]" : ""}`}>
+          <div className={`mt-12 grid gap-px bg-foreground ${supporting.length ? "lg:grid-cols-[1.15fr_1fr]" : ""}`}>
             {/* Featured quote — quote overlaid on image */}
             <Reveal className="h-full">
               <figure className="group relative flex h-full min-h-[26rem] flex-col justify-end overflow-hidden bg-foreground md:min-h-[32rem]">
@@ -513,7 +496,7 @@ function Home() {
                 <div className="relative z-10 p-7 md:p-10">
                   <span
                     aria-hidden="true"
-                    className="pointer-events-none absolute -top-10 left-6 font-display text-[9rem] leading-none text-primary md:text-[11rem]"
+                    className="pointer-events-none absolute -top-3 left-5 font-display text-[3.25rem] leading-none text-primary md:-top-10 md:left-6 md:text-[11rem]"
                   >
                     &ldquo;
                   </span>
@@ -536,23 +519,30 @@ function Home() {
 
             {/* Supporting quotes — photo left, quote right */}
             {supporting.length > 0 && (
-            <div className="min-h-0">
+            <div className="min-h-0 lg:h-full">
             <div
-              ref={supportingTrackRef}
-              style={supportingMaxHeight ? { maxHeight: supportingMaxHeight } : undefined}
-              className="flex flex-col gap-px overflow-y-auto overscroll-auto bg-background/12 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              ref={supportingViewportRef}
+              className="overflow-hidden bg-foreground lg:h-full"
+              onMouseEnter={() => {
+                if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+                  supportingPausedRef.current = true;
+                }
+              }}
+              onMouseLeave={() => {
+                supportingPausedRef.current = false;
+              }}
             >
-              {supporting.map((t, i) => (
-                <Reveal key={t.id} delay={(i + 1) * 130} className="shrink-0">
-                  <figure className="group relative grid grid-cols-[6.5rem_minmax(0,1fr)] gap-5 bg-foreground p-5 transition-colors duration-500 hover:bg-background/[0.05] sm:grid-cols-[8rem_minmax(0,1fr)] sm:gap-6 sm:p-6 md:grid-cols-[9.5rem_minmax(0,1fr)] md:p-7">
-                    <div className="relative min-h-[7.5rem] overflow-hidden sm:min-h-[8.5rem] md:min-h-[9.5rem]">
+              <div ref={supportingTrackRef} className="flex flex-col gap-px will-change-transform">
+              {supportingLoop.map((t, i) => (
+                  <figure key={`${t.id}-${i}`} className="group relative grid shrink-0 grid-cols-[5.25rem_minmax(0,1fr)] gap-4 bg-foreground p-4 sm:grid-cols-[8rem_minmax(0,1fr)] sm:gap-6 sm:p-6 md:grid-cols-[9.5rem_minmax(0,1fr)] md:p-7">
+                    <div className="relative min-h-[6.25rem] overflow-hidden sm:min-h-[8.5rem] md:min-h-[9.5rem]">
                       <img
                         src={t.imageUrl || testimonialFallbackImages[(i + 1) % testimonialFallbackImages.length]}
                         alt={t.name}
                         loading="lazy"
                         width={300}
                         height={380}
-                        className="absolute inset-0 h-full w-full object-cover grayscale transition-all duration-500 group-hover:scale-[1.04] group-hover:grayscale-0 motion-reduce:transform-none"
+                        className="absolute inset-0 h-full w-full object-cover grayscale"
                       />
                     </div>
                     <div className="flex min-w-0 flex-col">
@@ -560,10 +550,10 @@ function Home() {
                         <span className="h-px w-6 bg-primary/50" />
                         {t.designation || "Client"}
                       </span>
-                      <blockquote className="mt-4 text-sm leading-relaxed text-background/80 md:text-base">
+                      <blockquote className="mt-3 line-clamp-4 text-sm leading-relaxed text-background/80 md:mt-4 md:line-clamp-none md:text-base">
                         {t.testimonial}
                       </blockquote>
-                      <figcaption className="mt-4 flex items-end justify-between gap-4 border-t border-background/12 pt-4">
+                      <figcaption className="mt-3 flex items-end justify-between gap-4 border-t border-background/12 pt-3 sm:mt-4 sm:pt-4">
                         <span>
                           <span className="label-caps block text-background">{t.name}</span>
                           <span className="mt-1 block text-xs text-background/50">{t.company}</span>
@@ -572,8 +562,8 @@ function Home() {
                     </div>
                     <span className="absolute inset-x-0 bottom-0 h-px w-0 bg-primary transition-[width] duration-500 group-hover:w-full" />
                   </figure>
-                </Reveal>
               ))}
+              </div>
             </div>
             </div>
             )}

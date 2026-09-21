@@ -82,58 +82,71 @@ export async function createCallBooking(req: Request, res: Response) {
 
   try {
     const doc = await CallBooking.create({ date, slot, name, phone, email, city, message });
-    const notifyEmail = await getCallNotifyEmail();
-    const contact = await ContactSettings.findOne({ key: CONTACT_SETTINGS_KEY });
-    const studioEmail = contact?.email || DEFAULT_CONTACT_SETTINGS.email;
-    const studioPhone = contact?.whatsapp || contact?.phone || DEFAULT_CONTACT_SETTINGS.whatsapp;
-    const firstName = name.trim().split(/\s+/)[0] || name;
-    const when = `${dateLabel(date)} · ${slot}`;
-    try {
-      await sendMail({
-        to: notifyEmail,
-        replyTo: email,
-        fromName: name,
-        subject: `New discovery call · ${dateLabel(date)} · ${slot}`,
-        text: [
-          "A discovery call was booked.",
-          "",
-          `Date: ${dateLabel(date)}`,
-          `Time: ${slot}`,
-          `Name: ${name}`,
-          `Email: ${email}`,
-          `Mobile: ${phone}`,
-          `City: ${city}`,
-          `Message: ${message}`,
-        ].join("\n"),
-      });
-    } catch (err) {
-      console.error("Call booking email failed", err);
-    }
-    try {
-      const body = `Thank you for booking a discovery call with Design Diaries. Your call is confirmed for ${when}. Keep this time free — Sagrika will join you on the call.`;
-      const sent = await sendMail({
-        to: email,
-        replyTo: studioEmail,
-        subject: `Your call is booked · ${when} | Design Diaries`,
-        text: [`Hi ${firstName},`, "", body, "", "Design Diaries", studioEmail, studioPhone].join("\n"),
-        html: thankYouEmailHtml({
-          firstName,
-          studioEmail,
-          studioPhone,
-          title: "Call booked",
-          body,
-        }),
-      });
-      if (!sent) {
-        console.error(`Call thank-you email was not sent to ${email}: Gmail SMTP is not configured`);
-      }
-    } catch (err) {
-      console.error("Call thank-you email failed", err);
-    }
     res.status(201).json({ ok: true, booking: toDto(doc) });
+    void sendCallBookingEmails({ date, slot, name, phone, email, city, message });
   } catch (err) {
     if (isDuplicate(err)) throw new AppError(409, "This time is no longer available");
     throw err;
+  }
+}
+
+async function sendCallBookingEmails(options: {
+  date: string;
+  slot: string;
+  name: string;
+  phone: string;
+  email: string;
+  city: string;
+  message: string;
+}) {
+  const { date, slot, name, phone, email, city, message } = options;
+  const notifyEmail = await getCallNotifyEmail();
+  const contact = await ContactSettings.findOne({ key: CONTACT_SETTINGS_KEY });
+  const studioEmail = contact?.email || DEFAULT_CONTACT_SETTINGS.email;
+  const studioPhone = contact?.whatsapp || contact?.phone || DEFAULT_CONTACT_SETTINGS.whatsapp;
+  const firstName = name.trim().split(/\s+/)[0] || name;
+  const when = `${dateLabel(date)} · ${slot}`;
+  try {
+    await sendMail({
+      to: notifyEmail,
+      replyTo: email,
+      fromName: name,
+      subject: `New discovery call · ${dateLabel(date)} · ${slot}`,
+      text: [
+        "A discovery call was booked.",
+        "",
+        `Date: ${dateLabel(date)}`,
+        `Time: ${slot}`,
+        `Name: ${name}`,
+        `Email: ${email}`,
+        `Mobile: ${phone}`,
+        `City: ${city}`,
+        `Message: ${message}`,
+      ].join("\n"),
+    });
+  } catch (err) {
+    console.error("Call booking email failed", err);
+  }
+  try {
+    const body = `Thank you for booking a discovery call with Design Diaries. Your call is confirmed for ${when}. Keep this time free — Sagrika will join you on the call.`;
+    const sent = await sendMail({
+      to: email,
+      replyTo: studioEmail,
+      subject: `Your call is booked · ${when} | Design Diaries`,
+      text: [`Hi ${firstName},`, "", body, "", "Design Diaries", studioEmail, studioPhone].join("\n"),
+      html: thankYouEmailHtml({
+        firstName,
+        studioEmail,
+        studioPhone,
+        title: "Call booked",
+        body,
+      }),
+    });
+    if (!sent) {
+      console.error(`Call thank-you email was not sent to ${email}: Gmail SMTP is not configured`);
+    }
+  } catch (err) {
+    console.error("Call thank-you email failed", err);
   }
 }
 

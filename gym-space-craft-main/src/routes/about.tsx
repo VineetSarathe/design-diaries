@@ -12,7 +12,7 @@ import { useRecognitions } from "@/hooks/use-recognitions";
 import type { InstagramCard } from "@/lib/admin-api";
 import { mediaPreviewUrl } from "@/lib/media";
 import { storyArc } from "@/data/company";
-import founderImg from "@/assets/founder.webp";
+import founderHero from "@/assets/founder-hero.jpg";
 import journey01 from "@/assets/journey-01.webp";
 import journey02 from "@/assets/journey-02.webp";
 import journey03 from "@/assets/journey-03.webp";
@@ -93,7 +93,7 @@ function AboutPage() {
           </Reveal>
 
           <Reveal delay={120} className="group relative mx-auto w-full max-w-md overflow-hidden border border-background/20 lg:self-end">
-            <img src={founderImg} alt="Sagrika founder of Design Diaries" width={1000} height={1250} className="aspect-[4/5] w-full object-cover object-top transition-transform duration-[1400ms] group-hover:scale-[1.035]" />
+            <img src={founderHero} alt="Sagrika Saraf, founder of Design Diaries" width={1000} height={1500} className="aspect-[4/5] w-full object-cover object-[center_20%] transition-transform duration-[1400ms] group-hover:scale-[1.035]" />
             <span className="absolute inset-0 bg-gradient-to-t from-foreground/85 via-transparent to-transparent" />
             <div className="absolute inset-x-0 bottom-0 flex items-end justify-between p-5">
               <div><p className="label-caps text-primary">Founder</p><p className="mt-2 font-serif text-2xl">Sagrika</p></div>

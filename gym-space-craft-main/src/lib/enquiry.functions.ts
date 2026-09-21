@@ -49,7 +49,7 @@ export async function submitEnquiry(data: unknown) {
     city: parsed.city,
     message: `Enquiry from ${parsed.city}`,
   });
-  await notifyAdmin({
+  void notifyAdmin({
     subject: `New Enquiry · ${parsed.name}`,
     eyebrow: "New enquiry",
     heading: parsed.name,
@@ -83,7 +83,7 @@ export async function submitDownloadLead(data: unknown) {
     resource: parsed.resource,
     message: `Download request: ${parsed.resource}`,
   });
-  await notifyAdmin({
+  void notifyAdmin({
     subject: `New Resource download · ${parsed.name}`,
     eyebrow: "Resource download",
     heading: parsed.name,
@@ -140,7 +140,7 @@ export async function submitProjectEnquiry(data: {
   }
 
   await apiFormRequest<{ lead: Lead }>("/leads", fd, "POST");
-  await notifyAdmin({
+  void notifyAdmin({
     subject: `New Start a project · ${parsed.name}`,
     eyebrow: "Start a project",
     heading: parsed.name,

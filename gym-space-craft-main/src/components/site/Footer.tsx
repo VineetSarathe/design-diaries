@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, ArrowUpRight, Instagram, Linkedin, Mail, MessageCircle } from "lucide-react";
 import { Reveal } from "./Reveal";
@@ -14,6 +15,7 @@ import { mailtoHref, whatsappHref } from "@/lib/contact";
 import { useInstagramFeed } from "@/hooks/use-instagram-feed";
 import { useStartProjectLink } from "@/hooks/use-start-project-link";
 import type { InstagramCard } from "@/lib/admin-api";
+import { cn } from "@/lib/utils";
 
 const quick = [
   { label: "Services", to: "/services" as const },
@@ -171,28 +173,7 @@ export function Footer() {
             Follow on Instagram
           </p>
         </a>
-        <div className="mt-5 flex gap-3 overflow-x-auto px-5 pb-2 md:px-10">
-          {feed.map((f) => (
-            <a
-              key={f.id}
-              href={f.link || contact.instagram}
-              target="_blank"
-              rel="noreferrer noopener"
-              className="group relative h-32 w-48 shrink-0 overflow-hidden border border-background/15 transition-colors duration-300 hover:border-primary"
-            >
-              <img
-                src={f.imageUrl}
-                alt={f.caption}
-                loading="lazy"
-                className="absolute inset-0 h-full w-full object-cover opacity-80 transition-transform duration-700 ease-out group-hover:scale-105"
-              />
-              <ArrowUpRight
-                size={16}
-                className="absolute top-3 right-3 text-background/70 transition-all duration-300 group-hover:translate-x-0.5 group-hover:text-primary"
-              />
-            </a>
-          ))}
-        </div>
+        <InstagramRail feed={feed} instagram={contact.instagram} />
       </div>
 
       <div
@@ -216,5 +197,127 @@ export function Footer() {
         </div>
       </div>
     </footer>
+  );
+}
+
+function InstagramRail({ feed, instagram }: { feed: InstagramCard[]; instagram: string }) {
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
+  const [thumb, setThumb] = useState({ width: 40, left: 0 });
+  const [activeId, setActiveId] = useState<string | null>(feed[0]?.id ?? null);
+
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+
+    const update = () => {
+      const overflow = Math.max(el.scrollWidth - el.clientWidth, 0);
+      const width = el.scrollWidth > 0 ? Math.max(18, (el.clientWidth / el.scrollWidth) * 100) : 100;
+      const left = overflow > 0 ? (el.scrollLeft / overflow) * (100 - width) : 0;
+      setThumb({ width, left });
+
+      if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+        setActiveId(null);
+        return;
+      }
+      const center = el.getBoundingClientRect().left + el.clientWidth / 2;
+      let nearest: string | null = null;
+      let distance = Number.POSITIVE_INFINITY;
+      feed.forEach((item) => {
+        const card = cardRefs.current[item.id];
+        if (!card) return;
+        const rect = card.getBoundingClientRect();
+        const nextDistance = Math.abs(rect.left + rect.width / 2 - center);
+        if (nextDistance < distance) {
+          distance = nextDistance;
+          nearest = item.id;
+        }
+      });
+      setActiveId(nearest);
+    };
+
+    update();
+    el.scrollLeft = 0;
+    el.addEventListener("scroll", update, { passive: true });
+    const observer = new ResizeObserver(update);
+    observer.observe(el);
+    window.addEventListener("resize", update);
+    return () => {
+      el.removeEventListener("scroll", update);
+      observer.disconnect();
+      window.removeEventListener("resize", update);
+    };
+  }, [feed]);
+
+  const scrollByPage = (dir: -1 | 1) => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    el.scrollBy({ left: dir * Math.max(el.clientWidth * 0.7, 200), behavior: "smooth" });
+  };
+
+  return (
+    <>
+      <div
+        ref={scrollerRef}
+        className="instagram-feed-rail mt-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-2 scroll-pl-5 md:snap-none md:px-10 md:scroll-pl-10"
+      >
+        {feed.map((f) => {
+          const isActive = activeId === f.id;
+          return (
+          <a
+            key={f.id}
+            ref={(node) => {
+              cardRefs.current[f.id] = node;
+            }}
+            href={f.link || instagram}
+            target="_blank"
+            rel="noreferrer noopener"
+            className={cn(
+              "group relative h-32 w-48 shrink-0 snap-start overflow-hidden border transition-colors duration-300 hover:border-primary",
+              isActive ? "border-primary" : "border-background/15",
+            )}
+          >
+            <img
+              src={f.imageUrl}
+              alt={f.caption}
+              loading="lazy"
+              className={cn(
+                "absolute inset-0 h-full w-full object-cover opacity-80 transition-[transform,opacity] duration-700 ease-out group-hover:scale-105 group-hover:opacity-100",
+                isActive && "scale-105 opacity-100",
+              )}
+            />
+            <ArrowUpRight
+              size={16}
+              className={cn(
+                "absolute top-3 right-3 text-background/70 transition-all duration-300 group-hover:translate-x-0.5 group-hover:text-primary",
+                isActive && "translate-x-0.5 text-primary",
+              )}
+            />
+          </a>
+          );
+        })}
+      </div>
+
+      <div className="instagram-feed-scroll" aria-hidden>
+        <button type="button" className="instagram-feed-scroll-btn" aria-label="Scroll Instagram cards left" onClick={() => scrollByPage(-1)}>
+          <span />
+        </button>
+        <div
+          className="instagram-feed-scroll-track"
+          onClick={(event) => {
+            const el = scrollerRef.current;
+            if (!el) return;
+            const rect = event.currentTarget.getBoundingClientRect();
+            const ratio = (event.clientX - rect.left) / rect.width;
+            el.scrollTo({ left: ratio * (el.scrollWidth - el.clientWidth), behavior: "smooth" });
+          }}
+        >
+          <span style={{ width: `${thumb.width}%`, left: `${thumb.left}%` }} />
+        </div>
+        <button type="button" className="instagram-feed-scroll-btn next" aria-label="Scroll Instagram cards right" onClick={() => scrollByPage(1)}>
+          <span />
+        </button>
+      </div>
+    </>
   );
 }

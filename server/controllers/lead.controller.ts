@@ -155,6 +155,11 @@ export async function createLead(req: Request, res: Response) {
   }
 
   const lead = await Lead.create({ ...payload, fileName, fileUrl, filePublicId });
+  res.status(201).json({ ok: true, lead: toLeadDto(lead) });
+  void sendLeadEmails(lead);
+}
+
+async function sendLeadEmails(lead: LeadDoc) {
   try {
     const notifyEmail = await getCallNotifyEmail();
     const sourceLabel =
@@ -193,7 +198,6 @@ export async function createLead(req: Request, res: Response) {
   } catch (err) {
     console.error("Lead thank-you email failed", err);
   }
-  res.status(201).json({ ok: true, lead: toLeadDto(lead) });
 }
 
 export async function listLeads(req: Request, res: Response) {
