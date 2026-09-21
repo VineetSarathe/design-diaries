@@ -16,6 +16,7 @@ import { useInstagramFeed } from "@/hooks/use-instagram-feed";
 import { useStartProjectLink } from "@/hooks/use-start-project-link";
 import type { InstagramCard } from "@/lib/admin-api";
 import { cn } from "@/lib/utils";
+import { mediaPreviewUrl } from "@/lib/media";
 
 const quick = [
   { label: "Services", to: "/services" as const },
@@ -265,7 +266,7 @@ function InstagramRail({ feed, instagram }: { feed: InstagramCard[]; instagram: 
           )}
         >
           <img
-            src={f.imageUrl}
+            src={mediaPreviewUrl(f.imageUrl, 480)}
             alt={f.caption}
             loading="lazy"
             className={cn(

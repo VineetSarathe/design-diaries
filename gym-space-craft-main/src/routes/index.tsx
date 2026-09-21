@@ -20,6 +20,7 @@ import { useHomepageSettings } from "@/hooks/use-homepage-settings";
 import { useRecognitions } from "@/hooks/use-recognitions";
 import { isExternalHref, pickBySlugs } from "@/lib/homepage";
 import { loadRouteSeo, routePageSeo } from "@/lib/page-seo";
+import { mediaPreviewUrl } from "@/lib/media";
 
 import heroImg from "@/assets/hero-gym.jpg";
 import p1 from "@/assets/project-1.jpg";
@@ -488,7 +489,7 @@ function Home() {
             <Reveal>
               <figure className="group relative flex h-[26rem] flex-col justify-end overflow-hidden bg-foreground md:h-[32rem]">
                 <img
-                  src={featured.imageUrl || testimonialFallbackImages[0]}
+                  src={featured.imageUrl ? mediaPreviewUrl(featured.imageUrl, 1600) : testimonialFallbackImages[0]}
                   alt={featured.name}
                   loading="lazy"
                   width={1400}
@@ -504,11 +505,11 @@ function Home() {
                 <div className="relative z-10 p-7 md:p-10">
                   <span
                     aria-hidden="true"
-                    className="pointer-events-none absolute -top-3 left-5 font-display text-[3.25rem] leading-none text-primary md:-top-10 md:left-6 md:text-[11rem]"
+                    className="mb-3 block font-display text-[3.5rem] leading-none text-primary md:mb-4 md:text-6xl"
                   >
                     &ldquo;
                   </span>
-                  <blockquote className="relative z-10 mt-10 max-w-[34ch] font-display text-[1.35rem] uppercase leading-[1.38] tracking-[-0.04em] text-background md:text-[1.75rem]">
+                  <blockquote className="relative z-10 max-w-[34ch] font-display text-[1.35rem] uppercase leading-[1.38] tracking-[-0.04em] text-background md:text-[1.75rem]">
                     {featured.testimonial}
                   </blockquote>
                   <figcaption className="relative z-10 mt-8 flex items-center justify-between gap-4 border-t border-background/20 pt-6">
@@ -545,7 +546,7 @@ function Home() {
                   <figure key={`${t.id}-${i}`} className="group relative grid h-[calc((26rem-2px)/3)] shrink-0 grid-cols-[5.25rem_minmax(0,1fr)] gap-3 overflow-hidden bg-foreground px-4 py-3 sm:grid-cols-[6.5rem_minmax(0,1fr)] sm:gap-4 md:h-[calc((32rem-2px)/3)] md:grid-cols-[7.25rem_minmax(0,1fr)] md:px-5">
                     <div className="relative min-h-0 overflow-hidden">
                       <img
-                        src={t.imageUrl || testimonialFallbackImages[(i + 1) % testimonialFallbackImages.length]}
+                        src={t.imageUrl ? mediaPreviewUrl(t.imageUrl, 720) : testimonialFallbackImages[(i + 1) % testimonialFallbackImages.length]}
                         alt={t.name}
                         loading="lazy"
                         width={300}

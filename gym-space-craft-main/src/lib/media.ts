@@ -19,13 +19,13 @@ export function mediaPreviewUrl(url: string, width: number) {
   if (!parts) return url;
   if (parts.resource === "video") {
     const still = parts.versionedPath.replace(/\.(mp4|webm|mov)(\?.*)?$/i, ".jpg");
-    return `${parts.host}/video/upload/so_1,w_${width},c_fill,q_auto,f_jpg/${still}`;
+    return `${parts.host}/video/upload/so_1,w_${width},c_fill,dpr_auto,q_auto:best,f_jpg/${still}`;
   }
-  return `${parts.host}/image/upload/w_${width},c_limit,f_auto,q_auto/${parts.versionedPath}`;
+  return `${parts.host}/image/upload/c_limit,dpr_auto,f_auto,q_auto:best,w_${width}/${parts.versionedPath}`;
 }
 
 export function mediaPlaybackUrl(url: string, width = 960) {
   const parts = cloudinaryParts(url);
   if (!parts || parts.resource !== "video") return url;
-  return `${parts.host}/video/upload/w_${width},c_limit,q_auto,f_mp4/${parts.versionedPath}`;
+  return `${parts.host}/video/upload/c_limit,dpr_auto,f_mp4,q_auto:best,w_${width}/${parts.versionedPath}`;
 }

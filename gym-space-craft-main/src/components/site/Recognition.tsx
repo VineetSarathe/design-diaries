@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Reveal } from "./Reveal";
 import { VideoPlayButton } from "@/components/site/VideoPlayButton";
+import { mediaPlaybackUrl, mediaPreviewUrl } from "@/lib/media";
 
 export type RecognitionMedia = {
   url: string;
@@ -181,7 +182,7 @@ export function RecognitionCard({ item, active, onActivate, register }: Recognit
               ref={(node) => {
                 videoRefs.current[index] = node;
               }}
-              src={entry.url}
+              src={mediaPlaybackUrl(entry.url, 1280)}
               muted
               playsInline
               preload="metadata"
@@ -204,7 +205,7 @@ export function RecognitionCard({ item, active, onActivate, register }: Recognit
           ) : (
             <img
               key={`${entry.url}-${index}`}
-              src={entry.url}
+              src={mediaPreviewUrl(entry.url, 1400)}
               alt={`${item.title}, ${item.category.toLowerCase()}, ${item.year}${index ? `, view ${index + 1}` : ""}`}
               loading="lazy"
               width={960}

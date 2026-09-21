@@ -4,34 +4,21 @@ import { compressImageToWebp, maxEdgeForFolder } from "./compress-image";
 import { compressVideoToMp4 } from "./compress-video";
 import { deleteLocalPublicFile, savePublicFile, savePublicImage } from "./local-images";
 
-async function toWebp(source: string | Buffer, folder: string) {
-  return compressImageToWebp(source, maxEdgeForFolder(folder));
-}
-
-const WEBP_UPLOAD = { format: "webp" as const };
-
-export async function storeImageBuffer(buffer: Buffer, name: string, folder: string, _mimetype?: string) {
-  const webp = await toWebp(buffer, folder);
+export async function storeImageBuffer(buffer: Buffer, name: string, folder: string, mimetype?: string) {
   if (isCloudinaryConfigured()) {
     try {
-      return await uploadImageBuffer(webp, name, folder, WEBP_UPLOAD);
+      return await uploadImageBuffer(buffer, name, folder);
     } catch {
       // Cloudinary cloud_name mismatch etc. fall back to local files.
     }
   }
+  const webp = await compressImageToWebp(buffer, maxEdgeForFolder(folder));
   return savePublicImage(folder, name, webp, "image/webp");
 }
 
 export async function storeImageFromPath(filePath: string, name: string, folder: string, _localFilename?: string) {
-  const webp = await toWebp(filePath, folder);
-  if (isCloudinaryConfigured()) {
-    try {
-      return await uploadImageBuffer(webp, name, folder, WEBP_UPLOAD);
-    } catch {
-      // fall through
-    }
-  }
-  return savePublicImage(folder, name, webp, "image/webp");
+  const buffer = await import("node:fs/promises").then((fs) => fs.readFile(filePath));
+  return storeImageBuffer(buffer, name, folder);
 }
 
 function isVideoName(name: string, mimetype = "") {

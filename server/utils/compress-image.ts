@@ -2,19 +2,20 @@ import sharp from "sharp";
 import { AppError } from "./appError";
 
 const FOLDER_MAX_EDGE: Record<string, number> = {
-  "client-logos": 800,
-  instagram: 1080,
-  testimonials: 1600,
-  blogs: 2000,
-  recognition: 2000,
-  projects: 2000,
-  "lead-files": 2000,
+  "client-logos": 2400,
+  instagram: 2400,
+  testimonials: 4500,
+  blogs: 4500,
+  recognition: 4500,
+  projects: 4500,
+  "lead-files": 4500,
 };
 
 export function maxEdgeForFolder(folder: string) {
-  return FOLDER_MAX_EDGE[folder] ?? 2000;
+  return FOLDER_MAX_EDGE[folder] ?? 4500;
 }
 
+/** Only used as a last-resort fallback when Cloudinary is down. Keep near-original quality. */
 export async function compressImageToWebp(source: string | Buffer, maxEdge: number) {
   try {
     return await sharp(source, { failOn: "none", limitInputPixels: false, animated: false })
@@ -25,7 +26,7 @@ export async function compressImageToWebp(source: string | Buffer, maxEdge: numb
         fit: "inside",
         withoutEnlargement: true,
       })
-      .webp({ quality: 78 })
+      .webp({ quality: 95, effort: 4 })
       .toBuffer();
   } catch {
     throw new AppError(400, "Could not read that image. Please upload a valid image file.");

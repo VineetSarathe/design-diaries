@@ -1,5 +1,5 @@
-const MAX_EDGE = 2000;
-const TARGET_BYTES = 3 * 1024 * 1024;
+const UPLOAD_SAFE_BYTES = 35 * 1024 * 1024;
+const MAX_EDGE = 4500;
 
 function loadImage(file: File) {
   return new Promise<HTMLImageElement>((resolve, reject) => {
@@ -17,25 +17,25 @@ function loadImage(file: File) {
   });
 }
 
-function canvasToFile(canvas: HTMLCanvasElement, quality: number, name: string) {
+function canvasToFile(canvas: HTMLCanvasElement, name: string) {
   return new Promise<File>((resolve, reject) => {
     canvas.toBlob(
       (blob) => {
         if (!blob) {
-          reject(new Error("Could not compress the image"));
+          reject(new Error("Could not prepare that image"));
           return;
         }
         resolve(new File([blob], name.replace(/\.[^.]+$/, ".jpg"), { type: "image/jpeg" }));
       },
       "image/jpeg",
-      quality,
+      0.95,
     );
   });
 }
 
+/** Keep originals. Only shrink files that would miss the 40 MB upload cap. */
 export async function compressImage(file: File): Promise<File> {
-  if (!file.type.startsWith("image/")) return file;
-  if (file.size <= TARGET_BYTES && file.type === "image/jpeg") return file;
+  if (!file.type.startsWith("image/") || file.size <= UPLOAD_SAFE_BYTES) return file;
 
   const image = await loadImage(file);
   const scale = Math.min(1, MAX_EDGE / Math.max(image.width, image.height));
@@ -48,11 +48,6 @@ export async function compressImage(file: File): Promise<File> {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
 
-  let quality = 0.82;
-  let compressed = await canvasToFile(canvas, quality, file.name);
-  while (compressed.size > TARGET_BYTES && quality > 0.5) {
-    quality -= 0.12;
-    compressed = await canvasToFile(canvas, quality, file.name);
-  }
-  return compressed.size < file.size ? compressed : file;
+  const prepared = await canvasToFile(canvas, file.name);
+  return prepared.size < file.size ? prepared : file;
 }

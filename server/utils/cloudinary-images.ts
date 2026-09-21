@@ -100,7 +100,7 @@ export function uploadTestimonialImageFromPath(filePath: string, name: string) {
   return uploadImageFromPath(filePath, name, "testimonials");
 }
 
-const CLIENT_LOGO_UPLOAD = { format: "webp", maxEdge: 800 };
+const CLIENT_LOGO_UPLOAD = {};
 
 export function uploadClientLogoImage(buffer: Buffer, name: string) {
   return uploadImageBuffer(buffer, name, "client-logos", CLIENT_LOGO_UPLOAD);
