@@ -99,11 +99,15 @@ function ProjectDetail() {
   const project = getProject(loaded.slug) ?? loaded;
   const related = projects.filter((p) => p.slug !== project.slug).slice(0, 3);
   const heroSlides = toProjectCardData(project).images;
+  const pageLabel =
+    (project.cardLabel ?? project.category) === "GYM INTERIOR DESIGN PROJECTS"
+      ? "GYM INTERIOR"
+      : (project.cardLabel ?? project.category);
 
   return (
     <>
       <CinematicHero
-        label={project.cardLabel ?? project.category}
+        label={pageLabel}
         title={project.detail?.title ?? `${project.name}${project.location ? ` · ${project.location}` : ""}`}
         intro={project.insight}
         image={project.hero || heroSlides[0] || project.card}

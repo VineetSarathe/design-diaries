@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { GripVertical, ImageIcon, ImagePlus, Trash2, X } from "lucide-react";
+import { ArrowLeftRight, GripVertical, ImageIcon, ImagePlus, Trash2, X } from "lucide-react";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { useAdminSession } from "@/hooks/use-admin-session";
 import { adminApi, type Recognition } from "@/lib/admin-api";
@@ -57,6 +57,7 @@ function AdminRecognitionPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState("");
+  const [imageOriginalUrl, setImageOriginalUrl] = useState("");
   const [extraSlots, setExtraSlots] = useState<ExtraSlot[]>([]);
   const [saving, setSaving] = useState(false);
   const [savingOrder, setSavingOrder] = useState(false);
@@ -85,6 +86,7 @@ function AdminRecognitionPage() {
     setEditingId(null);
     setImageFile(null);
     setImagePreview("");
+    setImageOriginalUrl("");
     setExtraSlots([]);
     setShowForm(false);
   }
@@ -107,6 +109,7 @@ function AdminRecognitionPage() {
     setEditingId(item.id);
     setImageFile(null);
     setImagePreview(item.imageUrl);
+    setImageOriginalUrl(item.imageUrl);
     setExtraSlots(
       item.images.map((image, index) => ({
         id: `${image.url}-${index}`,
@@ -153,6 +156,39 @@ function AdminRecognitionPage() {
     ]);
   }
 
+  function swapWithMain(slotId: string) {
+    const slot = extraSlots.find((item) => item.id === slotId);
+    if (!slot) return;
+    if (isVideoSrc(slot.preview, slot.file)) {
+      setError("Main photo must be an image. Videos can stay in More Photos.");
+      return;
+    }
+    const previous = {
+      file: imageFile,
+      preview: imagePreview,
+      originalUrl: imageOriginalUrl,
+    };
+    setError(null);
+    setImageFile(slot.file ?? null);
+    setImagePreview(slot.preview);
+    setImageOriginalUrl(slot.file ? "" : slot.originalUrl);
+    setExtraSlots((current) => {
+      if (!previous.preview && !previous.file) {
+        return current.filter((item) => item.id !== slotId);
+      }
+      return current.map((item) =>
+        item.id === slotId
+          ? {
+              ...item,
+              file: previous.file ?? undefined,
+              preview: previous.preview,
+              originalUrl: previous.file ? "" : previous.originalUrl,
+            }
+          : item,
+      );
+    });
+  }
+
   async function save() {
     if (saving) return;
     setSaving(true);
@@ -186,6 +222,7 @@ function AdminRecognitionPage() {
         data.set("extraOrder", JSON.stringify([]));
       }
       if (imageFile) data.set("image", await compressImage(imageFile));
+      else if (imageOriginalUrl) data.set("imageUrl", imageOriginalUrl);
 
       const res = editingId
         ? await adminApi.updateRecognition(editingId, data)
@@ -203,6 +240,7 @@ function AdminRecognitionPage() {
           link: savedItem.link || "/about#recognition",
         });
         setImagePreview(savedItem.imageUrl);
+        setImageOriginalUrl(savedItem.imageUrl);
         setExtraSlots(
           savedItem.images.map((image, index) => ({
             id: `${image.url}-${index}`,
@@ -366,6 +404,7 @@ function AdminRecognitionPage() {
                 onChange={(event) => {
                   const next = event.target.files?.[0] ?? null;
                   setImageFile(next);
+                  setImageOriginalUrl("");
                   setImagePreview(
                     next
                       ? URL.createObjectURL(next)
@@ -378,14 +417,21 @@ function AdminRecognitionPage() {
               />
             </label>
             {imagePreview && (
-              <button
-                type="button"
-                onClick={() => setViewer({ src: imagePreview, name: form.title || "Photo" })}
-                className="block"
-              >
-                <img src={imagePreview} alt="" className="h-28 w-36 object-cover" />
-                <span className="label-caps mt-2 inline-block text-primary">View photo</span>
-              </button>
+              <div className="flex items-start gap-4">
+                <button
+                  type="button"
+                  onClick={() => setViewer({ src: imagePreview, name: form.title || "Photo" })}
+                  className="block"
+                >
+                  <img src={imagePreview} alt="" className="h-28 w-36 object-cover" />
+                  <span className="label-caps mt-2 inline-block text-primary">View photo</span>
+                </button>
+                {extraSlots.length > 0 && (
+                  <p className="max-w-xs pt-2 text-sm text-muted-foreground">
+                    Click the swap icon on a more-photo to make it the main photo.
+                  </p>
+                )}
+              </div>
             )}
             <div className="block">
               <span className="label-caps text-muted-foreground">More Photos / Videos</span>
@@ -423,6 +469,17 @@ function AdminRecognitionPage() {
                       )}
                     </button>
                     <div className="absolute top-1 right-1 flex flex-col gap-1">
+                      {!isVideoSrc(slot.preview, slot.file) && imagePreview ? (
+                        <button
+                          type="button"
+                          aria-label="Swap with main photo"
+                          title="Swap with main photo"
+                          onClick={() => swapWithMain(slot.id)}
+                          className="bg-foreground/80 p-1 text-background transition-colors hover:bg-primary hover:text-primary-foreground"
+                        >
+                          <ArrowLeftRight size={12} />
+                        </button>
+                      ) : null}
                       <button
                         type="button"
                         aria-label="Replace photo"

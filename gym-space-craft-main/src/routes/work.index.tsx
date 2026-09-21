@@ -10,8 +10,9 @@ import { useBlogs } from "@/hooks/use-blogs";
 import { posts as fallbackPosts } from "@/data/resources";
 import { projectFaqs } from "@/data/projects";
 import { categoriesFromProjects } from "@/lib/cms-project";
-import { isVideoSrc, mediaPlaybackUrl, mediaPreviewUrl } from "@/lib/media";
-import workHero from "@/assets/work-hero.jpg";
+import workHeroVideo from "@/assets/workhero.mp4";
+import workHeroPoster from "@/assets/work-hero.jpg";
+import workCtaVideo from "@/assets/work.mp4";
 import p5 from "@/assets/project-5.jpg";
 import { loadRouteSeo, routePageSeo } from "@/lib/page-seo";
 
@@ -27,35 +28,30 @@ function WorkListing() {
   const featuredPosts = posts.slice(0, 3);
   const tabs = useMemo(() => ["All", ...categoriesFromProjects(projects)], [projects]);
   const [active, setActive] = useState("All");
-  const [heroSrc, setHeroSrc] = useState<string | null>(null);
   const shown = active === "All" ? projects : projects.filter((p) => p.category === active);
-  const heroIsVideo = Boolean(heroSrc && isVideoSrc(heroSrc));
-  const heroPreview = heroSrc ? mediaPreviewUrl(heroSrc, 1280) : workHero;
-  const heroPlayback = heroSrc && heroIsVideo ? mediaPlaybackUrl(heroSrc, 960) : "";
 
   return (
     <>
       {/* Hero banner */}
       <section className="relative flex min-h-[62svh] items-end overflow-hidden bg-foreground">
         <img
-          src={heroPreview}
-          alt="Gym interior project preview"
+          src={workHeroPoster}
+          alt=""
           width={1920}
           height={1080}
-          className="absolute inset-0 h-full w-full object-cover opacity-50 transition-opacity duration-500"
+          className="absolute inset-0 h-full w-full object-cover opacity-50"
         />
-        {heroIsVideo && heroPlayback ? (
-          <video
-            key={heroPlayback}
-            src={heroPlayback}
-            poster={heroPreview}
-            muted
-            autoPlay
-            playsInline
-            preload="none"
-            className="absolute inset-0 h-full w-full object-cover opacity-50"
-          />
-        ) : null}
+        <video
+          src={workHeroVideo}
+          poster={workHeroPoster}
+          muted
+          autoPlay
+          loop
+          playsInline
+          preload="auto"
+          aria-hidden="true"
+          className="absolute inset-0 h-full w-full object-cover opacity-50"
+        />
         <span className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/35 to-foreground/20" />
         <div className="relative mx-auto w-full max-w-[110rem] px-5 pt-32 pb-14 text-background md:px-10 md:pb-20">
           <Reveal>
@@ -94,10 +90,10 @@ function WorkListing() {
           </span>
         </Reveal>
 
-        <div className="mt-14 grid items-start gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-14 grid items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {shown.map((p, i) => (
-            <Reveal key={p.slug} delay={i * 90}>
-              <ProjectCard project={p} number={i + 1} onPreviewChange={setHeroSrc} uncropped />
+            <Reveal key={p.slug} delay={i * 90} className="h-full">
+              <ProjectCard project={p} number={i + 1} uncropped />
             </Reveal>
           ))}
         </div>
@@ -118,6 +114,7 @@ function WorkListing() {
         body="Tell us about your gym, fitness or wellness space, including the floor area, city and what you plan to build. We will help you explore the right design approach for your project."
         cta="Start a Project →"
         image={p5}
+        video={workCtaVideo}
         imageAlt="Full-width view of a completed gym training floor"
       />
 

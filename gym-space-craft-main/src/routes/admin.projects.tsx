@@ -43,7 +43,7 @@ const EMPTY_FORM: FormState = {
   name: "",
   slug: "",
   category: "Gym Projects",
-  cardLabel: "GYM INTERIOR DESIGN PROJECTS",
+  cardLabel: "GYM INTERIOR",
   location: "",
   area: "",
   year: "",
@@ -66,6 +66,11 @@ type ExtraSlot = {
   file?: File;
 };
 
+const REQUIRED_PROJECT_IMAGE_WIDTH = 1010;
+const REQUIRED_PROJECT_IMAGE_HEIGHT = 793;
+const REQUIRED_PROJECT_IMAGE_LABEL = `${REQUIRED_PROJECT_IMAGE_WIDTH} × ${REQUIRED_PROJECT_IMAGE_HEIGHT}px`;
+const CANVA_PROJECT_IMAGE_LABEL = "577 × 453px";
+
 function newSlotId() {
   return `slot-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
@@ -76,6 +81,36 @@ function slugify(value: string) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
     .slice(0, 80);
+}
+
+function isImageUpload(file: File) {
+  return file.type.startsWith("image/");
+}
+
+function readImageSize(file: File) {
+  return new Promise<{ width: number; height: number }>((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const image = new Image();
+    image.onload = () => {
+      URL.revokeObjectURL(url);
+      resolve({ width: image.naturalWidth, height: image.naturalHeight });
+    };
+    image.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("Could not read the image size"));
+    };
+    image.src = url;
+  });
+}
+
+async function assertProjectImageSize(file: File) {
+  if (!isImageUpload(file)) return;
+  const { width, height } = await readImageSize(file);
+  if (width !== REQUIRED_PROJECT_IMAGE_WIDTH || height !== REQUIRED_PROJECT_IMAGE_HEIGHT) {
+    throw new Error(
+      `Use Canva size ${CANVA_PROJECT_IMAGE_LABEL}; exported file must be ${REQUIRED_PROJECT_IMAGE_LABEL}. This file is ${width} × ${height}px.`,
+    );
+  }
 }
 
 function AdminProjectsPage() {
@@ -178,30 +213,42 @@ function AdminProjectsPage() {
     window.setTimeout(() => replaceInputRef.current?.click(), 0);
   }
 
-  function onReplaceFile(event: React.ChangeEvent<HTMLInputElement>) {
+  async function onReplaceFile(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     const slotId = replaceSlotIdRef.current;
     event.target.value = "";
     if (!file || !slotId) return;
-    const preview = URL.createObjectURL(file);
-    setExtraSlots((current) =>
-      current.map((slot) => (slot.id === slotId ? { ...slot, file, preview, originalUrl: "" } : slot)),
-    );
-    replaceSlotIdRef.current = null;
-    setReplaceSlotId(null);
+    setError(null);
+    try {
+      await assertProjectImageSize(file);
+      const preview = URL.createObjectURL(file);
+      setExtraSlots((current) =>
+        current.map((slot) => (slot.id === slotId ? { ...slot, file, preview, originalUrl: "" } : slot)),
+      );
+      replaceSlotIdRef.current = null;
+      setReplaceSlotId(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : `Use Canva size ${CANVA_PROJECT_IMAGE_LABEL}; exported file must be ${REQUIRED_PROJECT_IMAGE_LABEL}.`);
+    }
   }
 
-  function addExtraFiles(files: File[]) {
+  async function addExtraFiles(files: File[]) {
     if (!files.length) return;
-    setExtraSlots((current) => [
-      ...current,
-      ...files.map((file) => ({
+    setError(null);
+    try {
+      await Promise.all(files.map(assertProjectImageSize));
+      setExtraSlots((current) => [
+        ...current,
+        ...files.map((file) => ({
         id: newSlotId(),
         originalUrl: "",
         preview: URL.createObjectURL(file),
         file,
-      })),
-    ]);
+        })),
+      ]);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : `Use Canva size ${CANVA_PROJECT_IMAGE_LABEL}; exported file must be ${REQUIRED_PROJECT_IMAGE_LABEL}.`);
+    }
   }
 
   function setField<K extends keyof FormState>(key: K, value: FormState[K]) {
@@ -530,13 +577,30 @@ function AdminProjectsPage() {
             />
             <label className="block">
               <span className="label-caps text-muted-foreground">Main Photo</span>
+              <span className="mt-1 block text-xs text-muted-foreground">
+                Canva size: {CANVA_PROJECT_IMAGE_LABEL}. Upload file accepted: {REQUIRED_PROJECT_IMAGE_LABEL}.
+              </span>
               <input
                 type="file"
                 accept="image/*"
-                onChange={(event) => {
+                onChange={async (event) => {
                   const next = event.target.files?.[0] ?? null;
-                  setCardFile(next);
-                  setCardPreview(next ? URL.createObjectURL(next) : editingId ? items.find((item) => item.id === editingId)?.cardUrl || "" : "");
+                  event.target.value = "";
+                  setError(null);
+                  if (!next) {
+                    setCardFile(null);
+                    setCardPreview(editingId ? items.find((item) => item.id === editingId)?.cardUrl || "" : "");
+                    return;
+                  }
+                  try {
+                    await assertProjectImageSize(next);
+                    setCardFile(next);
+                    setCardPreview(URL.createObjectURL(next));
+                  } catch (err) {
+                    setCardFile(null);
+                    setError(err instanceof Error ? err.message : `Use Canva size ${CANVA_PROJECT_IMAGE_LABEL}; exported file must be ${REQUIRED_PROJECT_IMAGE_LABEL}.`);
+                    setCardPreview(editingId ? items.find((item) => item.id === editingId)?.cardUrl || "" : "");
+                  }
                 }}
                 className="mt-3 block w-full text-sm"
               />
@@ -549,12 +613,15 @@ function AdminProjectsPage() {
             )}
             <div className="block">
               <span className="label-caps text-muted-foreground">More Photos / Videos</span>
+              <span className="mt-1 block text-xs text-muted-foreground">
+                Photos should be Canva size {CANVA_PROJECT_IMAGE_LABEL}; exported file accepted: {REQUIRED_PROJECT_IMAGE_LABEL}. Videos can stay MP4 / WEBM / MOV.
+              </span>
               <input
                 type="file"
                 multiple
                 accept="image/*,video/mp4,video/webm,video/quicktime"
                 onChange={(event) => {
-                  addExtraFiles(Array.from(event.target.files ?? []));
+                  void addExtraFiles(Array.from(event.target.files ?? []));
                   event.target.value = "";
                 }}
                 className="mt-3 block w-full text-sm"

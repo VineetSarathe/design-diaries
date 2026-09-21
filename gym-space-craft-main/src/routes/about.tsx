@@ -21,14 +21,15 @@ import journey05 from "@/assets/journey-05.webp";
 import founderMeet from "@/assets/founder-meet.webp";
 import founderPractice from "@/assets/founder-practice.webp";
 import gallery1 from "@/assets/gallery-1.jpg";
-import materials from "@/assets/why-materials.jpg";
 import gymLayout from "@/assets/gym-layout.jpg";
 import heroGym from "@/assets/hero-gym.jpg";
 import p1 from "@/assets/project-1.jpg";
 import p2 from "@/assets/project-2.jpg";
 import p3 from "@/assets/project-3.jpg";
 import p4 from "@/assets/project-4.jpg";
-import p6 from "@/assets/project-6.jpg";
+import builtForRealUse from "@/assets/philosophy-built-for-real-use.webp";
+import designedForBusiness from "@/assets/philosophy-designed-for-business.webp";
+import aboutServiceVideo from "@/assets/about-service.mp4";
 import { loadRouteSeo, routePageSeo } from "@/lib/page-seo";
 
 export const Route = createFileRoute("/about")({
@@ -152,7 +153,7 @@ function AboutPage() {
           <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr_1fr]">
             {[
               {
-                image: materials,
+                image: builtForRealUse,
                 title: "BUILT FOR REAL USE",
                 text:
                   "The materials are chosen to withstand daily training, regular maintenance and years of use.",
@@ -164,7 +165,7 @@ function AboutPage() {
                   "Every layout begins with the movement, training and interaction of people with the space.",
               },
               {
-                image: p6,
+                image: designedForBusiness,
                 title: "DESIGNED FOR BUSINESS",
                 text: "We consider the design, member flow, operations and revenue together.",
               },
@@ -236,7 +237,17 @@ function AboutPage() {
       </section>
 
       <section className="relative overflow-hidden bg-foreground text-background">
-        <img src={p3} alt="A Design Diaries gym interior" loading="lazy" width={1800} height={1100} className="absolute inset-0 h-full w-full object-cover opacity-45" />
+        <video
+          src={aboutServiceVideo}
+          poster={p3}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          aria-hidden="true"
+          className="absolute inset-0 h-full w-full object-cover opacity-45"
+        />
         <span className="absolute inset-0 bg-gradient-to-r from-foreground via-foreground/85 to-foreground/35" />
         <div className="relative mx-auto grid min-h-[28rem] max-w-[110rem] items-end gap-8 px-5 py-16 md:px-10 md:py-24 lg:grid-cols-[1fr_auto]">
           <Reveal>

@@ -94,6 +94,7 @@ export function AboutJourney({ items }: { items: JourneyItem[] }) {
                 height={1500}
                 className={cn(
                   "absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-700 ease-out",
+                  item.title === "Instagram as the First Portfolio" && "max-md:object-[center_32%]",
                   active === index ? "opacity-100" : "opacity-0",
                 )}
               />

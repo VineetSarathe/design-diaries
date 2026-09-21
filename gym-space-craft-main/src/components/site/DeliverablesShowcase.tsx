@@ -6,9 +6,9 @@ import { Reveal } from "./Reveal";
 import { deliverables } from "@/data/services";
 import conceptImage from "@/assets/case-study.jpg";
 import planningImage from "@/assets/gym-layout.jpg";
-import lightingImage from "@/assets/project-5.jpg";
-import drawingsImage from "@/assets/floorplan.jpg";
-import viewsImage from "@/assets/project-3.jpg";
+import lightingImage from "@/assets/deliverable-lighting.webp";
+import drawingsImage from "@/assets/deliverable-drawings.webp";
+import viewsImage from "@/assets/deliverable-see-the-space.webp";
 
 const images = [conceptImage, planningImage, lightingImage, drawingsImage, viewsImage];
 

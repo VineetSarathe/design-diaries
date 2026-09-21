@@ -8,6 +8,7 @@ export function CtaBanner({
   body = "Thinking gym, fitness studio, or wellness project? Let’s talk about your space, your needs, and what you want to build.",
   cta = "Start a Project",
   image,
+  video,
   imageAlt = "Purpose-designed strength and conditioning gym interior",
   compact = false,
 }: {
@@ -16,6 +17,7 @@ export function CtaBanner({
   body?: string;
   cta?: string;
   image?: string;
+  video?: string;
   imageAlt?: string;
   compact?: boolean;
 }) {
@@ -26,7 +28,23 @@ export function CtaBanner({
         !compact && "min-h-[32rem] md:min-h-[40rem]",
       )}
     >
-      {image ? (
+      {video ? (
+        <>
+          <video
+            src={video}
+            poster={image}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            aria-hidden="true"
+            className="absolute inset-0 -z-20 h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 -z-10 bg-gradient-to-r from-foreground via-foreground/80 to-foreground/25" />
+          <div className="absolute inset-x-0 bottom-0 -z-10 h-1/2 bg-gradient-to-t from-foreground/70 to-transparent" />
+        </>
+      ) : image ? (
         <>
           <img
             src={image}

@@ -93,12 +93,15 @@ export function ProjectCard({
   const cardRef = useRef<HTMLElement | null>(null);
   const [playing, setPlaying] = useState(false);
   const activeSrc = images[safeActive];
-  const activeCaption = card.captions?.[safeActive] || card.insight;
   const activeIsVideo = Boolean(activeSrc && isVideoSrc(activeSrc));
   const previewSrc = activeSrc ? mediaPreviewUrl(activeSrc, uncropped ? 1400 : 800) : "";
   const playbackSrc = activeSrc && activeIsVideo ? mediaPlaybackUrl(activeSrc, 720) : "";
   const eager = number <= 3;
   const showVideo = Boolean(activeIsVideo && (playing || cycling));
+  const cardLabel =
+    (card.cardLabel ?? card.category) === "GYM INTERIOR DESIGN PROJECTS"
+      ? "GYM INTERIOR"
+      : (card.cardLabel ?? card.category);
 
   const advance = () => {
     if (images.length < 2) return;
@@ -256,7 +259,7 @@ export function ProjectCard({
       <div
         className={cn(
           "relative touch-pan-y overflow-hidden bg-foreground",
-          uncropped ? "min-h-[12rem]" : "aspect-[5/4]",
+          uncropped ? "h-[18rem] sm:h-[19rem] lg:h-[21rem]" : "aspect-[5/4]",
         )}
       >
         {previewSrc ? (
@@ -273,7 +276,7 @@ export function ProjectCard({
             className={cn(
               "transition-[opacity,transform] duration-500 ease-out motion-reduce:transition-none",
               uncropped
-                ? "relative z-0 h-auto w-full object-contain object-center"
+                ? "absolute inset-0 h-full w-full object-cover object-center"
                 : cn(
                     "absolute inset-0 h-full w-full object-cover",
                     (cycling || (isTouchUi && mobileInView)) && "scale-[1.12]",
@@ -303,7 +306,7 @@ export function ProjectCard({
             aria-label={`${card.name} in ${card.location}, video ${safeActive + 1}`}
             className={cn(
               "absolute inset-0 h-full w-full",
-              uncropped ? "object-contain" : "object-cover",
+              "object-cover",
               showVideo ? "opacity-100" : "opacity-0",
             )}
           />
@@ -371,9 +374,9 @@ export function ProjectCard({
       </div>
 
       <div className="flex flex-1 flex-col px-5 pt-5 pb-4 transition-colors duration-500">
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start sm:gap-4">
+        <div className="grid grid-cols-1 gap-3 sm:items-start sm:gap-4">
           <div className="min-w-0">
-            <p className="label-caps text-primary">{card.cardLabel ?? card.category}</p>
+            <p className="label-caps text-primary">{cardLabel}</p>
             <h3
               className={cn(
                 "display-md mt-2 text-foreground transition-colors duration-500 group-hover:text-background group-focus-within:text-background",
@@ -383,16 +386,6 @@ export function ProjectCard({
               {card.name}
             </h3>
           </div>
-          {card.clientType ? (
-            <p
-              className={cn(
-                "label-caps max-w-full leading-snug tracking-[0.12em] text-muted-foreground transition-colors duration-500 group-hover:text-background/60 group-focus-within:text-background/60 sm:max-w-[11rem] sm:text-right sm:tracking-[0.2em] [word-break:break-word]",
-                isTouchUi && mobileInView && "text-background/60",
-              )}
-            >
-              {card.clientType}
-            </p>
-          ) : null}
         </div>
 
         <p
@@ -401,7 +394,7 @@ export function ProjectCard({
             isTouchUi && mobileInView && "text-background/75",
           )}
         >
-          {activeCaption}
+          {card.insight}
         </p>
 
         {(card.location || (!card.hideCardMeta && (card.area || card.year))) && (

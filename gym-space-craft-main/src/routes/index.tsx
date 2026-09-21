@@ -30,6 +30,7 @@ import p4 from "@/assets/project-4.jpg";
 import caseImg from "@/assets/case-study.jpg";
 import founderImg from "@/assets/founder.webp";
 import gallery1 from "@/assets/gallery-1.jpg";
+import heroCtaVideo from "@/assets/hero-cta.mp4";
 import materials from "@/assets/why-materials.jpg";
 
 export const Route = createFileRoute("/")({
@@ -555,10 +556,6 @@ function Home() {
                       />
                     </div>
                     <div className="flex min-h-0 min-w-0 flex-col">
-                      <span className="label-caps flex items-center gap-3 text-primary">
-                        <span className="h-px w-6 bg-primary/50" />
-                        {t.designation || "Client"}
-                      </span>
                       <blockquote className="mt-1.5 line-clamp-2 text-sm leading-snug text-background/80">
                         {t.testimonial}
                       </blockquote>
@@ -608,11 +605,15 @@ function Home() {
 
         {/* 10 — Enquiry CTA */}
         <div id="enquire" className="relative overflow-hidden border-t border-background/10">
-          <img
-            src={gallery1}
-            alt=""
+          <video
+            src={heroCtaVideo}
+            poster={gallery1}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
             aria-hidden="true"
-            loading="lazy"
             className="absolute inset-0 h-full w-full object-cover opacity-45"
           />
           <span

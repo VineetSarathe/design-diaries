@@ -1,24 +1,31 @@
 import { useEffect, useRef, useState } from "react";
 import { useInView } from "./Reveal";
 import { cn } from "@/lib/utils";
-import s1 from "@/assets/floorplan.jpg";
-import s2 from "@/assets/why-materials.jpg";
-import s3 from "@/assets/gym-layout.jpg";
-import s4 from "@/assets/project-2.jpg";
-import s5 from "@/assets/project-3.jpg";
-import s6 from "@/assets/gallery-1.jpg";
+import imgUnderstand from "@/assets/method-understand.webp";
+import imgResearch from "@/assets/method-research.webp";
+import imgPlan from "@/assets/method-plan.webp";
+import imgDesign from "@/assets/method-design.webp";
+import imgBuild from "@/assets/method-build.webp";
+import imgLearn from "@/assets/method-learn.webp";
 
 export type MethodStep = { k: string; d: string; img?: string };
 
-const imgs = [s1, s2, s3, s4, s5, s6];
+const methodImages: Record<string, string> = {
+  Understand: imgUnderstand,
+  Research: imgResearch,
+  Plan: imgPlan,
+  Design: imgDesign,
+  Build: imgBuild,
+  Learn: imgLearn,
+};
 
 const defaultSteps: MethodStep[] = [
-  { k: "Understand", d: "Understand who you are designing for and what the space needs to achieve." },
-  { k: "Research", d: "Look closely at the site, people and practical details before making design decisions." },
-  { k: "Plan", d: "Plan the layout, equipment and movement around how the gym will actually work." },
-  { k: "Design", d: "Bring function, experience and aesthetics together to create a space people remember." },
-  { k: "Build", d: "Make the design work on site, with attention to every detail along the way." },
-  { k: "Learn", d: "Learn from every project and turn unexpected challenges into better solutions." },
+  { k: "Understand", d: "Understand who you are designing for and what the space needs to achieve.", img: imgUnderstand },
+  { k: "Research", d: "Look closely at the site, people and practical details before making design decisions.", img: imgResearch },
+  { k: "Plan", d: "Plan the layout, equipment and movement around how the gym will actually work.", img: imgPlan },
+  { k: "Design", d: "Bring function, experience and aesthetics together to create a space people remember.", img: imgDesign },
+  { k: "Build", d: "Make the design work on site, with attention to every detail along the way.", img: imgBuild },
+  { k: "Learn", d: "Learn from every project and turn unexpected challenges into better solutions.", img: imgLearn },
 ];
 
 /* Wavy path across a 1200 x 96 viewbox, peaking/dipping between the six
@@ -300,11 +307,13 @@ export function SagrikaMethod({
                   >
                     <span className="relative block aspect-[4/5] overflow-hidden bg-background/5">
                       <img
-                        src={s.img ?? imgs[i % imgs.length]}
+                        src={s.img ?? methodImages[s.k]}
                         alt={`${s.k} stage of the Sagrika method`}
-                        loading="lazy"
-                        width={600}
-                        height={750}
+                        loading={i < 4 ? "eager" : "lazy"}
+                        fetchPriority={i < 2 ? "high" : "low"}
+                        decoding="async"
+                        width={960}
+                        height={1200}
                         className={cn(
                           "h-full w-full object-cover transition-all duration-[900ms] ease-out",
                           on

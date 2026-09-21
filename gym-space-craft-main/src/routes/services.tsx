@@ -19,9 +19,10 @@ import floorplan from "@/assets/floorplan.jpg";
 import gallery1 from "@/assets/gallery-1.jpg";
 import caseImg from "@/assets/case-study.jpg";
 import p1 from "@/assets/project-1.jpg";
-import p3 from "@/assets/project-3.jpg";
 import p5 from "@/assets/project-5.jpg";
 import p6 from "@/assets/project-6.jpg";
+import drawingsYourImage from "@/assets/DRAWINGS YOUR.png";
+import aboutServiceVideo from "@/assets/about-service.mp4";
 import { loadRouteSeo, routePageSeo } from "@/lib/page-seo";
 
 export const Route = createFileRoute("/services")({
@@ -30,7 +31,7 @@ export const Route = createFileRoute("/services")({
   component: ServicesPage,
 });
 
-const methodImages = [gymLayout, floorplan, caseImg, p3];
+const methodImages = [gymLayout, floorplan, drawingsYourImage];
 const problemImages = [p1, gallery1, floorplan, p6];
 
 function ServicesPage() {
@@ -42,7 +43,7 @@ function ServicesPage() {
         label="Services — Design consultancy"
         title={
           <>
-            Design consultancy for gym and fitness spaces.
+            Design consultancy for gym and fitness spaces
           </>
         }
         intro="Full service fitness and gym design, including space planning, equipment layout, design development, and technical drawings. All designed around how your space needs to perform."
@@ -104,7 +105,9 @@ function ServicesPage() {
                   loading="lazy"
                   width={1400}
                   height={900}
-                  className="aspect-[3/2] w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.04]"
+                  className={`aspect-[3/2] w-full transition-transform duration-[1200ms] ease-out group-hover:scale-[1.04] ${
+                    i === 2 ? "object-contain bg-foreground" : "object-cover"
+                  }`}
                 />
                 <span className="label-caps absolute top-0 left-0 bg-primary px-4 py-2 text-primary-foreground">
                   Stage 0{i + 1}
@@ -151,6 +154,7 @@ function ServicesPage() {
         body="Thinking gym, fitness studio, or wellness project? Let’s talk about your space, your needs, and what you want to build."
         cta="Start a Project"
         image={p5}
+        video={aboutServiceVideo}
         imageAlt="Full-width view of a completed gym training floor"
       />
     </>

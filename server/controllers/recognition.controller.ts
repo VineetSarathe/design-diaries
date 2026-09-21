@@ -158,6 +158,15 @@ export async function updateRecognition(req: Request, res: Response) {
     const uploaded = await storeImageBuffer(imageFile.buffer, `${base}-main`, FOLDER, imageFile.mimetype);
     imageUrl = uploaded.imageUrl;
     imagePublicId = uploaded.imagePublicId;
+  } else {
+    const requestedMain = readField(req.body ?? {}, "imageUrl", 2000);
+    if (requestedMain && requestedMain !== doc.imageUrl) {
+      const fromExtra = previousImages.find((image) => image.url === requestedMain);
+      if (!fromExtra) throw new AppError(400, "Main photo was not found in this card");
+      if (fromExtra.kind === "video") throw new AppError(400, "Main photo must be an image, not a video");
+      imageUrl = fromExtra.url;
+      imagePublicId = fromExtra.publicId;
+    }
   }
 
   const extraOrder = parseExtraOrder(req.body ?? {});
@@ -168,6 +177,7 @@ export async function updateRecognition(req: Request, res: Response) {
     const nextImages: RecognitionImageDoc[] = [];
     let fileIndex = 0;
     for (const token of extraOrder) {
+      if (token === imageUrl) continue;
       if (token === "__file__") {
         const file = newExtras[fileIndex++];
         if (!file?.buffer) continue;
@@ -176,11 +186,17 @@ export async function updateRecognition(req: Request, res: Response) {
         continue;
       }
       const existing = previousImages.find((image) => image.url === token);
-      if (existing) nextImages.push(existing);
+      if (existing) {
+        nextImages.push(existing);
+        continue;
+      }
+      if (token === previousImageUrl && token !== imageUrl) {
+        nextImages.push({ url: previousImageUrl, publicId: previousImageId, kind: "image" });
+      }
     }
     images = nextImages;
   } else if (newExtras.length) {
-    images = [...previousImages, ...(await uploadExtras(newExtras, base))];
+    images = [...previousImages, ...(await uploadExtras(newExtras, base))].filter((image) => image.url !== imageUrl);
   }
 
   const updated = await Recognition.findByIdAndUpdate(
@@ -201,10 +217,11 @@ export async function updateRecognition(req: Request, res: Response) {
   );
   if (!updated) throw new AppError(404, "Recognition not found");
 
-  if (imageFile?.buffer && previousImageUrl !== updated.imageUrl) {
+  const remaining = new Set(updated.images.map((image) => image.url));
+  remaining.add(updated.imageUrl);
+  if (imageFile?.buffer && previousImageUrl !== updated.imageUrl && !remaining.has(previousImageUrl)) {
     await removeStoredImage(previousImageUrl, previousImageId, FOLDER).catch(() => undefined);
   }
-  const remaining = new Set(updated.images.map((image) => image.url));
   await Promise.all(
     previousImages
       .filter((image) => !remaining.has(image.url))

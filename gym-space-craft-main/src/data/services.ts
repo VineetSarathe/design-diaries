@@ -22,15 +22,15 @@ export const problems = [
 export const method = [
   {
     title: "FUNCTION COMES BEFORE FINISH",
-    text: "The circulation, zoning and placement of equipment are planned before a single material is chosen. The space is designed around how people move, train and use it.",
+    text: "Before we think about colours, materials or finishes, we look at how the gym will actually be used. Where will the equipment go? How will people move between zones? What happens when the gym gets busy? We plan the layout around real movement, training needs and everyday use, so the space works naturally before it starts looking good.",
   },
   {
     title: "DESIGNED AROUND HOW THE BUSINESS RUNS",
-    text: "The layout is shaped by class timetables, trainer schedules, staffed and unstaffed hours and retail paths. The floor is designed around the operating day, not just how it looks on a mood board.",
+    text: "A gym does not operate the same way throughout the day, so the design cannot be based only on how it looks in a presentation. We look at your audience, training mix, peak hours, class schedules and business goals. The layout is planned around how people use the space and how your gym needs to function from morning to closing.",
   },
   {
     title: "DRAWINGS YOUR CONTRACTOR CAN BUILD FROM",
-    text: "Detailed 2D working drawings coordinated with services provide the contractor clarity on site and help to carry the design intent through the build.",
+    text: "A good design should be easy to understand when it reaches the site. Once the design is finalised, we prepare detailed 2D working drawings that help translate the idea into execution. From layouts and services to ceilings, electrical points and key details, everything is coordinated so your contractor knows what needs to be built and how.",
   },
 ];
 
