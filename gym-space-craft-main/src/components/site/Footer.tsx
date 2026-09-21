@@ -203,7 +203,6 @@ export function Footer() {
 function InstagramRail({ feed, instagram }: { feed: InstagramCard[]; instagram: string }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
-  const [thumb, setThumb] = useState({ width: 40, left: 0 });
   const [activeId, setActiveId] = useState<string | null>(feed[0]?.id ?? null);
 
   useEffect(() => {
@@ -211,11 +210,6 @@ function InstagramRail({ feed, instagram }: { feed: InstagramCard[]; instagram: 
     if (!el) return;
 
     const update = () => {
-      const overflow = Math.max(el.scrollWidth - el.clientWidth, 0);
-      const width = el.scrollWidth > 0 ? Math.max(18, (el.clientWidth / el.scrollWidth) * 100) : 100;
-      const left = overflow > 0 ? (el.scrollLeft / overflow) * (100 - width) : 0;
-      setThumb({ width, left });
-
       if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
         setActiveId(null);
         return;
@@ -249,75 +243,46 @@ function InstagramRail({ feed, instagram }: { feed: InstagramCard[]; instagram: 
     };
   }, [feed]);
 
-  const scrollByPage = (dir: -1 | 1) => {
-    const el = scrollerRef.current;
-    if (!el) return;
-    el.scrollBy({ left: dir * Math.max(el.clientWidth * 0.7, 200), behavior: "smooth" });
-  };
-
   return (
-    <>
-      <div
-        ref={scrollerRef}
-        className="instagram-feed-rail mt-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-2 scroll-pl-5 md:snap-none md:px-10 md:scroll-pl-10"
-      >
-        {feed.map((f) => {
-          const isActive = activeId === f.id;
-          return (
-          <a
-            key={f.id}
-            ref={(node) => {
-              cardRefs.current[f.id] = node;
-            }}
-            href={f.link || instagram}
-            target="_blank"
-            rel="noreferrer noopener"
-            className={cn(
-              "group relative h-32 w-48 shrink-0 snap-start overflow-hidden border transition-colors duration-300 hover:border-primary",
-              isActive ? "border-primary" : "border-background/15",
-            )}
-          >
-            <img
-              src={f.imageUrl}
-              alt={f.caption}
-              loading="lazy"
-              className={cn(
-                "absolute inset-0 h-full w-full object-cover opacity-80 transition-[transform,opacity] duration-700 ease-out group-hover:scale-105 group-hover:opacity-100",
-                isActive && "scale-105 opacity-100",
-              )}
-            />
-            <ArrowUpRight
-              size={16}
-              className={cn(
-                "absolute top-3 right-3 text-background/70 transition-all duration-300 group-hover:translate-x-0.5 group-hover:text-primary",
-                isActive && "translate-x-0.5 text-primary",
-              )}
-            />
-          </a>
-          );
-        })}
-      </div>
-
-      <div className="instagram-feed-scroll" aria-hidden>
-        <button type="button" className="instagram-feed-scroll-btn" aria-label="Scroll Instagram cards left" onClick={() => scrollByPage(-1)}>
-          <span />
-        </button>
-        <div
-          className="instagram-feed-scroll-track"
-          onClick={(event) => {
-            const el = scrollerRef.current;
-            if (!el) return;
-            const rect = event.currentTarget.getBoundingClientRect();
-            const ratio = (event.clientX - rect.left) / rect.width;
-            el.scrollTo({ left: ratio * (el.scrollWidth - el.clientWidth), behavior: "smooth" });
+    <div
+      ref={scrollerRef}
+      className="instagram-feed-rail mt-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-2 scroll-pl-5 md:snap-none md:px-10 md:scroll-pl-10"
+    >
+      {feed.map((f) => {
+        const isActive = activeId === f.id;
+        return (
+        <a
+          key={f.id}
+          ref={(node) => {
+            cardRefs.current[f.id] = node;
           }}
+          href={f.link || instagram}
+          target="_blank"
+          rel="noreferrer noopener"
+          className={cn(
+            "group relative h-32 w-48 shrink-0 snap-start overflow-hidden border transition-colors duration-300 hover:border-primary",
+            isActive ? "border-primary" : "border-background/15",
+          )}
         >
-          <span style={{ width: `${thumb.width}%`, left: `${thumb.left}%` }} />
-        </div>
-        <button type="button" className="instagram-feed-scroll-btn next" aria-label="Scroll Instagram cards right" onClick={() => scrollByPage(1)}>
-          <span />
-        </button>
-      </div>
-    </>
+          <img
+            src={f.imageUrl}
+            alt={f.caption}
+            loading="lazy"
+            className={cn(
+              "absolute inset-0 h-full w-full object-cover opacity-80 transition-[transform,opacity] duration-700 ease-out group-hover:scale-105 group-hover:opacity-100",
+              isActive && "scale-105 opacity-100",
+            )}
+          />
+          <ArrowUpRight
+            size={16}
+            className={cn(
+              "absolute top-3 right-3 text-background/70 transition-all duration-300 group-hover:translate-x-0.5 group-hover:text-primary",
+              isActive && "translate-x-0.5 text-primary",
+            )}
+          />
+        </a>
+        );
+      })}
+    </div>
   );
 }

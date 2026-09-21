@@ -77,7 +77,7 @@ export function SagrikaMethod({
     if (paused) return;
     const timer = window.setInterval(() => {
       setAuto((current) => (current + 1) % steps.length);
-    }, 500);
+    }, 1500);
     return () => window.clearInterval(timer);
   }, [paused, steps.length]);
 

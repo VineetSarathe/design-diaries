@@ -7,7 +7,7 @@ export function AwardsMarquee() {
   const movingMarks = logos.length ? [...logos, ...logos] : [];
 
   return (
-    <Reveal className="border-y border-background/15 py-8">
+    <Reveal className="mt-8 border-y border-background/15 pt-10 pb-8 md:mt-10 md:pt-12">
       <p className="label-caps mb-7 text-background/45">Selected studio network</p>
       {movingMarks.length > 0 && (
         <div className="group relative overflow-hidden">

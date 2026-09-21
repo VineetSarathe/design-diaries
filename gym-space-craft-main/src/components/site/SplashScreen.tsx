@@ -26,7 +26,7 @@ export function SplashScreen() {
     >
       <div className="flex h-[1.35em] w-full items-center justify-center overflow-hidden text-4xl md:text-5xl">
         <p className="splash-word text-center font-display font-bold uppercase text-white">
-          DESIGNDIARIES
+          DESIGN DIARIES
         </p>
       </div>
     </div>

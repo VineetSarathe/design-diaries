@@ -9,7 +9,7 @@ export function TrustedBy({ compact = false }: { compact?: boolean }) {
 
   return (
     <section className={cn(compact ? "border-b border-border bg-background" : "bg-transparent")}>
-      <div className={cn("mx-auto max-w-[110rem] px-5 md:px-10", compact ? "py-12 md:py-16" : "pt-0 pb-16 md:pb-24")}>
+      <div className={cn("mx-auto max-w-[110rem] px-5 md:px-10", compact ? "pt-14 pb-12 md:pt-20 md:pb-16" : "pt-6 pb-16 md:pt-10 md:pb-24")}>
         <Reveal>
           <div className="max-w-4xl">
             <p className="label-caps text-primary">Studio network</p>

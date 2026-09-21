@@ -150,16 +150,21 @@ function Home() {
     const rail = supportingTrackRef.current;
     if (!viewport || !rail || supporting.length < 1) return;
 
-    const cards = Array.from(rail.children) as HTMLElement[];
-    const count = window.matchMedia("(min-width: 1024px)").matches ? 3 : 2;
-    const visible = cards.slice(0, Math.min(count, supporting.length));
-    if (window.matchMedia("(min-width: 1024px)").matches) {
-      viewport.style.height = "";
-    } else if (visible.length) {
-      const first = visible[0];
-      const last = visible[visible.length - 1];
-      viewport.style.height = `${last.offsetTop + last.offsetHeight - first.offsetTop}px`;
-    }
+    const sizeCards = () => {
+      const cards = Array.from(rail.children) as HTMLElement[];
+      const visibleCount = Math.min(3, supporting.length);
+      const height = viewport.clientHeight;
+      if (!height || !cards.length) return;
+      const gap = 1;
+      const cardHeight = (height - gap * Math.max(visibleCount - 1, 0)) / visibleCount;
+      cards.forEach((card) => {
+        card.style.height = `${cardHeight}px`;
+      });
+    };
+
+    sizeCards();
+    const observer = new ResizeObserver(sizeCards);
+    observer.observe(viewport);
 
     let offset = 0;
     let frame = 0;
@@ -173,7 +178,10 @@ function Home() {
       frame = window.requestAnimationFrame(tick);
     };
     frame = window.requestAnimationFrame(tick);
-    return () => window.cancelAnimationFrame(frame);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
   }, [supporting.length, supportingLoop.length]);
 
   return (
@@ -264,7 +272,7 @@ function Home() {
 
       {/* 02 — Trusted by */}
       <div className="seam-to-cream" />
-      <div className="-mt-10 md:-mt-16">
+      <div className="-mt-4 md:-mt-8">
         <TrustedBy />
       </div>
 
@@ -475,10 +483,10 @@ function Home() {
           </Reveal>
 
           {featured && (
-          <div className={`mt-12 grid gap-px bg-foreground ${supporting.length ? "lg:grid-cols-[1.15fr_1fr]" : ""}`}>
+          <div className={`mt-12 grid items-start gap-px bg-foreground ${supporting.length ? "lg:grid-cols-[1.15fr_1fr]" : ""}`}>
             {/* Featured quote — quote overlaid on image */}
-            <Reveal className="h-full">
-              <figure className="group relative flex h-full min-h-[26rem] flex-col justify-end overflow-hidden bg-foreground md:min-h-[32rem]">
+            <Reveal>
+              <figure className="group relative flex h-[26rem] flex-col justify-end overflow-hidden bg-foreground md:h-[32rem]">
                 <img
                   src={featured.imageUrl || testimonialFallbackImages[0]}
                   alt={featured.name}
@@ -519,10 +527,10 @@ function Home() {
 
             {/* Supporting quotes — photo left, quote right */}
             {supporting.length > 0 && (
-            <div className="min-h-0 lg:h-full">
+            <div className="h-[26rem] min-h-0 md:h-[32rem]">
             <div
               ref={supportingViewportRef}
-              className="overflow-hidden bg-foreground lg:h-full"
+              className="h-full overflow-hidden bg-foreground"
               onMouseEnter={() => {
                 if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
                   supportingPausedRef.current = true;
@@ -534,8 +542,8 @@ function Home() {
             >
               <div ref={supportingTrackRef} className="flex flex-col gap-px will-change-transform">
               {supportingLoop.map((t, i) => (
-                  <figure key={`${t.id}-${i}`} className="group relative grid shrink-0 grid-cols-[5.25rem_minmax(0,1fr)] gap-4 bg-foreground p-4 sm:grid-cols-[8rem_minmax(0,1fr)] sm:gap-6 sm:p-6 md:grid-cols-[9.5rem_minmax(0,1fr)] md:p-7">
-                    <div className="relative min-h-[6.25rem] overflow-hidden sm:min-h-[8.5rem] md:min-h-[9.5rem]">
+                  <figure key={`${t.id}-${i}`} className="group relative grid h-[calc((26rem-2px)/3)] shrink-0 grid-cols-[5.25rem_minmax(0,1fr)] gap-3 overflow-hidden bg-foreground px-4 py-3 sm:grid-cols-[6.5rem_minmax(0,1fr)] sm:gap-4 md:h-[calc((32rem-2px)/3)] md:grid-cols-[7.25rem_minmax(0,1fr)] md:px-5">
+                    <div className="relative min-h-0 overflow-hidden">
                       <img
                         src={t.imageUrl || testimonialFallbackImages[(i + 1) % testimonialFallbackImages.length]}
                         alt={t.name}
@@ -545,18 +553,18 @@ function Home() {
                         className="absolute inset-0 h-full w-full object-cover grayscale"
                       />
                     </div>
-                    <div className="flex min-w-0 flex-col">
+                    <div className="flex min-h-0 min-w-0 flex-col">
                       <span className="label-caps flex items-center gap-3 text-primary">
                         <span className="h-px w-6 bg-primary/50" />
                         {t.designation || "Client"}
                       </span>
-                      <blockquote className="mt-3 line-clamp-4 text-sm leading-relaxed text-background/80 md:mt-4 md:line-clamp-none md:text-base">
+                      <blockquote className="mt-1.5 line-clamp-2 text-sm leading-snug text-background/80">
                         {t.testimonial}
                       </blockquote>
-                      <figcaption className="mt-3 flex items-end justify-between gap-4 border-t border-background/12 pt-3 sm:mt-4 sm:pt-4">
+                      <figcaption className="mt-auto flex items-end justify-between gap-4 border-t border-background/12 pt-2">
                         <span>
                           <span className="label-caps block text-background">{t.name}</span>
-                          <span className="mt-1 block text-xs text-background/50">{t.company}</span>
+                          <span className="mt-0.5 block text-xs text-background/50">{t.company}</span>
                         </span>
                       </figcaption>
                     </div>
