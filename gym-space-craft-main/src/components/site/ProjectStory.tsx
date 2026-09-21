@@ -35,8 +35,8 @@ export function ProjectVisualStory({ project }: { project: Project }) {
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const currentIsVideo = Boolean(active?.src && isVideoSrc(active.src));
-  const previewSrc = active?.src ? mediaPreviewUrl(active.src, 1400) : "";
-  const playbackSrc = active?.src && currentIsVideo ? mediaPlaybackUrl(active.src, 1280) : "";
+  const previewSrc = active?.src ? mediaPreviewUrl(active.src, 1100) : "";
+  const playbackSrc = active?.src && currentIsVideo ? mediaPlaybackUrl(active.src, 720) : "";
 
   useEffect(() => {
     if (visuals.length < 2 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -59,7 +59,7 @@ export function ProjectVisualStory({ project }: { project: Project }) {
     const next = visuals[(activeVisual + 1) % Math.max(visuals.length, 1)];
     if (!next?.src) return;
     const img = new Image();
-    img.src = mediaPreviewUrl(next.src, 1400);
+    img.src = mediaPreviewUrl(next.src, 1100);
   }, [activeVisual, currentIsVideo, visuals]);
 
   const togglePlay = () => {

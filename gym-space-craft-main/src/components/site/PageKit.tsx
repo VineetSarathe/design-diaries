@@ -98,8 +98,8 @@ export function CinematicHero({
   const safeActive = slides.length ? Math.min(active, slides.length - 1) : 0;
   const current = slides[safeActive] || image;
   const currentIsVideo = Boolean(current && isVideoSrc(current));
-  const previewSrc = current ? mediaPreviewUrl(current, 1920) : image;
-  const playbackSrc = current && currentIsVideo ? mediaPlaybackUrl(current, 1600) : "";
+  const previewSrc = current ? mediaPreviewUrl(current, 1280) : image;
+  const playbackSrc = current && currentIsVideo ? mediaPlaybackUrl(current, 960) : "";
 
   const advance = () => {
     if (slides.length < 2) return;
@@ -184,7 +184,7 @@ export function CinematicHero({
           muted
           autoPlay
           playsInline
-          preload="metadata"
+          preload="none"
           onEnded={advance}
           onError={() => {
             if (slides.length > 1) window.setTimeout(advance, 1000);

@@ -30,8 +30,8 @@ function WorkListing() {
   const [heroSrc, setHeroSrc] = useState<string | null>(null);
   const shown = active === "All" ? projects : projects.filter((p) => p.category === active);
   const heroIsVideo = Boolean(heroSrc && isVideoSrc(heroSrc));
-  const heroPreview = heroSrc ? mediaPreviewUrl(heroSrc, 1920) : workHero;
-  const heroPlayback = heroSrc && heroIsVideo ? mediaPlaybackUrl(heroSrc, 1280) : "";
+  const heroPreview = heroSrc ? mediaPreviewUrl(heroSrc, 1280) : workHero;
+  const heroPlayback = heroSrc && heroIsVideo ? mediaPlaybackUrl(heroSrc, 960) : "";
 
   return (
     <>
@@ -52,6 +52,7 @@ function WorkListing() {
             muted
             autoPlay
             playsInline
+            preload="none"
             className="absolute inset-0 h-full w-full object-cover opacity-50"
           />
         ) : null}

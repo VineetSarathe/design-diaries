@@ -116,7 +116,7 @@ export function ReelsSection({
               >
                 <div className="relative aspect-[9/16] overflow-hidden bg-muted">
                   <img
-                    src={mediaPreviewUrl(r.imageUrl, 640)}
+                    src={mediaPreviewUrl(r.imageUrl, 480)}
                     alt={`Placeholder reel — ${r.caption}`}
                     loading="lazy"
                     decoding="async"

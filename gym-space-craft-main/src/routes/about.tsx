@@ -212,7 +212,7 @@ function AboutPage() {
               <Reveal key={item.id} delay={index * 80} className="w-[calc((100%-1rem)/2)] shrink-0 snap-start lg:w-[calc((100%-3rem)/4)]">
                 <a href={item.link || instagram} target="_blank" rel="noreferrer noopener" className="group block">
                   <div className="relative aspect-[9/16] overflow-hidden bg-muted">
-                    <img src={mediaPreviewUrl(item.imageUrl, 720)} alt="" loading="lazy" decoding="async" width={720} height={1280} className="h-full w-full object-cover opacity-80 transition-all duration-[900ms] group-hover:scale-[1.05] group-hover:opacity-100" />
+                    <img src={mediaPreviewUrl(item.imageUrl, 560)} alt="" loading="lazy" decoding="async" width={560} height={1000} className="h-full w-full object-cover opacity-80 transition-all duration-[900ms] group-hover:scale-[1.05] group-hover:opacity-100" />
                     <Instagram className="absolute top-4 right-4 h-5 w-5 text-background/80" />
                   </div>
                 </a>

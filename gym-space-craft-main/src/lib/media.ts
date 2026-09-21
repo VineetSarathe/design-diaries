@@ -14,18 +14,24 @@ function cloudinaryParts(url: string) {
   };
 }
 
+function clamp(width: number, max: number) {
+  return Math.max(1, Math.min(Math.round(width), max));
+}
+
 export function mediaPreviewUrl(url: string, width: number) {
   const parts = cloudinaryParts(url);
   if (!parts) return url;
+  const w = clamp(width, 1400);
   if (parts.resource === "video") {
     const still = parts.versionedPath.replace(/\.(mp4|webm|mov)(\?.*)?$/i, ".jpg");
-    return `${parts.host}/video/upload/so_1,w_${width},c_fill,dpr_auto,q_auto:best,f_jpg/${still}`;
+    return `${parts.host}/video/upload/c_fill,f_jpg,q_auto:good,so_1,w_${w}/${still}`;
   }
-  return `${parts.host}/image/upload/c_limit,dpr_auto,f_auto,q_auto:best,w_${width}/${parts.versionedPath}`;
+  return `${parts.host}/image/upload/c_limit,f_auto,q_auto:good,w_${w}/${parts.versionedPath}`;
 }
 
-export function mediaPlaybackUrl(url: string, width = 960) {
+export function mediaPlaybackUrl(url: string, width = 720) {
   const parts = cloudinaryParts(url);
   if (!parts || parts.resource !== "video") return url;
-  return `${parts.host}/video/upload/c_limit,dpr_auto,f_mp4,q_auto:best,w_${width}/${parts.versionedPath}`;
+  const w = clamp(width, 960);
+  return `${parts.host}/video/upload/ac_aac,br_700k,c_limit,f_mp4,q_auto:good,vc_h264,w_${w}/${parts.versionedPath}`;
 }

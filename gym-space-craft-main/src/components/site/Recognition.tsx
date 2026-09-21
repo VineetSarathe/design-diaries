@@ -175,17 +175,19 @@ export function RecognitionCard({ item, active, onActivate, register }: Recognit
           swipeStart.current = null;
         }}
       >
-        {gallery.map((entry, index) =>
-          isVideoSrc(entry.url, entry.kind) ? (
+        {gallery.map((entry, index) => {
+          if (index !== imageIndex) return null;
+          return isVideoSrc(entry.url, entry.kind) ? (
             <video
               key={`${entry.url}-${index}`}
               ref={(node) => {
                 videoRefs.current[index] = node;
               }}
-              src={mediaPlaybackUrl(entry.url, 1280)}
+              src={mediaPlaybackUrl(entry.url, 720)}
+              poster={mediaPreviewUrl(entry.url, 800)}
               muted
               playsInline
-              preload="metadata"
+              preload="none"
               onPlay={() => {
                 if (index === imageIndex) setPlaying(true);
               }}
@@ -198,26 +200,25 @@ export function RecognitionCard({ item, active, onActivate, register }: Recognit
               aria-label={`${item.title}, ${item.category.toLowerCase()}, ${item.year}${index ? `, video ${index + 1}` : ""}`}
               className={cn(
                 "absolute inset-0 h-full w-full object-cover transition-[opacity,transform] duration-500 ease-out motion-reduce:transition-none",
-                index === imageIndex ? "opacity-100" : "pointer-events-none opacity-0",
-                active && index === imageIndex && "scale-[1.06]",
+                active && "scale-[1.06]",
               )}
             />
           ) : (
             <img
               key={`${entry.url}-${index}`}
-              src={mediaPreviewUrl(entry.url, 1400)}
+              src={mediaPreviewUrl(entry.url, 800)}
               alt={`${item.title}, ${item.category.toLowerCase()}, ${item.year}${index ? `, view ${index + 1}` : ""}`}
               loading="lazy"
-              width={960}
-              height={768}
+              decoding="async"
+              width={800}
+              height={640}
               className={cn(
                 "absolute inset-0 h-full w-full object-cover transition-[opacity,transform] duration-500 ease-out motion-reduce:transition-none",
-                index === imageIndex ? "opacity-100" : "pointer-events-none opacity-0",
-                active && index === imageIndex && "scale-[1.06]",
+                active && "scale-[1.06]",
               )}
             />
-          ),
-        )}
+          );
+        })}
         <span
           className={cn(
             "pointer-events-none absolute inset-0 transition-colors duration-500 motion-reduce:transition-none",

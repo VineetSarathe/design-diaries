@@ -266,7 +266,7 @@ function InstagramRail({ feed, instagram }: { feed: InstagramCard[]; instagram: 
           )}
         >
           <img
-            src={mediaPreviewUrl(f.imageUrl, 480)}
+            src={mediaPreviewUrl(f.imageUrl, 320)}
             alt={f.caption}
             loading="lazy"
             className={cn(

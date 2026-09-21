@@ -33,7 +33,7 @@ export function TrustedBy({ compact = false }: { compact?: boolean }) {
               {row.map((logo, i) => (
                 <img
                   key={`${logo.id}-${i}`}
-                  src={mediaPreviewUrl(logo.imageUrl, 400)}
+                  src={mediaPreviewUrl(logo.imageUrl, 240)}
                   alt={`${logo.name} logo`}
                   loading="lazy"
                   className="h-12 w-auto max-h-16 shrink-0 object-contain sm:h-14 sm:max-h-20 md:h-16 md:max-h-24"
