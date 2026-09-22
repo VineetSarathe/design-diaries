@@ -23,6 +23,7 @@ import { loadRouteSeo, routePageSeo } from "@/lib/page-seo";
 import { mediaPreviewUrl } from "@/lib/media";
 
 import heroImg from "@/assets/hero-gym.jpg";
+import heroVideo from "@/assets/hero-gym.mp4";
 import p1 from "@/assets/project-1.jpg";
 import p2 from "@/assets/project-2.jpg";
 import p3 from "@/assets/project-3.jpg";
@@ -233,10 +234,15 @@ function Home() {
           className="absolute inset-0"
           style={{ transform: `translateY(${Math.min(scrollY * 0.18, 160)}px)` }}
         >
-          <img
-            src={heroImg}
-            alt=""
+          <video
+            src={heroVideo}
+            poster={heroImg}
             aria-hidden="true"
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
             className="h-full w-full scale-105 object-cover transition-[opacity,transform] duration-[1800ms] ease-out"
             style={{ opacity: stage >= 2 ? 0.72 : 0 }}
           />
