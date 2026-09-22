@@ -131,7 +131,7 @@ function AboutPage() {
             </Reveal>
             <div className="grid grid-cols-[0.8fr_1.2fr] items-end gap-3 md:gap-5">
               <Reveal className="group relative mb-10 overflow-hidden">
-                <img src={founderPractice} alt="Sagrika working through a gym interior design" loading="lazy" width={1200} height={1800} className="aspect-[3/4] w-full object-cover object-[center_20%] opacity-70 transition-all duration-[1000ms] group-hover:scale-[1.04] group-hover:opacity-95" />
+                <img src={founderPractice} alt="Sagrika working through a gym interior design" loading="lazy" width={1200} height={1800} className="aspect-[3/4] w-full object-cover object-[center_46%] opacity-70 transition-all duration-[1000ms] group-hover:scale-[1.04] group-hover:opacity-95" />
                 <span className="absolute inset-0 border border-background/20" />
               </Reveal>
               <Reveal delay={120} className="group relative overflow-hidden">

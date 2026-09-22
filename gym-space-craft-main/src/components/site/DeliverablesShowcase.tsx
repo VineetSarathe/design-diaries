@@ -98,12 +98,16 @@ export function DeliverablesShowcase({ fadeFromInk = false }: { fadeFromInk?: bo
                 loading={index === 0 ? "eager" : "lazy"}
                 width={1400}
                 height={1050}
-                className={`absolute inset-0 h-full w-full object-cover transition-all duration-[1000ms] ease-out ${active === index ? "scale-100 opacity-70" : "scale-[1.05] opacity-0"}`}
+                className={cn(
+                  "absolute inset-0 h-full w-full transition-all duration-[1000ms] ease-out",
+                  index === 3 ? "object-contain bg-foreground" : "object-cover",
+                  active === index ? "scale-100 opacity-[0.58]" : "scale-[1.05] opacity-0",
+                )}
               />
             ))}
-            <span aria-hidden className="absolute inset-0 bg-gradient-to-t from-foreground via-foreground/35 to-transparent" />
+            <span aria-hidden className="absolute inset-0 bg-gradient-to-t from-foreground via-foreground/50 to-transparent" />
 
-            <div key={selected.title} className="animate-fade-in absolute inset-x-0 bottom-0 p-5 md:p-7">
+            <div key={selected.title} className="animate-fade-in absolute inset-x-0 bottom-0 bg-foreground/10 p-5 md:p-7">
               <div className="flex items-center gap-3">
                 <SelectedIcon className="h-5 w-5 text-primary" />
                 <p className="label-caps text-primary">Included in your package</p>

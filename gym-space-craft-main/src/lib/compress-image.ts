@@ -1,6 +1,13 @@
 const UPLOAD_SAFE_BYTES = 35 * 1024 * 1024;
 const MAX_EDGE = 4500;
 
+type CompressImageOptions = {
+  force?: boolean;
+  maxEdge?: number;
+  quality?: number;
+  uploadSafeBytes?: number;
+};
+
 function loadImage(file: File) {
   return new Promise<HTMLImageElement>((resolve, reject) => {
     const url = URL.createObjectURL(file);
@@ -17,7 +24,7 @@ function loadImage(file: File) {
   });
 }
 
-function canvasToFile(canvas: HTMLCanvasElement, name: string) {
+function canvasToFile(canvas: HTMLCanvasElement, name: string, quality: number) {
   return new Promise<File>((resolve, reject) => {
     canvas.toBlob(
       (blob) => {
@@ -28,17 +35,20 @@ function canvasToFile(canvas: HTMLCanvasElement, name: string) {
         resolve(new File([blob], name.replace(/\.[^.]+$/, ".jpg"), { type: "image/jpeg" }));
       },
       "image/jpeg",
-      0.95,
+      quality,
     );
   });
 }
 
 /** Keep originals. Only shrink files that would miss the 40 MB upload cap. */
-export async function compressImage(file: File): Promise<File> {
-  if (!file.type.startsWith("image/") || file.size <= UPLOAD_SAFE_BYTES) return file;
+export async function compressImage(file: File, options: CompressImageOptions = {}): Promise<File> {
+  const limit = options.uploadSafeBytes ?? UPLOAD_SAFE_BYTES;
+  if (!file.type.startsWith("image/") || (!options.force && file.size <= limit)) return file;
 
+  const maxEdge = options.maxEdge ?? MAX_EDGE;
+  const quality = options.quality ?? 0.95;
   const image = await loadImage(file);
-  const scale = Math.min(1, MAX_EDGE / Math.max(image.width, image.height));
+  const scale = Math.min(1, maxEdge / Math.max(image.width, image.height));
   const canvas = document.createElement("canvas");
   canvas.width = Math.max(1, Math.round(image.width * scale));
   canvas.height = Math.max(1, Math.round(image.height * scale));
@@ -48,6 +58,6 @@ export async function compressImage(file: File): Promise<File> {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
 
-  const prepared = await canvasToFile(canvas, file.name);
+  const prepared = await canvasToFile(canvas, file.name, quality);
   return prepared.size < file.size ? prepared : file;
 }

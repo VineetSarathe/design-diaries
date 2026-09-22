@@ -1,15 +1,11 @@
 import type { Request, Response } from "express";
 import mongoose from "mongoose";
-import sharp from "sharp";
 import { HomepageSettings, HOMEPAGE_SETTINGS_KEY } from "../models/homepage-settings.model";
 import { Project, type ProjectDoc, type ProjectImageDoc } from "../models/project.model";
 import { AppError } from "../utils/appError";
 import { removeStoredImage, storeImageBuffer, storeMediaBuffer } from "../utils/store-image";
 
 const CATEGORIES = new Set(["Gym Projects", "Fitness Studios"]);
-const REQUIRED_PROJECT_IMAGE_WIDTH = 1010;
-const REQUIRED_PROJECT_IMAGE_HEIGHT = 793;
-const CANVA_PROJECT_IMAGE_LABEL = "577 x 453px";
 
 function filesOf(req: Request, field: string) {
   const files = req.files;
@@ -185,37 +181,17 @@ async function assertUniqueSlug(slug: string, ignoreId?: string) {
   throw new AppError(400, "That project slug is already in use");
 }
 
-function isImageUpload(file: Express.Multer.File) {
-  const mime = (file.mimetype || "").toLowerCase();
-  const name = file.originalname.toLowerCase();
-  return mime.startsWith("image/") || /\.(jpe?g|png|webp|gif|avif|bmp|tiff?|heic|heif)$/i.test(name);
-}
-
-async function assertProjectImageSize(file: Express.Multer.File) {
-  if (!isImageUpload(file)) return;
-  const meta = await sharp(file.buffer, { failOn: "none", limitInputPixels: false }).metadata();
-  if (meta.width !== REQUIRED_PROJECT_IMAGE_WIDTH || meta.height !== REQUIRED_PROJECT_IMAGE_HEIGHT) {
-    throw new AppError(
-      400,
-      `Project images must be exported from Canva ${CANVA_PROJECT_IMAGE_LABEL} as ${REQUIRED_PROJECT_IMAGE_WIDTH} x ${REQUIRED_PROJECT_IMAGE_HEIGHT}px.`,
-    );
-  }
-}
-
 async function uploadExtras(files: Express.Multer.File[], slug: string): Promise<ProjectImageDoc[]> {
-  const extras: ProjectImageDoc[] = [];
-  for (const [index, file] of files.entries()) {
-    await assertProjectImageSize(file);
+  return Promise.all(files.map(async (file, index) => {
     const uploaded = await storeMediaBuffer(file.buffer, `${slug}-${index + 1}`, "projects", file.mimetype);
-    extras.push({
+    return {
       url: uploaded.imageUrl,
       publicId: uploaded.imagePublicId,
       alt: "",
       caption: "",
       kind: uploaded.kind,
-    });
-  }
-  return extras;
+    };
+  }));
 }
 
 export async function listProjects(req: Request, res: Response) {
@@ -239,7 +215,6 @@ export async function createProject(req: Request, res: Response) {
   const cardFile = filesOf(req, "card")[0];
   if (!cardFile?.buffer) throw new AppError(400, "Please upload a project photo");
 
-  await assertProjectImageSize(cardFile);
   const card = await storeImageBuffer(cardFile.buffer, fields.slug, "projects", cardFile.mimetype);
   const images = await uploadExtras(filesOf(req, "images"), fields.slug);
 
@@ -283,7 +258,6 @@ export async function updateProject(req: Request, res: Response) {
   const previousCardUrl = doc.cardUrl;
   const cardFile = filesOf(req, "card")[0];
   if (cardFile?.buffer) {
-    await assertProjectImageSize(cardFile);
     const uploaded = await storeImageBuffer(cardFile.buffer, `${doc.slug}-card`, "projects", cardFile.mimetype);
     doc.cardUrl = uploaded.imageUrl;
     doc.cardPublicId = uploaded.imagePublicId;
@@ -295,19 +269,12 @@ export async function updateProject(req: Request, res: Response) {
 
   if (extraOrder) {
     const nextImages: ProjectImageDoc[] = [];
+    const uploadedNewExtras = await uploadExtras(newExtras, doc.slug);
     let fileIndex = 0;
     for (const token of extraOrder) {
       if (token === "__file__") {
-        const file = newExtras[fileIndex++];
-        if (!file?.buffer) continue;
-        const uploaded = await storeMediaBuffer(file.buffer, `${doc.slug}-${nextImages.length + 1}`, "projects", file.mimetype);
-        nextImages.push({
-          url: uploaded.imageUrl,
-          publicId: uploaded.imagePublicId,
-          alt: "",
-          caption: "",
-          kind: uploaded.kind,
-        });
+        const uploaded = uploadedNewExtras[fileIndex++];
+        if (uploaded) nextImages.push(uploaded);
         continue;
       }
       const existing = previousImages.find((image) => image.url === token);

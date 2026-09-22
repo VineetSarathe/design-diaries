@@ -20,6 +20,16 @@ const chapters: { key: StoryKey; label: string; question: string }[] = [
 
 export function ProjectVisualStory({ project }: { project: Project }) {
   const visuals = useMemo(() => {
+    if (project.cardImages?.length) {
+      return project.cardImages.map((src, index) => {
+        const fromGallery = project.gallery.find((image) => image.src === src);
+        return {
+          src,
+          alt: fromGallery?.alt || `${project.name} image ${index + 1}`,
+          caption: fromGallery?.caption || project.insight,
+        };
+      });
+    }
     const source = [
       { src: project.hero, alt: `${project.name} main training floor`, caption: project.insight },
       { src: project.card, alt: `${project.name} interior`, caption: "The designed floor in use" },
@@ -103,10 +113,10 @@ export function ProjectVisualStory({ project }: { project: Project }) {
             </h2>
           </Reveal>
 
-          <div className="mt-10 lg:aspect-[16/8]">
+          <div className="mt-10 lg:h-[min(44rem,80vh)] xl:h-[min(48rem,82vh)]">
             <div className="grid h-full gap-4 lg:grid-cols-[minmax(0,1.65fr)_minmax(0,0.35fr)]">
-              <Reveal className="relative h-full min-h-[18rem] min-w-0 overflow-hidden border border-background/15 bg-foreground">
-                <div className="relative h-full min-h-[18rem] aspect-[4/3] sm:aspect-[16/9] lg:aspect-auto">
+              <Reveal className="relative h-full min-h-[20rem] min-w-0 overflow-hidden border border-background/15 bg-foreground sm:min-h-[24rem]">
+                <div className="relative h-full min-h-[20rem] aspect-[16/10] sm:min-h-[24rem] sm:aspect-[16/9] lg:aspect-auto">
                   {previewSrc ? (
                     <img
                       key={previewSrc}
@@ -143,7 +153,7 @@ export function ProjectVisualStory({ project }: { project: Project }) {
                   )}
                   <div className="absolute inset-x-0 bottom-0 z-20 flex items-end justify-between gap-5 p-5 md:p-8">
                     <div className="max-w-lg">
-                      <p className="label-caps text-primary">Frame 0{activeVisual + 1}</p>
+                      <p className="label-caps text-primary">Frame {String(activeVisual + 1).padStart(2, "0")}</p>
                       <p className="mt-2 text-sm text-background/80 md:text-base">{active?.caption ?? active?.alt}</p>
                     </div>
                     <div className="flex shrink-0 gap-2">
@@ -158,22 +168,22 @@ export function ProjectVisualStory({ project }: { project: Project }) {
                 </div>
               </Reveal>
 
-              <div className="grid min-h-0 min-w-0 grid-cols-3 gap-3 lg:h-full lg:grid-cols-1 lg:grid-rows-3">
-                {visuals.slice(0, 3).map((visual, index) => (
+              <div className="flex min-h-0 min-w-0 gap-3 overflow-x-auto pb-1 [scrollbar-width:none] lg:h-full lg:flex-col lg:overflow-x-hidden lg:overflow-y-auto lg:pb-0 [&::-webkit-scrollbar]:hidden">
+                {visuals.map((visual, index) => (
                   <Button
                     type="button"
                     variant="ghost"
-                    key={visual.src}
+                    key={`${visual.src}-${index}`}
                     onClick={() => setActiveVisual(index)}
                     aria-label={`Show project image ${index + 1}`}
                     aria-pressed={index === activeVisual}
                     className={cn(
-                      "group relative h-auto min-h-0 min-w-0 overflow-hidden rounded-none border p-0 transition-colors duration-500 hover:bg-transparent lg:h-full",
+                      "group relative h-20 w-24 shrink-0 overflow-hidden rounded-none border p-0 transition-colors duration-500 hover:bg-transparent sm:h-24 sm:w-28 lg:h-auto lg:min-h-[4.5rem] lg:w-full lg:flex-1",
                       index === activeVisual ? "border-primary" : "border-background/15 hover:border-background/45",
                     )}
                   >
-                    <img src={mediaPreviewUrl(visual.src, 400)} alt="" loading="lazy" decoding="async" className="aspect-square h-full w-full object-cover opacity-60 transition-all duration-700 group-hover:scale-105 group-hover:opacity-90 lg:aspect-auto" />
-                    <span className="label-caps absolute top-3 left-3 text-background">0{index + 1}</span>
+                    <img src={mediaPreviewUrl(visual.src, 400)} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover opacity-60 transition-all duration-700 group-hover:scale-105 group-hover:opacity-90" />
+                    <span className="label-caps absolute top-3 left-3 text-background">{String(index + 1).padStart(2, "0")}</span>
                     <span className={cn("absolute inset-x-0 bottom-0 h-0.5 origin-left bg-primary transition-transform duration-700", index === activeVisual ? "scale-x-100" : "scale-x-0")} />
                   </Button>
                 ))}

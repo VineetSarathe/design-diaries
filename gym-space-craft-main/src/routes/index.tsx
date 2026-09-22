@@ -102,6 +102,43 @@ function Home() {
   const [scrollY, setScrollY] = useState(0);
   const featuredProjects = pickBySlugs(workProjects, home.featuredProjectSlugs).map(toProjectCardData);
   const featuredBlogs = pickBySlugs(posts, home.featuredBlogSlugs);
+  const caseStudyProject = useMemo(
+    () =>
+      workProjects.find((project) => project.slug === "sanctum-wellness") ??
+      workProjects.find((project) => /a3 fitness/i.test(project.name)) ??
+      null,
+    [workProjects],
+  );
+  const caseStudyImages = useMemo(() => {
+    const fallback = [
+      { src: heroImg, alt: "Film of the finished gym floor in use" },
+      { src: caseImg, alt: "Mezzanine cardio deck above the main strength floor" },
+      { src: p1, alt: "Strength training zone with racks along the wall" },
+      { src: gallery1, alt: "Functional training area with open floor space" },
+      { src: materials, alt: "Material and finish detail from the fit-out" },
+    ];
+    if (!caseStudyProject) return fallback;
+    const source = caseStudyProject.cardImages?.length
+      ? caseStudyProject.cardImages
+      : [
+          caseStudyProject.card,
+          caseStudyProject.hero,
+          ...caseStudyProject.gallery.map((image) => image.src),
+        ];
+    const unique = Array.from(new Set(source.filter(Boolean))).slice(0, 5);
+    if (!unique.length) return fallback;
+    return unique.map((src, index) => ({
+      src,
+      alt: `${caseStudyProject.name} image ${index + 1}`,
+    }));
+  }, [caseStudyProject]);
+  const caseStudyMeta = useMemo(() => {
+    if (!caseStudyProject) return "JAMMU, J&K | 3,500 SQ FT | 2024";
+    const location = (caseStudyProject.location || "Jammu, J&K").toUpperCase();
+    const area = (caseStudyProject.area || "3,500 sq ft").toUpperCase();
+    const year = caseStudyProject.year || "2024";
+    return [location, area, year].filter(Boolean).join(" | ");
+  }, [caseStudyProject]);
   const reviews = useMemo(
     () =>
       workProjects
@@ -407,19 +444,13 @@ function Home() {
 
       {/* 07 — Case Study Spotlight */}
       <CaseStudySpotlight
-        meta="JAMMU, J&K | 3,500 SQ FT | 2024"
+        meta={caseStudyMeta}
         titleTop="A3 FITNESS"
         titleBottom="GYM & SPA"
         kicker="MAKING 3,500 SQ FT WORK HARDER."
         summary="The room had to fit cardio, Zumba, dumbbells and strength training and still feel open and inviting."
-        href="/work"
-        images={[
-          { src: heroImg, alt: "Film of the finished gym floor in use" },
-          { src: caseImg, alt: "Mezzanine cardio deck above the main strength floor" },
-          { src: p1, alt: "Strength training zone with racks along the wall" },
-          { src: gallery1, alt: "Functional training area with open floor space" },
-          { src: materials, alt: "Material and finish detail from the fit-out" },
-        ]}
+        href={caseStudyProject ? `/work/${caseStudyProject.slug}` : "/work"}
+        images={caseStudyImages}
         metrics={[
           { v: "-48%", l: "Peak hour\nequipment\nwait" },
           { v: "4", l: "Distinct\ntraining\nfunctions" },
@@ -427,7 +458,7 @@ function Home() {
           { v: "100%", l: "Natural light\nin core\narea" },
         ]}
         note="Ceiling and flooring were used to define the training areas while keeping the space open and connected."
-        journeyBackground={p3}
+        journeyBackground={caseStudyImages[0]?.src || p3}
         journey={[
           {
             n: "01",
@@ -506,7 +537,7 @@ function Home() {
                 <div className="relative z-10 p-7 md:p-10">
                   <span
                     aria-hidden="true"
-                    className="mb-3 block font-display text-[3.5rem] leading-none text-primary md:mb-4 md:text-6xl"
+                    className="mb-5 block translate-y-3 font-display text-[3.5rem] leading-none text-primary md:mb-4 md:translate-y-0 md:text-6xl"
                   >
                     &ldquo;
                   </span>
@@ -552,7 +583,7 @@ function Home() {
                         loading="lazy"
                         width={300}
                         height={380}
-                        className="absolute inset-0 h-full w-full object-cover grayscale"
+                        className="absolute inset-0 h-full w-full object-cover"
                       />
                     </div>
                     <div className="flex min-h-0 min-w-0 flex-col">

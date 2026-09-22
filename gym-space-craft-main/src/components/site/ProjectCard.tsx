@@ -80,7 +80,8 @@ export function ProjectCard({
     () => ("images" in project ? project : toProjectCardData(project)),
     [project],
   );
-  const images = card.images.length ? card.images : [];
+  // Work / showcase cards only cycle through the first 3 uploaded images.
+  const images = (card.images.length ? card.images : []).slice(0, 3);
   const [active, setActive] = useState(0);
   const [hovered, setHovered] = useState(false);
   const [isTouchUi, setIsTouchUi] = useState(false);
