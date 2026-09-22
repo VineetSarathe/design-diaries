@@ -22,6 +22,7 @@ import floorplan from "@/assets/floorplan.jpg";
 import caseImg from "@/assets/case-study.jpg";
 import materials from "@/assets/why-materials.jpg";
 import layout from "@/assets/gym-layout.jpg";
+import heroCtaVideo from "@/assets/hero-cta.mp4";
 
 async function loadPost(slug: string): Promise<{ post: BlogPost; related: BlogPost[] }> {
   const base = API_BASE;
@@ -453,9 +454,9 @@ function BlogDetail() {
       <CtaBanner
         compact
         label="Start a Project"
-        title="Apply this to your own floor"
-        body="Send the area, the city and what you plan to run in it. You'll get a considered reply, not a brochure."
-        image={caseImg}
+        title="SEE THE SPACE BEFORE IT IS BUILT"
+        body="Thinking gym, fitness studio, or wellness project? Let’s talk about your space, your needs, and what you want to build."
+        video={heroCtaVideo}
       />
 
       <ReelsSection placement="resources" />

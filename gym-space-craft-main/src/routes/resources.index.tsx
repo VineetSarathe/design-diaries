@@ -7,6 +7,7 @@ import { FaqSection, PageHero, ReelsSection } from "@/components/site/Sections";
 import { blogCategories, downloads, posts as fallbackPosts, resourceFaqs } from "@/data/resources";
 import { useBlogs } from "@/hooks/use-blogs";
 import resourcesHero from "@/assets/gallery-1.jpg";
+import heroCtaVideo from "@/assets/hero-cta.mp4";
 import { loadRouteSeo, routePageSeo } from "@/lib/page-seo";
 
 export const Route = createFileRoute("/resources/")({
@@ -169,7 +170,7 @@ function ResourcesListing() {
         </p>
       </section>
 
-      <CtaBanner compact />
+      <CtaBanner compact video={heroCtaVideo} />
 
       <ReelsSection label="EXPLORE OUR INSTAGRAM" title="Shorter faster answers" placement="resources" />
 
