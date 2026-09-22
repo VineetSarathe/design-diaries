@@ -1,10 +1,12 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import { Reveal } from "@/components/site/Reveal";
+import { CtaBanner } from "@/components/site/CtaBanner";
 import { useContactSettings } from "@/hooks/use-contact-settings";
 import { mailtoHref, telHref, whatsappHref } from "@/lib/contact";
 import { loadRouteSeo, routePageSeo } from "@/lib/page-seo";
 import contactHero from "@/assets/ContactHero.png";
+import workCtaVideo from "@/assets/work.mp4";
 
 export const Route = createFileRoute("/contact")({
   loader: () => loadRouteSeo("/contact"),
@@ -69,25 +71,14 @@ function ContactPage() {
         </div>
       </section>
 
-      <section className="bg-secondary">
-        <div className="mx-auto max-w-[110rem] px-5 py-20 md:px-10 md:py-28">
-          <Reveal className="max-w-3xl">
-            <p className="label-caps text-primary">START A PROJECT</p>
-            <h2 className="display-lg mt-5">HAVE A SPACE IN MIND?</h2>
-            <p className="mt-6 text-muted-foreground">
-              Planning a gym or fitness or wellness space? Share your project with us and let&apos;s see
-              how thoughtful gym interior design can bring your vision, function and user experience
-              together.
-            </p>
-            <Link
-              to="/start-a-project"
-              className="label-caps mt-8 inline-block bg-primary px-7 py-4 text-primary-foreground transition-all duration-300 hover:bg-foreground active:scale-[0.98]"
-            >
-              LET&apos;S TALK ABOUT YOUR PROJECT →
-            </Link>
-          </Reveal>
-        </div>
-      </section>
+      <CtaBanner
+        compact
+        label="START A PROJECT"
+        title="HAVE A SPACE IN MIND?"
+        body="Planning a gym or fitness or wellness space? Share your project with us and let's see how thoughtful gym interior design can bring your vision, function and user experience together."
+        cta="LET'S TALK ABOUT YOUR PROJECT →"
+        video={workCtaVideo}
+      />
     </>
   );
 }
