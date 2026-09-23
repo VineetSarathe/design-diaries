@@ -548,6 +548,7 @@ export function OffsetPanel({
   image,
   imageAlt,
   delay = 0,
+  emphasisActive = false,
 }: {
   n: string;
   title: string;
@@ -555,6 +556,8 @@ export function OffsetPanel({
   image: string;
   imageAlt: string;
   delay?: number;
+  /** Mirrors hover styles when the services problems loop highlights this card. */
+  emphasisActive?: boolean;
 }) {
   return (
     <Reveal delay={delay} className="group h-full">
@@ -565,7 +568,10 @@ export function OffsetPanel({
           loading="lazy"
           width={1200}
           height={960}
-          className="absolute inset-0 h-full w-full object-cover opacity-70 transition-transform duration-[1100ms] ease-out group-hover:scale-[1.05]"
+          className={cn(
+            "absolute inset-0 h-full w-full object-cover opacity-70 transition-transform duration-[1100ms] ease-out group-hover:scale-[1.05]",
+            emphasisActive && "scale-[1.05]",
+          )}
         />
         <span
           aria-hidden
@@ -577,12 +583,20 @@ export function OffsetPanel({
             <h3 className="font-display text-[0.95rem] uppercase leading-snug text-background lg:text-base">
               {title}
             </h3>
-            <p className="mt-2.5 text-[0.8rem] leading-relaxed text-background/90 transition-colors duration-500 lg:text-[0.82rem] lg:text-background/0 lg:group-hover:text-background/80 lg:group-focus-within:text-background/80">
+            <p
+              className={cn(
+                "mt-2.5 text-[0.8rem] leading-relaxed text-background/90 transition-colors duration-500 lg:text-[0.82rem] lg:text-background/0 lg:group-hover:text-background/80 lg:group-focus-within:text-background/80",
+                emphasisActive && "lg:text-background/80",
+              )}
+            >
               {text}
             </p>
             <span
               aria-hidden
-              className="mt-4 block h-0.5 w-12 bg-primary transition-all duration-700 lg:w-0 lg:group-hover:w-24 lg:group-focus-within:w-24"
+              className={cn(
+                "mt-4 block h-0.5 w-12 bg-primary transition-all duration-700 lg:w-0 lg:group-hover:w-24 lg:group-focus-within:w-24",
+                emphasisActive && "lg:w-24",
+              )}
             />
           </div>
         </div>

@@ -35,7 +35,11 @@ export function TrustedBy({ compact = false }: { compact?: boolean }) {
                   key={`${logo.id}-${i}`}
                   src={mediaPreviewUrl(logo.imageUrl, 240)}
                   alt={`${logo.name} logo`}
-                  loading="lazy"
+                  loading={i < logos.length ? "eager" : "lazy"}
+                  decoding="async"
+                  fetchPriority={i < logos.length ? "high" : "low"}
+                  width={240}
+                  height={96}
                   className="h-12 w-auto max-h-16 shrink-0 object-contain sm:h-14 sm:max-h-20 md:h-16 md:max-h-24"
                 />
               ))}

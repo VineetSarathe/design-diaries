@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Reveal } from "@/components/site/Reveal";
 import { DeliverablesShowcase } from "@/components/site/DeliverablesShowcase";
@@ -34,6 +35,37 @@ export const Route = createFileRoute("/services")({
 const methodImages = [gymLayout, floorplan, drawingsYourImage];
 const problemImages = [p1, gallery1, floorplan, p6];
 
+const PROBLEM_EMPHASIS_MS = 1500;
+
+function ProblemPanels() {
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    const timer = window.setInterval(
+      () => setActive((index) => (index + 1) % problems.length),
+      PROBLEM_EMPHASIS_MS,
+    );
+    return () => window.clearInterval(timer);
+  }, []);
+
+  return (
+    <div className="mt-12 grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {problems.map((p, i) => (
+        <OffsetPanel
+          key={p.title}
+          n={`0${i + 1}`}
+          title={p.title}
+          text={p.text}
+          image={problemImages[i % problemImages.length] ?? p1}
+          imageAlt={`Gym floor condition related to ${p.title}`}
+          delay={i * 90}
+          emphasisActive={active === i}
+        />
+      ))}
+    </div>
+  );
+}
+
 function ServicesPage() {
   const { projects } = useProjects();
   const review = projects[1];
@@ -68,19 +100,7 @@ function ServicesPage() {
           title={<>WHERE GYM DESIGN OFTEN GOES WRONG</>}
           intro="Most gym projects have at least 2 of these problems. Each is cheaper and easier to fix at the design stage than at handover."
         />
-        <div className="mt-12 grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {problems.map((p, i) => (
-            <OffsetPanel
-              key={p.title}
-              n={`0${i + 1}`}
-              title={p.title}
-              text={p.text}
-              image={problemImages[i % problemImages.length] ?? p1}
-              imageAlt={`Gym floor condition related to ${p.title}`}
-              delay={i * 90}
-            />
-          ))}
-        </div>
+        <ProblemPanels />
       </DarkBand>
 
       {/* Method — offset sequence */}

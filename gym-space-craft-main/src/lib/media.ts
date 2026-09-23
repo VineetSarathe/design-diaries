@@ -24,9 +24,9 @@ export function mediaPreviewUrl(url: string, width: number) {
   const w = clamp(width, 1400);
   if (parts.resource === "video") {
     const still = parts.versionedPath.replace(/\.(mp4|webm|mov)(\?.*)?$/i, ".jpg");
-    return `${parts.host}/video/upload/c_fill,f_jpg,q_auto:good,so_1,w_${w}/${still}`;
+    return `${parts.host}/video/upload/c_fill,dpr_auto,f_jpg,q_auto:best,so_1,w_${w}/${still}`;
   }
-  return `${parts.host}/image/upload/c_limit,f_auto,q_auto:good,w_${w}/${parts.versionedPath}`;
+  return `${parts.host}/image/upload/c_fit,dpr_auto,f_auto,q_auto:best,w_${w}/${parts.versionedPath}`;
 }
 
 export function mediaPlaybackUrl(url: string, width = 720) {

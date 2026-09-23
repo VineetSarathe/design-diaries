@@ -184,10 +184,10 @@ export function RecognitionCard({ item, active, onActivate, register }: Recognit
                 videoRefs.current[index] = node;
               }}
               src={mediaPlaybackUrl(entry.url, 720)}
-              poster={mediaPreviewUrl(entry.url, 800)}
+              poster={mediaPreviewUrl(entry.url, 1200)}
               muted
               playsInline
-              preload="none"
+              preload={active ? "auto" : "metadata"}
               onPlay={() => {
                 if (index === imageIndex) setPlaying(true);
               }}
@@ -206,12 +206,14 @@ export function RecognitionCard({ item, active, onActivate, register }: Recognit
           ) : (
             <img
               key={`${entry.url}-${index}`}
-              src={mediaPreviewUrl(entry.url, 800)}
+              src={mediaPreviewUrl(entry.url, 1200)}
               alt={`${item.title}, ${item.category.toLowerCase()}, ${item.year}${index ? `, view ${index + 1}` : ""}`}
-              loading="lazy"
+              loading={active ? "eager" : "lazy"}
               decoding="async"
-              width={800}
-              height={640}
+              fetchPriority={active ? "high" : "auto"}
+              sizes="(max-width: 767px) 84vw, (max-width: 1023px) 58vw, 33vw"
+              width={1200}
+              height={960}
               className={cn(
                 "absolute inset-0 h-full w-full object-cover transition-[opacity,transform] duration-500 ease-out motion-reduce:transition-none",
                 active && "scale-[1.06]",
