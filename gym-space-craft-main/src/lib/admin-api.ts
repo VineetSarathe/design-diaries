@@ -10,6 +10,11 @@ export type AdminUser = {
   email: string;
 };
 
+export type AdminAccount = {
+  id: string;
+  email: string;
+};
+
 export type LeadSource = "enquiry" | "project" | "download" | "contact";
 
 export type Lead = {
@@ -164,6 +169,24 @@ export const adminApi = {
   me() {
     return apiRequest<{ admin: AdminUser | null }>("/auth/me");
   },
+  listAdminAccounts() {
+    return apiRequest<{ admins: AdminAccount[]; max: number }>("/admin-accounts");
+  },
+  createAdminAccount(email: string, password: string) {
+    return apiRequest<{ admin: AdminAccount }>("/admin-accounts", {
+      method: "POST",
+      body: JSON.stringify({ email, password }),
+    });
+  },
+  updateAdminAccount(id: string, fields: { email?: string; password?: string }) {
+    return apiRequest<{ admin: AdminAccount }>(`/admin-accounts/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(fields),
+    });
+  },
+  deleteAdminAccount(id: string) {
+    return apiRequest(`/admin-accounts/${id}`, { method: "DELETE" });
+  },
   listLeads(
     params: { page?: number; limit?: number; q?: string; source?: string; from?: string; to?: string } = {},
   ) {
@@ -287,6 +310,9 @@ export const adminApi = {
   },
   listProjects() {
     return apiRequest<{ projects: AdminProject[] }>("/projects");
+  },
+  getProject(idOrSlug: string) {
+    return apiRequest<{ project: AdminProject }>(`/projects/${encodeURIComponent(idOrSlug)}`);
   },
   createProject(formData: FormData) {
     return apiFormRequest<{ project: AdminProject; message?: string }>("/projects", formData, "POST");

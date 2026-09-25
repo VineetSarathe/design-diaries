@@ -8,6 +8,15 @@ export type ProjectImageDoc = {
   kind: "image" | "video";
 };
 
+export type ProjectStudyDoc = {
+  brief: string;
+  user: string;
+  challenge: string;
+  decisions: string;
+  outcome: string;
+  learning: string;
+};
+
 export type ProjectDoc = {
   slug: string;
   name: string;
@@ -19,6 +28,7 @@ export type ProjectDoc = {
   cardLabel: string;
   hideCardMeta: boolean;
   insight: string;
+  study: ProjectStudyDoc;
   cardUrl: string;
   cardPublicId: string;
   images: ProjectImageDoc[];
@@ -33,6 +43,18 @@ export type ProjectDoc = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+const projectStudySchema = new Schema<ProjectStudyDoc>(
+  {
+    brief: { type: String, default: "", trim: true },
+    user: { type: String, default: "", trim: true },
+    challenge: { type: String, default: "", trim: true },
+    decisions: { type: String, default: "", trim: true },
+    outcome: { type: String, default: "", trim: true },
+    learning: { type: String, default: "", trim: true },
+  },
+  { _id: false },
+);
 
 const projectImageSchema = new Schema<ProjectImageDoc>(
   {
@@ -57,6 +79,7 @@ const projectSchema = new Schema<ProjectDoc>(
     cardLabel: { type: String, default: "", trim: true },
     hideCardMeta: { type: Boolean, default: true },
     insight: { type: String, required: true, trim: true },
+    study: { type: projectStudySchema, default: () => ({}) },
     cardUrl: { type: String, default: "", trim: true },
     cardPublicId: { type: String, default: "", trim: true },
     images: { type: [projectImageSchema], default: [] },

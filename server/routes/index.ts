@@ -14,6 +14,7 @@ import instagramFeedRoutes from "./instagram-feed.routes";
 import callBookingRoutes from "./call-booking.routes";
 import pageSeoRoutes from "./page-seo.routes";
 import redirectRoutes from "./redirect.routes";
+import adminAccountsRoutes from "./admin-accounts.routes";
 
 const router = Router();
 
@@ -32,5 +33,6 @@ router.use(instagramFeedRoutes);
 router.use(callBookingRoutes);
 router.use(pageSeoRoutes);
 router.use(redirectRoutes);
+router.use(adminAccountsRoutes);
 
 export default router;

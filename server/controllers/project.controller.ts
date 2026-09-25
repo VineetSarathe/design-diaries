@@ -4,6 +4,7 @@ import { HomepageSettings, HOMEPAGE_SETTINGS_KEY } from "../models/homepage-sett
 import { Project, type ProjectDoc, type ProjectImageDoc } from "../models/project.model";
 import { AppError } from "../utils/appError";
 import { removeStoredImage, storeImageBuffer, storeMediaBuffer } from "../utils/store-image";
+import { setPublicJsonCache } from "../utils/public-cache";
 
 const CATEGORIES = new Set(["Gym Projects", "Fitness Studios"]);
 
@@ -29,6 +30,14 @@ function toDto(doc: ProjectDoc & { _id: unknown }, admin = false) {
     cardLabel: doc.cardLabel,
     hideCardMeta: Boolean(doc.hideCardMeta),
     insight: doc.insight,
+    study: {
+      brief: doc.study?.brief || "",
+      user: doc.study?.user || "",
+      challenge: doc.study?.challenge || "",
+      decisions: doc.study?.decisions || "",
+      outcome: doc.study?.outcome || "",
+      learning: doc.study?.learning || "",
+    },
     cardUrl: doc.cardUrl,
     reviewQuote: doc.reviewQuote || "",
     reviewAuthor: doc.reviewAuthor || "",
@@ -48,6 +57,30 @@ function toDto(doc: ProjectDoc & { _id: unknown }, admin = false) {
     createdAt: doc.createdAt.toISOString(),
     updatedAt: doc.updatedAt.toISOString(),
     ...(admin ? { cardPublicId: doc.cardPublicId } : {}),
+  };
+}
+
+const EMPTY_STUDY = {
+  brief: "",
+  user: "",
+  challenge: "",
+  decisions: "",
+  outcome: "",
+  learning: "",
+};
+
+/** Smaller payload for public listing — detail pages use GET /projects/:slug. */
+function toPublicListDto(doc: ProjectDoc & { _id: unknown }, admin: boolean) {
+  const dto = toDto(doc, admin);
+  if (admin) return dto;
+  return {
+    ...dto,
+    study: EMPTY_STUDY,
+    images: dto.images.slice(0, 3),
+    seoTitle: "",
+    seoDescription: "",
+    seoKeywords: "",
+    seoCanonical: "",
   };
 }
 
@@ -92,6 +125,17 @@ function parseExtraOrder(source: object): string[] | null {
   }
 }
 
+function parseStudy(source: object) {
+  return {
+    brief: readField(source, "studyBrief", 2000),
+    user: readField(source, "studyUser", 2000),
+    challenge: readField(source, "studyChallenge", 2000),
+    decisions: readField(source, "studyDecisions", 2000),
+    outcome: readField(source, "studyOutcome", 2000),
+    learning: readField(source, "studyLearning", 2000),
+  };
+}
+
 function parseFields(source: object, required: boolean) {
   const name = readField(source, "name", 120);
   const location = readField(source, "location", 120);
@@ -133,6 +177,7 @@ function parseFields(source: object, required: boolean) {
     clientType,
     cardLabel,
     insight,
+    study: parseStudy(source),
     reviewQuote,
     reviewAuthor,
     reviewRole,
@@ -195,8 +240,10 @@ async function uploadExtras(files: Express.Multer.File[], slug: string): Promise
 }
 
 export async function listProjects(req: Request, res: Response) {
+  const admin = Boolean(req.admin);
   const docs = await Project.find().sort({ sortOrder: 1, createdAt: 1 });
-  res.json({ ok: true, projects: docs.map((doc) => toDto(doc, Boolean(req.admin))) });
+  setPublicJsonCache(res, req, 120);
+  res.json({ ok: true, projects: docs.map((doc) => toPublicListDto(doc, admin)) });
 }
 
 export async function getProject(req: Request, res: Response) {
@@ -206,6 +253,7 @@ export async function getProject(req: Request, res: Response) {
     ? await Project.findById(slug)
     : await Project.findOne({ slug });
   if (!doc) throw new AppError(404, "Project not found");
+  setPublicJsonCache(res, req, 120);
   res.json({ ok: true, project: toDto(doc, Boolean(req.admin)) });
 }
 
@@ -220,6 +268,7 @@ export async function createProject(req: Request, res: Response) {
 
   const doc = await Project.create({
     ...fields,
+    study: fields.study,
     cardUrl: card.imageUrl,
     cardPublicId: card.imagePublicId,
     images,
@@ -244,6 +293,7 @@ export async function updateProject(req: Request, res: Response) {
     clientType: fields.clientType,
     cardLabel: fields.cardLabel,
     insight: fields.insight || doc.insight,
+    study: fields.study,
     reviewQuote: fields.reviewQuote,
     reviewAuthor: fields.reviewAuthor,
     reviewRole: fields.reviewRole,
@@ -301,6 +351,7 @@ export async function updateProject(req: Request, res: Response) {
         clientType: doc.clientType,
         cardLabel: doc.cardLabel,
         insight: doc.insight,
+        study: fields.study,
         reviewQuote: doc.reviewQuote,
         reviewAuthor: doc.reviewAuthor,
         reviewRole: doc.reviewRole,

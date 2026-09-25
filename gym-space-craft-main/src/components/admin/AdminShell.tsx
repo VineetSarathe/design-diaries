@@ -7,6 +7,7 @@ import {
   FileText,
   Film,
   Home,
+  KeyRound,
   LayoutDashboard,
   Library,
   LogOut,
@@ -40,6 +41,7 @@ const NAV = [
   { label: "About", to: "/admin/about" as const, icon: BookOpen },
   { label: "Contact", to: "/admin/contact" as const, icon: Mail },
   { label: "SEO", to: "/admin/seo" as const, icon: Search },
+  { label: "Admins", to: "/admin/admins" as const, icon: KeyRound },
 ];
 
 function isActive(pathname: string, to: string) {

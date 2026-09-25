@@ -8,6 +8,14 @@ import { PROJECT_CATEGORIES } from "@/lib/cms-project";
 import { compressImage } from "@/lib/compress-image";
 import { useProjects } from "@/hooks/use-projects";
 import { SeoFields } from "@/components/admin/SeoFields";
+import { getProject } from "@/data/projects";
+import {
+  CASE_STUDY_CHAPTERS,
+  EMPTY_PROJECT_STUDY,
+  resolveStudyFields,
+  studyHasContent,
+  type ProjectStudyFields,
+} from "@/lib/project-study";
 
 export const Route = createFileRoute("/admin/projects")({
   head: () => ({
@@ -37,6 +45,7 @@ type FormState = {
   seoDescription: string;
   seoKeywords: string;
   seoCanonical: string;
+  study: ProjectStudyFields;
 };
 
 const EMPTY_FORM: FormState = {
@@ -57,6 +66,7 @@ const EMPTY_FORM: FormState = {
   seoDescription: "",
   seoKeywords: "",
   seoCanonical: "",
+  study: { ...EMPTY_PROJECT_STUDY },
 };
 
 type ExtraSlot = {
@@ -105,6 +115,7 @@ function AdminProjectsPage() {
   const [viewer, setViewer] = useState<{ src: string; name: string } | null>(null);
   const [dragId, setDragId] = useState<string | null>(null);
   const [orderDirty, setOrderDirty] = useState(false);
+  const [showCaseStudy, setShowCaseStudy] = useState(false);
 
   async function refresh() {
     const res = await adminApi.listProjects();
@@ -126,6 +137,7 @@ function AdminProjectsPage() {
     setExtraSlots([]);
     setReplaceSlotId(null);
     setShowForm(false);
+    setShowCaseStudy(false);
   }
 
   function startCreate() {
@@ -138,10 +150,12 @@ function AdminProjectsPage() {
     setReplaceSlotId(null);
     setError(null);
     setSaved(null);
+    setShowCaseStudy(false);
     setShowForm(true);
   }
 
-  function startEdit(item: AdminProject) {
+  function applyEditForm(item: AdminProject) {
+    const study = resolveStudyFields(item.study, getProject(item.slug)?.study);
     setForm({
       name: item.name,
       slug: item.slug,
@@ -160,7 +174,9 @@ function AdminProjectsPage() {
       seoDescription: item.seoDescription || "",
       seoKeywords: item.seoKeywords || "",
       seoCanonical: item.seoCanonical || "",
+      study,
     });
+    setShowCaseStudy(studyHasContent(study));
     setSlugTouched(true);
     setEditingId(item.id);
     setCardFile(null);
@@ -173,9 +189,21 @@ function AdminProjectsPage() {
       })),
     );
     setReplaceSlotId(null);
+    setShowForm(true);
+  }
+
+  async function startEdit(item: AdminProject) {
     setError(null);
     setSaved(null);
-    setShowForm(true);
+    let full = item;
+    try {
+      const res = await adminApi.getProject(item.id);
+      full = res.project;
+      setItems((list) => list.map((row) => (row.id === full.id ? { ...row, ...full } : row)));
+    } catch {
+      /* use list row */
+    }
+    applyEditForm(full);
   }
 
   function pickReplacement(id: string) {
@@ -220,6 +248,13 @@ function AdminProjectsPage() {
     });
   }
 
+  function setStudyField(key: keyof ProjectStudyFields, value: string) {
+    setForm((current) => ({
+      ...current,
+      study: { ...current.study, [key]: value },
+    }));
+  }
+
   async function save() {
     if (saving) return;
     setSaving(true);
@@ -249,6 +284,12 @@ function AdminProjectsPage() {
       data.set("seoKeywords", form.seoKeywords);
       data.set("seoCanonical", form.seoCanonical);
       data.set("hideCardMeta", String(form.hideCardMeta));
+      data.set("studyBrief", form.study.brief);
+      data.set("studyUser", form.study.user);
+      data.set("studyChallenge", form.study.challenge);
+      data.set("studyDecisions", form.study.decisions);
+      data.set("studyOutcome", form.study.outcome);
+      data.set("studyLearning", form.study.learning);
       const [preparedCardFile, preparedExtraSlots] = await Promise.all([
         cardFile ? compressImage(cardFile, PROJECT_UPLOAD_IMAGE_OPTIONS) : Promise.resolve(null),
         Promise.all(
@@ -284,6 +325,10 @@ function AdminProjectsPage() {
       setCardFile(null);
       setReplaceSlotId(null);
       if (savedProject) {
+        const study = resolveStudyFields(savedProject.study, getProject(savedProject.slug)?.study);
+        setItems((list) =>
+          list.map((row) => (row.id === savedProject.id ? { ...row, ...savedProject, study } : row)),
+        );
         setEditingId(savedProject.id);
         setForm({
           name: savedProject.name,
@@ -303,7 +348,9 @@ function AdminProjectsPage() {
           seoDescription: savedProject.seoDescription || "",
           seoKeywords: savedProject.seoKeywords || "",
           seoCanonical: savedProject.seoCanonical || "",
+          study,
         });
+        setShowCaseStudy(studyHasContent(study));
         setCardPreview(savedProject.cardUrl);
         setExtraSlots(
           savedProject.images.map((image, index) => ({
@@ -502,6 +549,38 @@ function AdminProjectsPage() {
                 className="mt-2 w-full border-b border-input bg-transparent py-3 outline-none focus:border-primary"
               />
             </label>
+
+            <div className="border-t border-border pt-8">
+              <button
+                type="button"
+                onClick={() => setShowCaseStudy((open) => !open)}
+                className="label-caps flex w-full items-center justify-between gap-4 border border-border bg-secondary px-5 py-4 text-left transition-colors hover:border-primary"
+                aria-expanded={showCaseStudy}
+              >
+                The case study
+                <span className="text-muted-foreground">{showCaseStudy ? "−" : "+"}</span>
+              </button>
+              {showCaseStudy && (
+                <div className="mt-6 space-y-8 border border-border border-t-0 p-5 md:p-6">
+                  <p className="text-sm text-muted-foreground">
+                    Six sections on the project detail page. Headings are fixed — add the text for each
+                    point below.
+                  </p>
+                  {CASE_STUDY_CHAPTERS.map((chapter) => (
+                    <label key={chapter.key} className="block">
+                      <span className="label-caps text-primary">{chapter.question}</span>
+                      <textarea
+                        rows={3}
+                        value={form.study[chapter.key]}
+                        onChange={(event) => setStudyField(chapter.key, event.target.value)}
+                        className="mt-2 w-full resize-y border-b border-input bg-transparent py-3 outline-none focus:border-primary"
+                      />
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+
             <label className="block">
               <span className="label-caps text-muted-foreground">Review quote</span>
               <textarea
@@ -696,7 +775,7 @@ function AdminProjectsPage() {
                   </span>
                   <button
                     type="button"
-                    onClick={() => startEdit(item)}
+                    onClick={() => void startEdit(item)}
                     className="label-caps text-primary transition-colors hover:text-foreground"
                   >
                     Edit

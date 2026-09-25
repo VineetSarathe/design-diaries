@@ -11,7 +11,6 @@ import { posts as fallbackPosts } from "@/data/resources";
 import { projectFaqs } from "@/data/projects";
 import { categoriesFromProjects } from "@/lib/cms-project";
 import workHeroVideo from "@/assets/workhero.mp4";
-import workHeroPoster from "@/assets/work-hero.jpg";
 import workCtaVideo from "@/assets/work.mp4";
 import p5 from "@/assets/project-5.jpg";
 import { loadRouteSeo, routePageSeo } from "@/lib/page-seo";
@@ -34,21 +33,13 @@ function WorkListing() {
     <>
       {/* Hero banner */}
       <section className="relative flex min-h-[62svh] items-end overflow-hidden bg-foreground">
-        <img
-          src={workHeroPoster}
-          alt=""
-          width={1920}
-          height={1080}
-          className="absolute inset-0 h-full w-full object-cover opacity-50"
-        />
         <video
           src={workHeroVideo}
-          poster={workHeroPoster}
           muted
           autoPlay
           loop
           playsInline
-          preload="auto"
+          preload="metadata"
           aria-hidden="true"
           className="absolute inset-0 h-full w-full object-cover opacity-50"
         />

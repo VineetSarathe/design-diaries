@@ -1,4 +1,9 @@
 import { categories, projects as fallbackProjects, type Category, type Project } from "@/data/projects";
+import {
+  EMPTY_PROJECT_STUDY,
+  type ProjectStudyFields,
+  studyHasContent,
+} from "@/lib/project-study";
 
 export type CmsProjectImage = {
   url: string;
@@ -19,6 +24,7 @@ export type CmsProject = {
   cardLabel: string;
   hideCardMeta: boolean;
   insight: string;
+  study?: ProjectStudyFields;
   cardUrl: string;
   images: CmsProjectImage[];
   reviewQuote?: string;
@@ -31,14 +37,15 @@ export type CmsProject = {
   sortOrder?: number;
 };
 
-const emptyStudy: Project["study"] = {
-  brief: "",
-  user: "",
-  challenge: "",
-  decisions: "",
-  outcome: "",
-  learning: "",
-};
+function studyForProject(cms: CmsProject, fallback?: Project): Project["study"] {
+  if (studyHasContent(cms.study)) {
+    return { ...EMPTY_PROJECT_STUDY, ...cms.study };
+  }
+  if (fallback?.study) return fallback.study;
+  const insight = cms.insight.trim();
+  if (!insight) return EMPTY_PROJECT_STUDY;
+  return { ...EMPTY_PROJECT_STUDY, brief: insight };
+}
 
 export const PROJECT_CATEGORIES = [...categories];
 
@@ -77,7 +84,7 @@ export function cmsToProject(cms: CmsProject, fallback?: Project): Project {
     hero: card || extras[0]?.src || fallback?.hero || "",
     gallery: extras.length ? extras : fallback?.gallery || [],
     plan: fallback?.plan,
-    study: fallback?.study ?? emptyStudy,
+    study: studyForProject(cms, fallback),
     testimonial: {
       quote: cms.reviewQuote || fallback?.testimonial.quote || cms.insight,
       author: cms.reviewAuthor || fallback?.testimonial.author || "Client",

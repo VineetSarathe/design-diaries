@@ -5,6 +5,7 @@ import {
   type HomepageSettingsDoc,
 } from "../models/homepage-settings.model";
 import { AppError } from "../utils/appError";
+import { setPublicJsonCache } from "../utils/public-cache";
 import { DEFAULT_HOMEPAGE_SETTINGS } from "../seed/homepage-settings.seed";
 
 function toDto(doc: HomepageSettingsDoc) {
@@ -69,8 +70,9 @@ async function getOrThrow() {
   return settings;
 }
 
-export async function getHomepageSettings(_req: Request, res: Response) {
+export async function getHomepageSettings(req: Request, res: Response) {
   const settings = await getOrThrow();
+  setPublicJsonCache(res, req, 120);
   res.json({ ok: true, settings: toDto(settings) });
 }
 

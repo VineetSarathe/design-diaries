@@ -4,7 +4,7 @@ import { ArrowLeft, ArrowRight, ArrowUpRight, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Project } from "@/data/projects";
 import { cn } from "@/lib/utils";
-import { isVideoSrc, mediaPlaybackUrl, mediaPreviewUrl } from "@/lib/media";
+import { isVideoSrc, mediaPlaybackUrl, mediaPreviewSrcSet, mediaPreviewUrl } from "@/lib/media";
 import { VideoPlayButton } from "@/components/site/VideoPlayButton";
 
 export type ProjectCardData = {
@@ -24,7 +24,7 @@ export type ProjectCardData = {
 
 function imagesFromProject(project: Project) {
   if (project.cardImages) {
-    return Array.from(new Set(project.cardImages.filter(Boolean)));
+    return Array.from(new Set(project.cardImages.filter(Boolean))).slice(0, 3);
   }
   return Array.from(
     new Set(
@@ -35,7 +35,7 @@ function imagesFromProject(project: Project) {
         ...(project.plan ? [project.plan.src] : []),
       ].filter(Boolean),
     ),
-  );
+  ).slice(0, 3);
 }
 
 function captionFor(project: Project, src: string) {
@@ -47,7 +47,7 @@ function captionFor(project: Project, src: string) {
 
 export function toProjectCardData(project: Project): ProjectCardData {
   const images = imagesFromProject(project);
-  return {
+  const data: ProjectCardData = {
     slug: project.slug,
     name: project.name,
     category: project.category,
@@ -58,9 +58,10 @@ export function toProjectCardData(project: Project): ProjectCardData {
     images,
     captions: images.map((src) => captionFor(project, src)),
     clientType: project.clientType,
-    cardLabel: project.cardLabel,
-    hideCardMeta: project.hideCardMeta,
   };
+  if (project.cardLabel !== undefined) data.cardLabel = project.cardLabel;
+  if (project.hideCardMeta !== undefined) data.hideCardMeta = project.hideCardMeta;
+  return data;
 }
 
 export function ProjectCard({
@@ -95,9 +96,13 @@ export function ProjectCard({
   const [playing, setPlaying] = useState(false);
   const activeSrc = images[safeActive];
   const activeIsVideo = Boolean(activeSrc && isVideoSrc(activeSrc));
-  const previewSrc = activeSrc ? mediaPreviewUrl(activeSrc, uncropped ? 1400 : 800) : "";
+  const previewWidths = uncropped ? [420, 720, 1100, 1400] : [360, 560, 800];
+  const previewMax = previewWidths[previewWidths.length - 1]!;
+  const previewSrc = activeSrc ? mediaPreviewUrl(activeSrc, previewMax) : "";
+  const previewSrcSet = activeSrc ? mediaPreviewSrcSet(activeSrc, previewWidths) : "";
   const playbackSrc = activeSrc && activeIsVideo ? mediaPlaybackUrl(activeSrc, 720) : "";
-  const eager = number <= 3;
+  const eager = number <= 6;
+  const shouldWarmNext = eager || cycling || mobileInView || hovered;
   const showVideo = Boolean(activeIsVideo && (playing || cycling));
   const cardLabel =
     (card.cardLabel ?? card.category) === "GYM INTERIOR DESIGN PROJECTS"
@@ -182,11 +187,12 @@ export function ProjectCard({
   }, [cycling, safeActive, activeIsVideo, playbackSrc]);
 
   useEffect(() => {
+    if (!shouldWarmNext) return;
     const next = images[(safeActive + 1) % Math.max(images.length, 1)];
     if (!next || images.length < 2) return;
     const img = new Image();
-    img.src = mediaPreviewUrl(next, 800);
-  }, [images, safeActive]);
+    img.src = mediaPreviewUrl(next, previewMax);
+  }, [images, safeActive, shouldWarmNext, previewMax]);
 
   const togglePlay = () => {
     const video = videoRef.current;
@@ -267,13 +273,14 @@ export function ProjectCard({
           <img
             key={previewSrc}
             src={previewSrc}
+            srcSet={previewSrcSet || undefined}
             alt={`${card.name} in ${card.location}`}
             loading={eager ? "eager" : "lazy"}
-            fetchPriority={eager ? "high" : "low"}
+            fetchPriority={eager ? "high" : "auto"}
             decoding="async"
             width={uncropped ? 1400 : 800}
             height={uncropped ? 1050 : 640}
-            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 92vw"
             className={cn(
               "transition-[opacity,transform] duration-500 ease-out motion-reduce:transition-none",
               uncropped

@@ -96,7 +96,9 @@ function DiscussCta({ className = "", invert = false }: { className?: string; in
 function ProjectDetail() {
   const { project: loaded } = Route.useLoaderData() as { project: Project };
   const { projects, getProject } = useProjects();
-  const project = getProject(loaded.slug) ?? loaded;
+  const fromList = getProject(loaded.slug);
+  const project =
+    fromList && fromList.gallery.length >= loaded.gallery.length ? fromList : loaded;
   const related = projects.filter((p) => p.slug !== project.slug).slice(0, 3);
   const heroSlides = toProjectCardData(project).images;
   const pageLabel =

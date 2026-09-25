@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import { Testimonial, type TestimonialDoc } from "../models/testimonial.model";
 import { AppError } from "../utils/appError";
 import { removeStoredImage, storeImageBuffer } from "../utils/store-image";
+import { setPublicJsonCache } from "../utils/public-cache";
 
 function toDto(doc: TestimonialDoc & { _id: unknown }, admin = false) {
   return {
@@ -97,6 +98,7 @@ function slugify(value: string) {
 
 export async function listTestimonials(req: Request, res: Response) {
   const docs = await Testimonial.find().sort({ sortOrder: 1, createdAt: 1 });
+  setPublicJsonCache(res, req, 120);
   res.json({ ok: true, testimonials: docs.map((doc) => toDto(doc, Boolean(req.admin))) });
 }
 

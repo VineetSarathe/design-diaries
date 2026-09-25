@@ -5,6 +5,7 @@ import { roles } from "@/data/company";
 import { useContactSettings } from "@/hooks/use-contact-settings";
 import { mailtoHref } from "@/lib/contact";
 import { loadRouteSeo, routePageSeo } from "@/lib/page-seo";
+import workCtaVideo from "@/assets/work.mp4";
 
 export const Route = createFileRoute("/careers")({
   loader: () => loadRouteSeo("/careers"),
@@ -17,16 +18,29 @@ function CareersPage() {
 
   return (
     <>
-      <section className="mx-auto max-w-[110rem] px-5 pt-28 pb-16 md:px-10 md:pt-36 md:pb-20">
-        <Reveal>
-          <p className="label-caps text-primary">Careers</p>
-          <h1 className="display-lg mt-5 max-w-4xl">GROW THROUGH REAL WORK</h1>
-          <p className="mt-8 max-w-2xl text-lg text-muted-foreground">
-            Join a studio where design is more than just esthetics. Work on real wellness and gym
-            interior design projects and get experience of helping to create spaces that work for the
-            people who use them.
-          </p>
-        </Reveal>
+      <section className="relative flex min-h-[62svh] items-end overflow-hidden bg-foreground">
+        <video
+          src={workCtaVideo}
+          muted
+          autoPlay
+          loop
+          playsInline
+          preload="auto"
+          aria-hidden="true"
+          className="absolute inset-0 h-full w-full object-cover opacity-50"
+        />
+        <span className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/35 to-foreground/20" />
+        <div className="relative mx-auto w-full max-w-[110rem] px-5 pt-32 pb-14 text-background md:px-10 md:pb-20">
+          <Reveal>
+            <p className="label-caps text-primary">Careers</p>
+            <h1 className="display-lg mt-5 max-w-4xl">GROW THROUGH REAL WORK</h1>
+            <p className="mt-6 max-w-2xl text-background/80">
+              Join a studio where design is more than just esthetics. Work on real wellness and gym
+              interior design projects and get experience of helping to create spaces that work for the
+              people who use them.
+            </p>
+          </Reveal>
+        </div>
       </section>
 
       <section className="border-t border-border">

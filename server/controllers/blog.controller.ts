@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import { Blog, type BlogDoc, type BlogPointDoc, type BlogSectionDoc } from "../models/blog.model";
 import { AppError } from "../utils/appError";
 import { removeStoredImage, storeImageBuffer } from "../utils/store-image";
+import { setPublicJsonCache } from "../utils/public-cache";
 
 const FOLDER = "blogs";
 const FILE_TOKEN = "__file__";
@@ -224,6 +225,7 @@ async function assertUniqueSlug(slug: string, ignoreId?: string) {
 
 export async function listBlogs(req: Request, res: Response) {
   const docs = await Blog.find().sort({ sortOrder: 1, createdAt: 1 });
+  setPublicJsonCache(res, req, 120);
   res.json({ ok: true, posts: docs.map((doc) => toDto(doc, Boolean(req.admin))) });
 }
 
@@ -232,6 +234,7 @@ export async function getBlog(req: Request, res: Response) {
   if (!slug) throw new AppError(400, "Invalid article");
   const doc = mongoose.Types.ObjectId.isValid(slug) ? await Blog.findById(slug) : await Blog.findOne({ slug });
   if (!doc) throw new AppError(404, "Article not found");
+  setPublicJsonCache(res, req, 120);
   res.json({ ok: true, post: toDto(doc, Boolean(req.admin)) });
 }
 

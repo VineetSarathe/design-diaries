@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Reveal, useInView } from "./Reveal";
 import { cn } from "@/lib/utils";
-import { isVideoSrc, mediaPlaybackUrl, mediaPreviewUrl } from "@/lib/media";
+import { isVideoSrc, mediaPlaybackUrl, mediaPreviewSrcSet, mediaPreviewUrl } from "@/lib/media";
 
 /** Thin gradient seam so a cream section flows into a dark one (and back). */
 export function Seam({
@@ -98,7 +98,9 @@ export function CinematicHero({
   const safeActive = slides.length ? Math.min(active, slides.length - 1) : 0;
   const current = slides[safeActive] || image;
   const currentIsVideo = Boolean(current && isVideoSrc(current));
-  const previewSrc = current ? mediaPreviewUrl(current, 1280) : image;
+  const heroWidths = [480, 840, 1280];
+  const previewSrc = current ? mediaPreviewUrl(current, heroWidths[heroWidths.length - 1]!) : image;
+  const previewSrcSet = current ? mediaPreviewSrcSet(current, heroWidths) : "";
   const playbackSrc = current && currentIsVideo ? mediaPlaybackUrl(current, 960) : "";
 
   const advance = () => {
@@ -169,9 +171,14 @@ export function CinematicHero({
       <img
         key={`still-${previewSrc}`}
         src={previewSrc}
+        srcSet={previewSrcSet || undefined}
+        sizes="100vw"
         alt={imageAlt}
         width={1920}
         height={1080}
+        loading="eager"
+        fetchPriority="high"
+        decoding="async"
         className="absolute inset-0 h-[118%] w-full object-cover transition-all duration-[1600ms] ease-out"
         style={mediaStyle}
       />

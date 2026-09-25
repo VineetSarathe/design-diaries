@@ -6,17 +6,22 @@ import { Reveal } from "./Reveal";
 import { VideoPlayButton } from "@/components/site/VideoPlayButton";
 import { isVideoSrc, mediaPlaybackUrl, mediaPreviewUrl } from "@/lib/media";
 import type { Project } from "@/data/projects";
+import { CASE_STUDY_CHAPTERS } from "@/lib/project-study";
 
-type StoryKey = keyof Project["study"];
+const chapterLabels: Record<keyof Project["study"], string> = {
+  brief: "The brief",
+  user: "The user",
+  challenge: "The constraint",
+  decisions: "The move",
+  outcome: "The result",
+  learning: "The learning",
+};
 
-const chapters: { key: StoryKey; label: string; question: string }[] = [
-  { key: "brief", label: "The brief", question: "What needed to be built" },
-  { key: "user", label: "The user", question: "Who the space needed to serve" },
-  { key: "challenge", label: "The constraint", question: "What stood in the way" },
-  { key: "decisions", label: "The move", question: "What changed in the plan" },
-  { key: "outcome", label: "The result", question: "What improved in use" },
-  { key: "learning", label: "The learning", question: "What we take forward" },
-];
+const chapters = CASE_STUDY_CHAPTERS.map((chapter) => ({
+  key: chapter.key,
+  label: chapterLabels[chapter.key],
+  question: chapter.question,
+}));
 
 export function ProjectVisualStory({ project }: { project: Project }) {
   const visuals = useMemo(() => {

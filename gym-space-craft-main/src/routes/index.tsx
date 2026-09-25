@@ -242,7 +242,7 @@ function Home() {
             loop
             muted
             playsInline
-            preload="auto"
+            preload="metadata"
             className="h-full w-full scale-105 object-cover transition-[opacity,transform] duration-[1800ms] ease-out"
             style={{ opacity: stage >= 2 ? 0.72 : 0 }}
           />
