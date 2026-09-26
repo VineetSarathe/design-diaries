@@ -35,7 +35,7 @@ export const Route = createFileRoute("/services")({
 const methodImages = [gymLayout, floorplan, drawingsYourImage];
 const problemImages = [p1, gallery1, floorplan, p6];
 
-const PROBLEM_EMPHASIS_MS = 1500;
+const PROBLEM_EMPHASIS_MS = 2000;
 
 function ProblemPanels() {
   const [active, setActive] = useState(0);

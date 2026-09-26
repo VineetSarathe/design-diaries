@@ -2,10 +2,17 @@ import { Reveal } from "./Reveal";
 import { cn } from "@/lib/utils";
 import { useClientLogos } from "@/hooks/use-client-logos";
 import { mediaPreviewUrl } from "@/lib/media";
+import type { ClientLogo } from "@/lib/admin-api";
+
+type TrustedByProps = {
+  compact?: boolean;
+  logos?: ClientLogo[];
+};
 
 /** Studio network logo rail. */
-export function TrustedBy({ compact = false }: { compact?: boolean }) {
-  const { logos } = useClientLogos();
+export function TrustedBy({ compact = false, logos: logosProp }: TrustedByProps) {
+  const { logos: fetchedLogos } = useClientLogos({ enabled: logosProp === undefined });
+  const logos = logosProp ?? fetchedLogos;
   const row = logos.length ? [...logos, ...logos] : [];
 
   return (
@@ -35,9 +42,9 @@ export function TrustedBy({ compact = false }: { compact?: boolean }) {
                   key={`${logo.id}-${i}`}
                   src={mediaPreviewUrl(logo.imageUrl, 240)}
                   alt={`${logo.name} logo`}
-                  loading={i < logos.length ? "eager" : "lazy"}
+                  loading="eager"
                   decoding="async"
-                  fetchPriority={i < logos.length ? "high" : "low"}
+                  fetchPriority={i < Math.min(logos.length, 8) ? "high" : "auto"}
                   width={240}
                   height={96}
                   className="h-12 w-auto max-h-16 shrink-0 object-contain sm:h-14 sm:max-h-20 md:h-16 md:max-h-24"

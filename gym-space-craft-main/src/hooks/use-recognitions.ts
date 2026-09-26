@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { apiRequest } from "@/lib/api";
+import { preloadMediaUrls } from "@/lib/media";
 import type { Recognition } from "@/lib/admin-api";
 import type { RecognitionItem } from "@/components/site/Recognition";
 
@@ -28,7 +29,15 @@ export function useRecognitions(fallback: RecognitionItem[] = []) {
 
   useEffect(() => {
     apiRequest<{ items: Recognition[] }>("/recognitions")
-      .then((res) => setItems(res.items.map(toItem)))
+      .then((res) => {
+        const next = res.items.map(toItem);
+        setItems(next);
+        preloadMediaUrls(next.map((item) => item.image), 900);
+        preloadMediaUrls(
+          next.flatMap((item) => item.images ?? []).filter(Boolean),
+          720,
+        );
+      })
       .catch(() => undefined);
   }, []);
 

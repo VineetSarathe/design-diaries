@@ -35,6 +35,19 @@ export function mediaPreviewSrcSet(url: string, widths: number[]) {
   return unique.map((w) => `${mediaPreviewUrl(url, w)} ${w}w`).join(", ");
 }
 
+/** Warm the browser cache for above-the-fold / carousel media. */
+export function preloadMediaUrls(urls: string[], width = 800) {
+  if (typeof window === "undefined") return;
+  const seen = new Set<string>();
+  for (const url of urls) {
+    if (!url || seen.has(url)) continue;
+    seen.add(url);
+    const img = new Image();
+    img.decoding = "async";
+    img.src = mediaPreviewUrl(url, width);
+  }
+}
+
 export function mediaPlaybackUrl(url: string, width = 720) {
   const parts = cloudinaryParts(url);
   if (!parts || parts.resource !== "video") return url;

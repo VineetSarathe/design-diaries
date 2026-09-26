@@ -18,6 +18,7 @@ import { AboutSagrika } from "@/components/site/AboutSagrika";
 import { CaseStudySpotlight } from "@/components/site/CaseStudySpotlight";
 import { useHomepageSettings } from "@/hooks/use-homepage-settings";
 import { useRecognitions } from "@/hooks/use-recognitions";
+import { useClientLogos } from "@/hooks/use-client-logos";
 import { isExternalHref, pickBySlugs } from "@/lib/homepage";
 import { loadRouteSeo, routePageSeo } from "@/lib/page-seo";
 import { mediaPreviewUrl } from "@/lib/media";
@@ -97,6 +98,7 @@ function HomeCta({
 function Home() {
   const home = useHomepageSettings();
   const { items: recognition } = useRecognitions(recognitionFallback);
+  const { logos: clientLogos } = useClientLogos();
   const { projects: workProjects } = useProjects();
   const { posts } = useBlogs();
   const [stage, setStage] = useState(0);
@@ -318,7 +320,7 @@ function Home() {
       {/* 02 — Trusted by */}
       <div className="seam-to-cream" />
       <div className="-mt-4 md:-mt-8">
-        <TrustedBy />
+        <TrustedBy logos={clientLogos} />
       </div>
 
       {/* 03 — Selected Work */}

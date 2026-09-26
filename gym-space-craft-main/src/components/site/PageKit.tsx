@@ -592,8 +592,10 @@ export function OffsetPanel({
             </h3>
             <p
               className={cn(
-                "mt-2.5 text-[0.8rem] leading-relaxed text-background/90 transition-colors duration-500 lg:text-[0.82rem] lg:text-background/0 lg:group-hover:text-background/80 lg:group-focus-within:text-background/80",
-                emphasisActive && "lg:text-background/80",
+                "mt-2.5 text-[0.8rem] leading-relaxed transition-colors duration-500 lg:text-[0.82rem]",
+                emphasisActive
+                  ? "text-background/80"
+                  : "text-background/0 group-hover:text-background/80 group-focus-within:text-background/80",
               )}
             >
               {text}
@@ -601,8 +603,8 @@ export function OffsetPanel({
             <span
               aria-hidden
               className={cn(
-                "mt-4 block h-0.5 w-12 bg-primary transition-all duration-700 lg:w-0 lg:group-hover:w-24 lg:group-focus-within:w-24",
-                emphasisActive && "lg:w-24",
+                "mt-4 block h-0.5 bg-primary transition-all duration-700",
+                emphasisActive ? "w-24" : "w-0 group-hover:w-24 group-focus-within:w-24",
               )}
             />
           </div>

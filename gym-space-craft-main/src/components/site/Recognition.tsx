@@ -38,11 +38,12 @@ function isVideoSrc(url: string, kind?: string) {
 type RecognitionCardProps = {
   item: RecognitionItem;
   active: boolean;
+  priority?: boolean;
   onActivate: () => void;
   register: (node: HTMLElement | null) => void;
 };
 
-export function RecognitionCard({ item, active, onActivate, register }: RecognitionCardProps) {
+export function RecognitionCard({ item, active, priority = false, onActivate, register }: RecognitionCardProps) {
   const gallery: RecognitionMedia[] = Array.from(
     new Map(
       (item.media?.length
@@ -184,10 +185,10 @@ export function RecognitionCard({ item, active, onActivate, register }: Recognit
                 videoRefs.current[index] = node;
               }}
               src={mediaPlaybackUrl(entry.url, 720)}
-              poster={mediaPreviewUrl(entry.url, 1200)}
+              poster={mediaPreviewUrl(entry.url, 900)}
               muted
               playsInline
-              preload={active ? "auto" : "metadata"}
+              preload={active || priority ? "auto" : "metadata"}
               onPlay={() => {
                 if (index === imageIndex) setPlaying(true);
               }}
@@ -206,14 +207,14 @@ export function RecognitionCard({ item, active, onActivate, register }: Recognit
           ) : (
             <img
               key={`${entry.url}-${index}`}
-              src={mediaPreviewUrl(entry.url, 1200)}
+              src={mediaPreviewUrl(entry.url, 900)}
               alt={`${item.title}, ${item.category.toLowerCase()}, ${item.year}${index ? `, view ${index + 1}` : ""}`}
-              loading={active ? "eager" : "lazy"}
+              loading={active || priority ? "eager" : "lazy"}
               decoding="async"
-              fetchPriority={active ? "high" : "auto"}
+              fetchPriority={active || priority ? "high" : "low"}
               sizes="(max-width: 767px) 84vw, (max-width: 1023px) 58vw, 33vw"
-              width={1200}
-              height={960}
+              width={900}
+              height={720}
               className={cn(
                 "absolute inset-0 h-full w-full object-cover transition-[opacity,transform] duration-500 ease-out motion-reduce:transition-none",
                 active && "scale-[1.06]",
@@ -405,6 +406,7 @@ export function RecognitionCards({ items }: { items: RecognitionItem[] }) {
               key={`${item.number}-${item.title}`}
               item={item}
               active={active === index}
+              priority={index < 3}
               onActivate={() => setActive(index)}
               register={(node) => {
                 cardRefs.current[index] = node;
