@@ -8,6 +8,7 @@ import { attachOriginalTestimonialImages, migrateTestimonialImagesToCloudinary }
 import { seedClientLogos, migrateClientLogosToCloudinary } from "./seed/client-logo.seed";
 import { seedAboutSettings } from "./seed/about-settings.seed";
 import { seedProjects, migrateProjectImagesToCloudinary, backfillProjectReviews } from "./seed/project.seed";
+import { seedAdditionalWorkProjects } from "./seed/additional-work-projects.seed";
 import { seedRecognitions, migrateRecognitionImagesToCloudinary, backfillRecognitionDescriptions } from "./seed/recognition.seed";
 import { seedBlogs, attachBlogPointImages, migrateBlogImagesToCloudinary } from "./seed/blog.seed";
 import { seedInstagramFeed, seedWorkInstagramFeed, seedAboutInstagramFeed, seedResourcesInstagramFeed, seedServicesInstagramFeed } from "./seed/instagram-feed.seed";
@@ -32,6 +33,7 @@ async function start() {
   await seedClientLogos();
   await seedAboutSettings();
   await seedProjects();
+  await seedAdditionalWorkProjects();
   await backfillProjectReviews();
   try {
     await seedRecognitions();

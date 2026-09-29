@@ -128,7 +128,7 @@ export const startFaqs = [
   },
   {
     q: "What's a typical timeline?",
-    a: "Six to ten weeks from first call to a complete drawing set for most floors.",
+    a: "2 weeks onwards from first call to a complete drawing set for most floors.",
   },
   {
     q: "How does the first call work?",
