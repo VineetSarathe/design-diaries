@@ -44,8 +44,7 @@ export async function login(req: Request, res: Response) {
   }
 
   const token = signAdminToken({ id: String(admin._id), email: admin.email });
-  res.cookie(env.AUTH_COOKIE, token, cookieOptions());
-  res.json({ ok: true, admin: { email: admin.email } });
+  res.json({ ok: true, token, admin: { email: admin.email } });
 }
 
 export function logout(_req: Request, res: Response) {

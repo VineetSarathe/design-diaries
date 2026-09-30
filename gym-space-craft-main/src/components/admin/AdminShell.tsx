@@ -26,7 +26,7 @@ import type { AdminUser } from "@/lib/admin-api";
 import logoBlack from "@/assets/logo-black.png";
 
 const NAV = [
-  { label: "Dashboard", to: "/admin" as const, icon: LayoutDashboard },
+  { label: "Dashboard", to: "/admin/dashboard" as const, icon: LayoutDashboard },
   { label: "Leads", to: "/admin/leads" as const, icon: Users },
   { label: "Calls", to: "/admin/calls" as const, icon: Phone },
   { label: "Homepage", to: "/admin/home" as const, icon: Home },
@@ -45,7 +45,9 @@ const NAV = [
 ];
 
 function isActive(pathname: string, to: string) {
-  if (to === "/admin") return pathname === "/admin" || pathname === "/admin/";
+  if (to === "/admin/dashboard") {
+    return pathname === "/admin/dashboard" || pathname === "/admin" || pathname === "/admin/";
+  }
   return pathname.startsWith(to);
 }
 
@@ -78,7 +80,7 @@ export function AdminShell({
     <div className="admin-panel min-h-svh bg-background text-foreground">
       <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur-xl">
         <div className="flex h-[4.25rem] items-center justify-between gap-4 px-5 md:px-8">
-          <Link to="/admin" className="flex cursor-pointer items-center gap-3" onClick={closeIfMobile}>
+          <Link to="/admin/dashboard" className="flex cursor-pointer items-center gap-3" onClick={closeIfMobile}>
             <img src={logoBlack} alt="Design Diaries" width={330} height={102} className="h-7 w-auto" />
             <span className="label-caps text-foreground">Admin</span>
           </Link>

@@ -26,6 +26,7 @@ import { ContactSettingsProvider } from "@/hooks/use-contact-settings";
 import { HomepageSettingsProvider } from "@/hooks/use-homepage-settings";
 import { AboutSettingsProvider } from "@/hooks/use-about-settings";
 import { ProjectsProvider } from "@/hooks/use-projects";
+import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
   return (
@@ -171,6 +172,7 @@ function RootComponent() {
         </main>
         {!isAdmin && <StickyCTA />}
         {!isAdmin && <Footer />}
+        <Toaster richColors closeButton position="top-center" />
         </ProjectsProvider>
         </AboutSettingsProvider>
         </HomepageSettingsProvider>

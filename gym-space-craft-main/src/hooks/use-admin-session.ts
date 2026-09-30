@@ -28,7 +28,7 @@ export function useAdminSession({ required = false, redirectIfAuthed = false }: 
         }
         setAdmin(res.admin);
         if (redirectIfAuthed) {
-          void navigate({ to: "/admin" });
+          void navigate({ to: "/admin/dashboard" });
         }
       })
       .catch(() => {

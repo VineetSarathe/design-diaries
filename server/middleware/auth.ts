@@ -21,11 +21,24 @@ export function optionalAdmin(req: Request, _res: Response, next: NextFunction) 
 }
 
 function readAdmin(req: Request) {
-  const token = req.cookies?.[env.AUTH_COOKIE];
+  const token = readAuthToken(req);
   if (!token) return undefined;
   try {
     return verifyAdminToken(token);
   } catch {
     return undefined;
   }
+}
+
+function readAuthToken(req: Request): string | undefined {
+  const cookieToken = req.cookies?.[env.AUTH_COOKIE];
+  if (typeof cookieToken === "string" && cookieToken.trim()) {
+    return cookieToken.trim();
+  }
+  const header = req.headers.authorization;
+  if (typeof header === "string" && header.startsWith("Bearer ")) {
+    const bearer = header.slice(7).trim();
+    if (bearer) return bearer;
+  }
+  return undefined;
 }

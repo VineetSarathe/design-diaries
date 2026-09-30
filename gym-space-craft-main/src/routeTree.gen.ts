@@ -30,6 +30,7 @@ import { Route as AdminAdminsRouteImport } from './routes/admin.admins'
 import { Route as AdminBlogsRouteImport } from './routes/admin.blogs'
 import { Route as AdminCallsRouteImport } from './routes/admin.calls'
 import { Route as AdminContactRouteImport } from './routes/admin.contact'
+import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
 import { Route as AdminHomeRouteImport } from './routes/admin.home'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
@@ -152,6 +153,11 @@ const AdminContactRoute = AdminContactRouteImport.update({
   path: '/contact',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminDashboardRoute = AdminDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminHomeRoute = AdminHomeRouteImport.update({
   id: '/home',
   path: '/home',
@@ -254,6 +260,7 @@ export interface FileRoutesByFullPath {
   '/admin/blogs': typeof AdminBlogsRoute
   '/admin/calls': typeof AdminCallsRoute
   '/admin/contact': typeof AdminContactRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/home': typeof AdminHomeRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
@@ -290,6 +297,7 @@ export interface FileRoutesByTo {
   '/admin/blogs': typeof AdminBlogsRoute
   '/admin/calls': typeof AdminCallsRoute
   '/admin/contact': typeof AdminContactRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/home': typeof AdminHomeRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
@@ -330,6 +338,7 @@ export interface FileRoutesById {
   '/admin/blogs': typeof AdminBlogsRoute
   '/admin/calls': typeof AdminCallsRoute
   '/admin/contact': typeof AdminContactRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/home': typeof AdminHomeRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
@@ -371,6 +380,7 @@ export interface FileRouteTypes {
     | '/admin/blogs'
     | '/admin/calls'
     | '/admin/contact'
+    | '/admin/dashboard'
     | '/admin/home'
     | '/admin/leads'
     | '/admin/login'
@@ -407,6 +417,7 @@ export interface FileRouteTypes {
     | '/admin/blogs'
     | '/admin/calls'
     | '/admin/contact'
+    | '/admin/dashboard'
     | '/admin/home'
     | '/admin/leads'
     | '/admin/login'
@@ -446,6 +457,7 @@ export interface FileRouteTypes {
     | '/admin/blogs'
     | '/admin/calls'
     | '/admin/contact'
+    | '/admin/dashboard'
     | '/admin/home'
     | '/admin/leads'
     | '/admin/login'
@@ -632,6 +644,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminContactRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/dashboard': {
+      id: '/admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/admin/dashboard'
+      preLoaderRoute: typeof AdminDashboardRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/home': {
       id: '/admin/home'
       path: '/home'
@@ -753,6 +772,7 @@ interface AdminRouteChildren {
   AdminBlogsRoute: typeof AdminBlogsRoute
   AdminCallsRoute: typeof AdminCallsRoute
   AdminContactRoute: typeof AdminContactRoute
+  AdminDashboardRoute: typeof AdminDashboardRoute
   AdminHomeRoute: typeof AdminHomeRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
   AdminLoginRoute: typeof AdminLoginRoute
@@ -773,6 +793,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminBlogsRoute: AdminBlogsRoute,
   AdminCallsRoute: AdminCallsRoute,
   AdminContactRoute: AdminContactRoute,
+  AdminDashboardRoute: AdminDashboardRoute,
   AdminHomeRoute: AdminHomeRoute,
   AdminLeadsRoute: AdminLeadsRoute,
   AdminLoginRoute: AdminLoginRoute,

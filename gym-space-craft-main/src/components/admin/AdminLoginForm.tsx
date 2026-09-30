@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
 import { Eye, EyeOff } from "lucide-react";
+import { toast } from "sonner";
 import { adminApi } from "@/lib/admin-api";
 
 export function AdminLoginForm() {
-  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -19,10 +18,15 @@ export function AdminLoginForm() {
     setError(null);
 
     try {
-      await adminApi.login(email, password);
-      await navigate({ to: "/admin" });
+      const res = await adminApi.login(email, password);
+      if (!res.token) {
+        throw new Error("Login succeeded but no token was returned. Try again.");
+      }
+      window.location.href = "/admin/dashboard";
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not sign in");
+      const message = err instanceof Error ? err.message : "Could not sign in";
+      setError(message);
+      toast.error("Sign in failed", { description: message });
     } finally {
       setSubmitting(false);
     }
@@ -64,7 +68,11 @@ export function AdminLoginForm() {
         </span>
       </label>
 
-      {error && <p className="text-sm text-destructive">{error}</p>}
+      {error && (
+        <p className="rounded-sm border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive" role="alert">
+          {error}
+        </p>
+      )}
 
       <button
         type="submit"

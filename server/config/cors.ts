@@ -43,6 +43,7 @@ const allowedOrigins = buildAllowedOriginSet();
 export function corsOptions(): CorsOptions {
   return {
     credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
     origin(origin, callback) {
       if (!origin) {
         callback(null, true);

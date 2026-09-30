@@ -1,3 +1,4 @@
+import { clearAdminToken, getAdminToken, setAdminToken } from "@/lib/admin-auth";
 import { API_BASE, apiFormRequest, apiRequest } from "@/lib/api";
 import type { ContactSettings } from "@/lib/contact";
 import type { HomepageSettings } from "@/lib/homepage";
@@ -157,14 +158,20 @@ export type InstagramCard = {
 };
 
 export const adminApi = {
-  login(email: string, password: string) {
-    return apiRequest<{ admin: AdminUser }>("/auth/login", {
+  async login(email: string, password: string) {
+    const res = await apiRequest<{ token: string; admin: AdminUser }>("/auth/login", {
       method: "POST",
       body: JSON.stringify({ email, password }),
     });
+    if (res.token) setAdminToken(res.token);
+    return res;
   },
-  logout() {
-    return apiRequest("/auth/logout", { method: "POST" });
+  async logout() {
+    try {
+      await apiRequest("/auth/logout", { method: "POST" });
+    } finally {
+      clearAdminToken();
+    }
   },
   me() {
     return apiRequest<{ admin: AdminUser | null }>("/auth/me");
@@ -225,7 +232,13 @@ export const adminApi = {
     if (params.from) query.set("from", params.from);
     if (params.to) query.set("to", params.to);
     const suffix = query.toString() ? `?${query.toString()}` : "";
-    const res = await fetch(`${API_BASE}/leads/export${suffix}`, { credentials: "include" });
+    const headers = new Headers();
+    const token = getAdminToken();
+    if (token) headers.set("Authorization", `Bearer ${token}`);
+    const res = await fetch(`${API_BASE}/leads/export${suffix}`, {
+      credentials: "include",
+      headers,
+    });
     if (!res.ok) {
       const data = (await res.json().catch(() => null)) as { message?: string } | null;
       throw new Error(data?.message || "Could not export leads");
