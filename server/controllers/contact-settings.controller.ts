@@ -6,7 +6,7 @@ import {
 } from "../models/contact-settings.model";
 import { AppError } from "../utils/appError";
 import { DEFAULT_CONTACT_SETTINGS } from "../seed/contact-settings.seed";
-import { sendMail, verifySmtp } from "../utils/mail";
+import { buildSmtpConfig, formatSmtpError, sendMail, verifySmtp } from "../utils/mail";
 
 function toDto(doc: ContactSettingsDoc) {
   return {
@@ -110,18 +110,10 @@ export async function updateMailSettings(req: Request, res: Response) {
   if (!nextPass) throw new AppError(400, "Paste the 16-character Gmail app password");
 
   try {
-    await verifySmtp({
-      host: "smtp.gmail.com",
-      port: 587,
-      user: smtpUser,
-      pass: nextPass,
-      from: smtpUser,
-    });
-  } catch {
-    throw new AppError(
-      400,
-      "Gmail login failed. Use an App Password (16 characters), not the normal Gmail password. 2-Step Verification must be on.",
-    );
+    await verifySmtp(buildSmtpConfig(smtpUser, nextPass, smtpUser));
+  } catch (err) {
+    console.error("Gmail SMTP verify failed:", err);
+    throw new AppError(400, formatSmtpError(err));
   }
 
   existing.smtpUser = smtpUser;
@@ -144,7 +136,8 @@ export async function testMailSettings(_req: Request, res: Response) {
     if (!sent) throw new AppError(400, "Save Gmail SMTP first, then send a test");
   } catch (err) {
     if (err instanceof AppError) throw err;
-    throw new AppError(400, "Gmail could not send the test email. Check the app password.");
+    console.error("Gmail SMTP test failed:", err);
+    throw new AppError(400, formatSmtpError(err));
   }
   res.json({ ok: true, to });
 }

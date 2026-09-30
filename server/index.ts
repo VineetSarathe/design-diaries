@@ -1,7 +1,7 @@
 import { env } from "./config/env";
 import { connectDB } from "./config/db";
 import { seedAdmin } from "./seed/admin.seed";
-import { seedContactSettings } from "./seed/contact-settings.seed";
+import { seedContactSettings, syncSmtpFromEnv } from "./seed/contact-settings.seed";
 import { seedHomepageSettings } from "./seed/homepage-settings.seed";
 import { seedTestimonials, backfillTestimonialSortOrder } from "./seed/testimonial.seed";
 import { attachOriginalTestimonialImages, migrateTestimonialImagesToCloudinary } from "./seed/testimonial-images.seed";
@@ -20,6 +20,7 @@ async function start() {
   await connectDB(env.MONGODB_URI);
   await seedAdmin();
   await seedContactSettings();
+  await syncSmtpFromEnv();
   await seedCallSettings();
   try {
     await seedPageSeo();

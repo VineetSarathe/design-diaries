@@ -2,7 +2,7 @@ import nodemailer from "nodemailer";
 import { env } from "../config/env";
 import { ContactSettings, CONTACT_SETTINGS_KEY } from "../models/contact-settings.model";
 
-type SmtpConfig = {
+export type SmtpConfig = {
   host: string;
   port: number;
   user: string;
@@ -19,34 +19,75 @@ type MailOptions = {
   fromName?: string;
 };
 
-export async function getSmtpConfig(): Promise<SmtpConfig | null> {
-  const settings = await ContactSettings.findOne({ key: CONTACT_SETTINGS_KEY }).select("+smtpPass");
-  const user = (settings?.smtpUser || env.SMTP_USER || "").trim();
-  const pass = (settings?.smtpPass || env.SMTP_PASS || "").replace(/\s/g, "");
-  if (!user || !pass) return null;
+export function normalizeAppPassword(pass: string): string {
+  return pass.replace(/\s/g, "");
+}
+
+export function buildSmtpConfig(user: string, pass: string, from?: string): SmtpConfig {
+  const normalizedUser = user.trim().toLowerCase();
   return {
     host: env.SMTP_HOST || "smtp.gmail.com",
     port: env.SMTP_PORT || 587,
-    user,
-    pass,
-    from: env.SMTP_FROM || user,
+    user: normalizedUser,
+    pass: normalizeAppPassword(pass),
+    from: (from || env.SMTP_FROM || normalizedUser).trim().toLowerCase(),
   };
 }
 
+export function formatSmtpError(err: unknown): string {
+  if (err && typeof err === "object") {
+    const e = err as {
+      code?: string;
+      responseCode?: number;
+      response?: string;
+      message?: string;
+    };
+    const response = e.response?.trim();
+    if (e.responseCode === 535 || response?.includes("535") || response?.includes("BadCredentials")) {
+      return "Gmail rejected the login. Use a 16-character App Password (not your normal password) with 2-Step Verification enabled.";
+    }
+    if (e.code === "ETIMEDOUT" || e.code === "ECONNECTION" || e.code === "ESOCKET") {
+      return "Could not reach Gmail SMTP. Check firewall, antivirus, or your internet connection.";
+    }
+    if (response) return response.split("\n")[0].slice(0, 240);
+    if (e.message) return e.message.slice(0, 240);
+  }
+  return "Gmail SMTP verification failed.";
+}
+
+function isGmailConfig(config: SmtpConfig): boolean {
+  return config.host.includes("gmail.com") || /@gmail\.com$/i.test(config.user);
+}
+
+export async function getSmtpConfig(): Promise<SmtpConfig | null> {
+  const settings = await ContactSettings.findOne({ key: CONTACT_SETTINGS_KEY }).select("+smtpPass");
+  const user = (settings?.smtpUser || env.SMTP_USER || "").trim().toLowerCase();
+  const pass = normalizeAppPassword(settings?.smtpPass || env.SMTP_PASS || "");
+  if (!user || !pass) return null;
+  return buildSmtpConfig(user, pass);
+}
+
 export function isMailConfigured() {
-  return Boolean(env.WEB3FORMS_KEY || env.SMTP_USER || env.SMTP_PASS);
+  return Boolean(env.WEB3FORMS_KEY || (env.SMTP_USER && env.SMTP_PASS));
 }
 
 function createTransport(config: SmtpConfig) {
+  const auth = { user: config.user, pass: normalizeAppPassword(config.pass) };
+
+  if (isGmailConfig(config)) {
+    return nodemailer.createTransport({
+      service: "gmail",
+      auth,
+      family: 4,
+    });
+  }
+
   return nodemailer.createTransport({
     host: config.host,
     port: config.port,
     secure: config.port === 465,
     requireTLS: config.port === 587,
-    auth: {
-      user: config.user,
-      pass: config.pass,
-    },
+    auth,
   });
 }
 

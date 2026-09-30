@@ -27,8 +27,8 @@ export const env = {
   CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET?.trim() || "",
   SMTP_HOST: process.env.SMTP_HOST?.trim() || (process.env.SMTP_USER?.trim() ? "smtp.gmail.com" : ""),
   SMTP_PORT: Number(process.env.SMTP_PORT) || 587,
-  SMTP_USER: process.env.SMTP_USER?.trim() || "",
-  SMTP_PASS: process.env.SMTP_PASS?.trim() || "",
+  SMTP_USER: (process.env.SMTP_USER?.trim() || "").toLowerCase(),
+  SMTP_PASS: (process.env.SMTP_PASS?.trim() || "").replace(/\s/g, ""),
   SMTP_FROM: process.env.SMTP_FROM?.trim() || "",
   WEB3FORMS_KEY: process.env.WEB3FORMS_KEY?.trim() || "",
 };

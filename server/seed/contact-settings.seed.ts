@@ -2,6 +2,8 @@ import {
   ContactSettings,
   CONTACT_SETTINGS_KEY,
 } from "../models/contact-settings.model";
+import { env } from "../config/env";
+import { buildSmtpConfig, formatSmtpError, verifySmtp } from "../utils/mail";
 
 export const DEFAULT_CONTACT_SETTINGS = {
   key: CONTACT_SETTINGS_KEY,
@@ -59,5 +61,28 @@ export async function seedContactSettings(): Promise<void> {
 
   if (Object.keys(patch).length > 0) {
     await ContactSettings.updateOne({ key: CONTACT_SETTINGS_KEY }, { $set: patch });
+  }
+}
+
+/** When server/.env has valid Gmail SMTP, store it in CMS (Admin → Contact) if missing or outdated. */
+export async function syncSmtpFromEnv(): Promise<void> {
+  if (!env.SMTP_USER || !env.SMTP_PASS) return;
+
+  const existing = await ContactSettings.findOne({ key: CONTACT_SETTINGS_KEY }).select("+smtpPass");
+  if (!existing) return;
+
+  const sameUser = existing.smtpUser === env.SMTP_USER;
+  const samePass = existing.smtpPass === env.SMTP_PASS;
+  if (sameUser && samePass && existing.smtpUser && existing.smtpPass) return;
+
+  try {
+    await verifySmtp(buildSmtpConfig(env.SMTP_USER, env.SMTP_PASS));
+    await ContactSettings.updateOne(
+      { key: CONTACT_SETTINGS_KEY },
+      { $set: { smtpUser: env.SMTP_USER, smtpPass: env.SMTP_PASS } },
+    );
+    console.log("Gmail SMTP saved from server/.env (visible in Admin → Contact)");
+  } catch (err) {
+    console.warn("Gmail SMTP in server/.env could not be verified:", formatSmtpError(err));
   }
 }
