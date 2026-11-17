@@ -1,4 +1,12 @@
 {
   "buildCommand": "npm run build",
-  "installCommand": "npm install"
+  "installCommand": "npm install",
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "design-diaries-web.vercel.app" }],
+      "destination": "https://www.designdiaries.co/$1",
+      "permanent": true
+    }
+  ]
 }
